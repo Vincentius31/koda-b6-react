@@ -3,14 +3,14 @@ import pictureLeft from "../assets/img/Rectangle 290.png"
 import logoBrown from "../assets/img/Logo-Brown.png"
 import logoFacebook from "../assets/img/facebook.png"
 import logoGoogle from "../assets/img/google.png"
-import { Mail, User } from 'lucide-react'
+import { Mail } from 'lucide-react'
 
 // Component Import
 import Input from "../components/Input";
 import Password from "../components/Password";
 import { PrimaryButton } from "../components/PrimaryButton";
 
-export default function RegisterPage() {
+export default function LoginPage() {
 
   return (
     <div>
@@ -36,12 +36,7 @@ export default function RegisterPage() {
             </form>
 
             {/* Button Register */}
-            <PrimaryButton>Register</PrimaryButton>
-
-            <p className="login-text text-center text-sm my-4">
-              Have An Account?
-              <a href="login.html" className="text-primary ml-1 hover:underline text-[#FF8906]">Login</a>
-            </p>
+            <PrimaryButton>Login</PrimaryButton>
 
             <div className="divider flex items-center my-6">
               <span className="flex-1 h-px bg-gray-300"></span>

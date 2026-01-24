@@ -1,6 +1,6 @@
 export default function Input({ label, type, placeholder, icon: Icon }) {
     return (
-        <div className="form-group mb-5">
+        <div className="form-group">
             <label className="block text-sm mb-2">{label}</label>
             <div className="input-box flex items-center border rounded-md px-3 py-3">
                 {Icon && <Icon className="w-5 mr-3"/>}

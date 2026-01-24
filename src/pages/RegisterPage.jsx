@@ -52,7 +52,7 @@ export default function RegisterPage() {
 
             <div className="social-login grid grid-cols-2 gap-4">
               <a href="#"
-                class="social flex items-center justify-center gap-2 border rounded-md py-3 hover:bg-gray-100">
+                className="social flex items-center justify-center gap-2 border rounded-md py-3 hover:bg-gray-100">
                 <img src={logoFacebook} className="w-5"/>
                   Facebook
               </a>

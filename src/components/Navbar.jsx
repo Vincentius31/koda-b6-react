@@ -1,9 +1,9 @@
 import { Search, ShoppingCart } from "lucide-react"
 import logoWhite from "../assets/img/Logo-White.png"
 
-export default function Navbar() {
+export default function Navbar({className = ""}) {
   return (
-    <header className="absolute top-0 left-0 w-full z-50">
+    <header className= {`absolute top-0 left-0 w-full z-50 ${className}`}>
       <nav className="flex items-center justify-between px-8 lg:px-20 py-6 text-white">
         <div className="flex flex-row gap-20">
           <a href="#" className="flex items-center">

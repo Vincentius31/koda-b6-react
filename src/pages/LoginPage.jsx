@@ -16,7 +16,7 @@ export default function LoginPage() {
     <div>
       <section className="register-container flex min-h-screen flex-col md:flex-row">
         {/* Image Left */}
-        <div className="register-image md:w-[45%] h-[220px] md:h-auto">
+        <div className="register-image md:w-[45%] h-55 md:h-auto">
           <img src={pictureLeft} alt="Coffee" className="w-full h-full object-cover" />
         </div>
 
@@ -24,7 +24,7 @@ export default function LoginPage() {
         <section className="register-form md:w-[55%] flex items-center justify-center py-8">
           <div className="form-wrapper w-[90%] md:w-[70%]">
             {/* Section Logo, Title, and Sub Title */}
-            <img src={logoBrown} alt="Coffee Shop" className="logo w-[120px] mb-5" />
+            <img src={logoBrown} alt="Coffee Shop" className="logo w-30 mb-5" />
             <h2 className="text-brown text-2xl font-semibold mb-1">Login</h2>
             <p className="content text-gray-400 mb-6">Fill out the form correctly</p>
 

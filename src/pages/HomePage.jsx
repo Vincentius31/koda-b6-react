@@ -19,7 +19,7 @@ export default function HomePage() {
 
             {/* Hero Section */}
             <section className="grid grid-cols-1 lg:grid-cols-2 min-h-screen">
-                <div className="bg-gradient-to-b from-gray-900 to-gray-800 text-white flex flex-col justify-center px-10 lg:px-20">
+                <div className="bg-linear-to-b from-gray-900 to-gray-800 text-white flex flex-col justify-center px-10 lg:px-20">
                     <div className="max-w-md">
                         <h1 className="text-4xl lg:text-5xl font-bold leading-tight">
                             Start Your Day with Coffee and Good Meals
@@ -148,14 +148,14 @@ export default function HomePage() {
             </section>
 
             {/* Testimonial Section */}
-            <section class="bg-gradient-to-r from-gray-900 to-black py-24">
+            <section class="bg-linear-to-r from-gray-900 to-black py-24">
                 <div class="container mx-auto px-6">
                     <div class="relative overflow-hidden">
                         <div id="testimonialSlider" class="flex transition-transform duration-500 ease-in-out">
                             <div class="min-w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center text-white">
                                 <div class="flex justify-center">
                                     <img src={imageTesti} alt="Viezh Robert"
-                                        class="w-[420px] h-[260px] object-cover"/>
+                                        class="w-105 h-65 object-cover"/>
                                 </div>
                                 <div>
                                     <span class="text-xs tracking-widest text-orange-400 uppercase">

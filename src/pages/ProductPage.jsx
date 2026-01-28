@@ -13,7 +13,7 @@ export default function ProductPage() {
             <Navbar className="bg-black" />
 
             {/* Hero Section */}
-            <section className="relative h-[300px] bg-black">
+            <section className="relative h-75 bg-black">
                 <img
                     src={imageHero}
                     alt="Hero"
@@ -43,7 +43,7 @@ export default function ProductPage() {
                 </div>
 
                 <div className="flex gap-4 overflow-x-auto pb-3">
-                    <div className="min-w-[280px] bg-[#88B788] rounded-xl p-4 flex gap-3">
+                    <div className="min-w-70 bg-[#88B788] rounded-xl p-4 flex gap-3">
                         <img src={imagePromoGreen} alt="image-promo" className="w-20 h-20" />
                         <div>
                             <p className="font-bold text-sm">HAPPY MOTHER'S DAY!</p>
@@ -54,7 +54,7 @@ export default function ProductPage() {
                         </div>
                     </div>
 
-                    <div className="min-w-[280px] bg-[#88B788] rounded-xl p-4 flex gap-3">
+                    <div className="min-w-70 bg-[#88B788] rounded-xl p-4 flex gap-3">
                         <img src={imagePromoGreen} alt="image-promo" className="w-20 h-20" />
                         <div>
                             <p className="font-bold text-sm">HAPPY MOTHER'S DAY!</p>
@@ -65,7 +65,7 @@ export default function ProductPage() {
                         </div>
                     </div>
 
-                    <div className="min-w-[280px] bg-[#88B788] rounded-xl p-4 flex gap-3">
+                    <div className="min-w-70 bg-[#88B788] rounded-xl p-4 flex gap-3">
                         <img src={imagePromoGreen} alt="image-promo" className="w-20 h-20" />
                         <div>
                             <p className="font-bold text-sm">HAPPY MOTHER'S DAY!</p>
@@ -76,7 +76,7 @@ export default function ProductPage() {
                         </div>
                     </div>
 
-                    <div className="min-w-[280px] bg-[#F5C361] rounded-xl p-4 flex gap-3">
+                    <div className="min-w-70 bg-[#F5C361] rounded-xl p-4 flex gap-3">
                         <img src={imagePromoYellow} alt="image-promo" className="w-20 h-20" />
                         <div>
                             <p className="font-bold text-sm">Free Coffee</p>
@@ -103,7 +103,7 @@ export default function ProductPage() {
                 <div className="flex flex-col lg:flex-row gap-8 pl-10">
                     <Filter />
 
-                    <div className="flex-2 max-w-[700px]">
+                    <div className="flex-2 max-w-175">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-10 auto-rows-fr">
                             <ProductCard
                                 name={"Hazelnut Latte"}

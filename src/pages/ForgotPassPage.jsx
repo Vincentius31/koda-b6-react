@@ -6,6 +6,7 @@ import { Mail } from 'lucide-react'
 // Component Import
 import Input from "../components/Input";
 import { PrimaryButton } from "../components/PrimaryButton";
+import { Link } from "react-router-dom";
 
 export default function ForgotPassPage() {
     return (
@@ -30,8 +31,7 @@ export default function ForgotPassPage() {
                         </form>
 
                         {/* Button Register */}
-                        <PrimaryButton>Submit</PrimaryButton>
-
+                        <Link to={"/login"}><PrimaryButton>Submit</PrimaryButton></Link>
                     </div>
                 </section>
 

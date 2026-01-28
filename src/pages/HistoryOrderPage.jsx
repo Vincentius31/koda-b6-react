@@ -4,6 +4,7 @@ import { Calendar, MessageSquareText } from 'lucide-react'
 import Footer from '../components/Footer'
 import imageProduct from '../assets/img/Image 31.png'
 import { PrimaryButton } from '../components/PrimaryButton'
+import { Link } from "react-router-dom";
 
 export default function HistoryOrder() {
     return (
@@ -37,7 +38,7 @@ export default function HistoryOrder() {
                                 <div>
                                     <p className="text-sm text-gray-500">No. Order</p>
                                     <p className="font-semibold">#12354-09893</p>
-                                    <a href="#" className="text-orange-500 text-sm">Views Order Detail</a>
+                                    <Link to={"/detail-order"} className="text-orange-500 text-sm">Views Order Detail</Link>
                                 </div>
 
                                 <div>
@@ -60,13 +61,13 @@ export default function HistoryOrder() {
                         </div>
 
                         <div className="flex gap-5 p-5 bg-gray-50">
-                            <img src={imageProduct} className="w-28 h-28 object-cover" alt="" />
+                            <img src={imageProduct} className="w-28 h-28 object-cover" alt="product-coffee" />
 
                             <div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-4 items-center">
                                 <div>
                                     <p className="text-sm text-gray-500">No. Order</p>
                                     <p className="font-semibold">#12354-09893</p>
-                                    <a href="#" className="text-orange-500 text-sm">Views Order Detail</a>
+                                    <Link to={"/detail-order"} className="text-orange-500 text-sm">Views Order Detail</Link>
                                 </div>
 
                                 <div>
@@ -89,13 +90,13 @@ export default function HistoryOrder() {
                         </div>
 
                         <div className="flex gap-5 p-5 bg-gray-50">
-                            <img src={imageProduct} className="w-28 h-28 object-cover" alt="" />
+                            <img src={imageProduct} className="w-28 h-28 object-cover" alt="product-coffee" />
 
                             <div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-4 items-center">
                                 <div>
                                     <p className="text-sm text-gray-500">No. Order</p>
                                     <p className="font-semibold">#12354-09893</p>
-                                    <a href="#" className="text-orange-500 text-sm">Views Order Detail</a>
+                                    <Link to={"/detail-order"} className="text-orange-500 text-sm">Views Order Detail</Link>
                                 </div>
 
                                 <div>
@@ -118,13 +119,13 @@ export default function HistoryOrder() {
                         </div>
 
                         <div className="flex gap-5 p-5 bg-gray-50">
-                            <img src={imageProduct} className="w-28 h-28 object-cover" alt="" />
+                            <img src={imageProduct} className="w-28 h-28 object-cover" alt="product-coffee" />
 
                             <div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-4 items-center">
                                 <div>
                                     <p className="text-sm text-gray-500">No. Order</p>
                                     <p className="font-semibold">#12354-09893</p>
-                                    <a href="#" className="text-orange-500 text-sm">Views Order Detail</a>
+                                    <Link to={"/detail-order"} className="text-orange-500 text-sm">Views Order Detail</Link>
                                 </div>
 
                                 <div>
@@ -173,7 +174,7 @@ export default function HistoryOrder() {
                 </div>
             </section>
 
-            <Footer/>
+            <Footer />
         </div>
     )
 }

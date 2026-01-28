@@ -7,7 +7,7 @@ import { Mail } from 'lucide-react'
 import Input from "../components/Input";
 import { PrimaryButton } from "../components/PrimaryButton";
 
-export const ForgotPassPage = () => {
+export default function ForgotPassPage() {
     return (
         <div>
             <section className="register-container flex min-h-screen flex-col md:flex-row">

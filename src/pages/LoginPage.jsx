@@ -9,6 +9,7 @@ import { Mail } from 'lucide-react'
 import Input from "../components/Input";
 import Password from "../components/Password";
 import { PrimaryButton } from "../components/PrimaryButton";
+import { Link } from "react-router-dom";
 
 export default function LoginPage() {
 
@@ -32,11 +33,12 @@ export default function LoginPage() {
             <form className="flex flex-col gap-6">
               <Input label={"Email"} type={"email"} placeholder={"Enter Your Email"} icon={Mail} />
               <Password label={"Password"} placeholder={"Enter Your Password"} />
-              <p className="text-[#FF8906] text-right text-sm">Forgot Password?</p>
+              <Link to={"/forgot"} className="text-[#FF8906] text-right text-sm">Forgot Password?</Link>
             </form>
 
             {/* Button Register */}
-            <PrimaryButton>Login</PrimaryButton>
+            <Link to={"/"}><PrimaryButton>Login</PrimaryButton></Link>
+            
 
             <div className="divider flex items-center my-6">
               <span className="flex-1 h-px bg-gray-300"></span>

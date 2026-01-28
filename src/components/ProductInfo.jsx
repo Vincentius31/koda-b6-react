@@ -1,4 +1,6 @@
 import React from 'react'
+import { PrimaryButton } from './PrimaryButton'
+import { Link } from "react-router-dom";
 
 export default function ProductInfo({name, priceNormal, priceDiscount, descriptionProduct, }) {
     return (
@@ -71,12 +73,12 @@ export default function ProductInfo({name, priceNormal, priceDiscount, descripti
 
             {/* Actions */}
             <div className="flex gap-4">
-                <button className="w-60 bg-orange-500 text-white px-10 py-3 rounded-lg">
-                    Buy
-                </button>
-                <button className="border border-orange-500 text-orange-500 px-8 py-3 rounded-lg flex items-center gap-2">
+                <Link to={"/checkout-product"} className='w-60'><PrimaryButton>Buy</PrimaryButton></Link>
+                <Link to={"/checkout-product"} className='mt-6'><button className="border border-orange-500 text-orange-500 px-8 py-3 rounded-lg flex items-center gap-2">
                     🛒 Add to cart
-                </button>
+                </button></Link>
+                
+                
             </div>
         </div>
     )

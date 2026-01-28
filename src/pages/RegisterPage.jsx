@@ -9,6 +9,7 @@ import { Mail, User } from 'lucide-react'
 import Input from "../components/Input";
 import Password from "../components/Password";
 import { PrimaryButton } from "../components/PrimaryButton";
+import { Link } from "react-router-dom";
 
 export default function RegisterPage() {
 
@@ -37,11 +38,11 @@ export default function RegisterPage() {
             </form>
 
             {/* Button Register */}
-            <PrimaryButton>Register</PrimaryButton>
+            <Link to={"/login"}><PrimaryButton>Register</PrimaryButton></Link>
 
             <p className="login-text text-center text-sm my-4">
               Have An Account?
-              <a href="login.html" className="text-primary ml-1 hover:underline text-[#FF8906]">Login</a>
+              <Link to={"/login"} className="text-primary ml-1 hover:underline text-[#FF8906]">Login</Link>
             </p>
 
             <div className="divider flex items-center my-6">

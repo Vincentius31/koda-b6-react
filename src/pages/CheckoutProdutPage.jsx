@@ -4,7 +4,7 @@ import Input from "../components/Input";
 import { Mail, MapPin, User } from "lucide-react";
 import ImageProduct from "../assets/img/Image 31.png"
 
-export default function CheckoutProdut() {
+export default function CheckoutProdutPage() {
   return (
     <>
       <Navbar className="bg-black"/>

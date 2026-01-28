@@ -2,6 +2,8 @@ import React from 'react'
 import Navbar from '../components/Navbar'
 import { Calendar, MessageSquareText } from 'lucide-react'
 import Footer from '../components/Footer'
+import imageProduct from '../assets/img/Image 31.png'
+import { PrimaryButton } from '../components/PrimaryButton'
 
 export default function HistoryOrder() {
     return (
@@ -26,119 +28,147 @@ export default function HistoryOrder() {
                     </button>
                 </div>
 
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
-                    <div class="lg:col-span-2 space-y-6">
-                        <div class="flex gap-5 p-5 bg-gray-50">
-                            <img src="img/image 31.png" class="w-28 h-28 object-cover" alt="" />
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+                    <div className="lg:col-span-2 space-y-6">
+                        <div className="flex gap-5 p-5 bg-gray-50">
+                            <img src={imageProduct} className="w-28 h-28 object-cover" alt="product-coffee" />
 
-                            <div class="flex-1 grid grid-cols-2 md:grid-cols-4 gap-4 items-center">
+                            <div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-4 items-center">
                                 <div>
-                                    <p class="text-sm text-gray-500">No. Order</p>
-                                    <p class="font-semibold">#12354-09893</p>
-                                    <a href="#" class="text-orange-500 text-sm">Views Order Detail</a>
+                                    <p className="text-sm text-gray-500">No. Order</p>
+                                    <p className="font-semibold">#12354-09893</p>
+                                    <a href="#" className="text-orange-500 text-sm">Views Order Detail</a>
                                 </div>
 
                                 <div>
-                                    <p class="text-sm text-gray-500">Date</p>
-                                    <p class="font-semibold">23 January 2023</p>
+                                    <p className="text-sm text-gray-500">Date</p>
+                                    <p className="font-semibold">23 January 2023</p>
                                 </div>
 
                                 <div>
-                                    <p class="text-sm text-gray-500">Total</p>
-                                    <p class="font-semibold">Idr 40.000</p>
+                                    <p className="text-sm text-gray-500">Total</p>
+                                    <p className="font-semibold">Idr 40.000</p>
                                 </div>
 
                                 <div>
-                                    <p class="text-sm text-gray-500">Status</p>
-                                    <span class="inline-block bg-orange-100 text-orange-500 text-xs px-3 py-1 rounded-full">
+                                    <p className="text-sm text-gray-500">Status</p>
+                                    <span className="inline-block bg-orange-100 text-orange-500 text-xs px-3 py-1 rounded-full">
                                         On Progress
                                     </span>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="flex gap-5 p-5 bg-gray-50">
-                            <img src="img/image 31.png" class="w-28 h-28 object-cover" alt="" />
+                        <div className="flex gap-5 p-5 bg-gray-50">
+                            <img src={imageProduct} className="w-28 h-28 object-cover" alt="" />
 
-                            <div class="flex-1 grid grid-cols-2 md:grid-cols-4 gap-4 items-center">
+                            <div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-4 items-center">
                                 <div>
-                                    <p class="text-sm text-gray-500">No. Order</p>
-                                    <p class="font-semibold">#12354-09893</p>
-                                    <a href="#" class="text-orange-500 text-sm">Views Order Detail</a>
+                                    <p className="text-sm text-gray-500">No. Order</p>
+                                    <p className="font-semibold">#12354-09893</p>
+                                    <a href="#" className="text-orange-500 text-sm">Views Order Detail</a>
                                 </div>
 
                                 <div>
-                                    <p class="text-sm text-gray-500">Date</p>
-                                    <p class="font-semibold">23 January 2023</p>
+                                    <p className="text-sm text-gray-500">Date</p>
+                                    <p className="font-semibold">23 January 2023</p>
                                 </div>
 
                                 <div>
-                                    <p class="text-sm text-gray-500">Total</p>
-                                    <p class="font-semibold">Idr 40.000</p>
+                                    <p className="text-sm text-gray-500">Total</p>
+                                    <p className="font-semibold">Idr 40.000</p>
                                 </div>
 
                                 <div>
-                                    <p class="text-sm text-gray-500">Status</p>
-                                    <span class="inline-block bg-orange-100 text-orange-500 text-xs px-3 py-1 rounded-full">
+                                    <p className="text-sm text-gray-500">Status</p>
+                                    <span className="inline-block bg-orange-100 text-orange-500 text-xs px-3 py-1 rounded-full">
                                         On Progress
                                     </span>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="flex gap-5 p-5 bg-gray-50">
-                            <img src="img/image 31.png" class="w-28 h-28 object-cover" alt="" />
+                        <div className="flex gap-5 p-5 bg-gray-50">
+                            <img src={imageProduct} className="w-28 h-28 object-cover" alt="" />
 
-                            <div class="flex-1 grid grid-cols-2 md:grid-cols-4 gap-4 items-center">
+                            <div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-4 items-center">
                                 <div>
-                                    <p class="text-sm text-gray-500">No. Order</p>
-                                    <p class="font-semibold">#12354-09893</p>
-                                    <a href="#" class="text-orange-500 text-sm">Views Order Detail</a>
+                                    <p className="text-sm text-gray-500">No. Order</p>
+                                    <p className="font-semibold">#12354-09893</p>
+                                    <a href="#" className="text-orange-500 text-sm">Views Order Detail</a>
                                 </div>
 
                                 <div>
-                                    <p class="text-sm text-gray-500">Date</p>
-                                    <p class="font-semibold">23 January 2023</p>
+                                    <p className="text-sm text-gray-500">Date</p>
+                                    <p className="font-semibold">23 January 2023</p>
                                 </div>
 
                                 <div>
-                                    <p class="text-sm text-gray-500">Total</p>
-                                    <p class="font-semibold">Idr 40.000</p>
+                                    <p className="text-sm text-gray-500">Total</p>
+                                    <p className="font-semibold">Idr 40.000</p>
                                 </div>
 
                                 <div>
-                                    <p class="text-sm text-gray-500">Status</p>
-                                    <span class="inline-block bg-orange-100 text-orange-500 text-xs px-3 py-1 rounded-full">
+                                    <p className="text-sm text-gray-500">Status</p>
+                                    <span className="inline-block bg-orange-100 text-orange-500 text-xs px-3 py-1 rounded-full">
                                         On Progress
                                     </span>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="flex justify-center items-center gap-3 pt-6">
-                            <button class="w-9 h-9 rounded-full bg-orange-500 text-white">1</button>
-                            <button class="w-9 h-9 rounded-full bg-gray-200">2</button>
-                            <button class="w-9 h-9 rounded-full bg-gray-200">3</button>
-                            <button class="w-9 h-9 rounded-full bg-gray-200">4</button>
-                            <button class="w-9 h-9 rounded-full bg-orange-500 text-white">→</button>
+                        <div className="flex gap-5 p-5 bg-gray-50">
+                            <img src={imageProduct} className="w-28 h-28 object-cover" alt="" />
+
+                            <div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-4 items-center">
+                                <div>
+                                    <p className="text-sm text-gray-500">No. Order</p>
+                                    <p className="font-semibold">#12354-09893</p>
+                                    <a href="#" className="text-orange-500 text-sm">Views Order Detail</a>
+                                </div>
+
+                                <div>
+                                    <p className="text-sm text-gray-500">Date</p>
+                                    <p className="font-semibold">23 January 2023</p>
+                                </div>
+
+                                <div>
+                                    <p className="text-sm text-gray-500">Total</p>
+                                    <p className="font-semibold">Idr 40.000</p>
+                                </div>
+
+                                <div>
+                                    <p className="text-sm text-gray-500">Status</p>
+                                    <span className="inline-block bg-orange-100 text-orange-500 text-xs px-3 py-1 rounded-full">
+                                        On Progress
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div className="flex justify-center items-center gap-3 pt-6">
+                            <button className="w-9 h-9 rounded-full bg-orange-500 text-white">1</button>
+                            <button className="w-9 h-9 rounded-full bg-gray-200">2</button>
+                            <button className="w-9 h-9 rounded-full bg-gray-200">3</button>
+                            <button className="w-9 h-9 rounded-full bg-gray-200">4</button>
+                            <button className="w-9 h-9 rounded-full bg-orange-500 text-white">→</button>
                         </div>
 
                     </div>
 
-                    <aside class="border rounded-lg p-6 h-fit">
-                        <div class="flex items-center gap-3 mb-4">
-                            <div class="w-10 h-10 bg-black rounded-full flex items-center justify-center">
+                    <aside className="border-gray-50 shadow rounded-lg p-6 h-fit">
+                        <div className="flex items-center gap-3 mb-4">
+                            <div className="w-10 h-10 bg-black rounded-full flex items-center justify-center">
                                 <MessageSquareText className="w-5 h-5 text-orange-400" />
                             </div>
-                            <h3 class="font-semibold text-lg">Send Us Message</h3>
+                            <h3 className="font-semibold text-lg">Send Us Message</h3>
                         </div>
-                        <p class="text-sm text-gray-600 mb-6">
+                        <p className="text-sm text-gray-600 mb-6">
                             if your unable to find answer or find your product quickly,
                             please describe your problem and tell us. we will give you solution.
                         </p>
-                        <button class="w-full bg-orange-500 text-white py-3 rounded font-medium">
-                            Send Message
-                        </button>
+                        <PrimaryButton>Send Message</PrimaryButton>
                     </aside>
                 </div>
             </section>

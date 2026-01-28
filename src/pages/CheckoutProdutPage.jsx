@@ -3,11 +3,13 @@ import Footer from "../components/Footer";
 import Input from "../components/Input";
 import { Mail, MapPin, User } from "lucide-react";
 import ImageProduct from "../assets/img/Image 31.png"
+import { Link } from "react-router-dom";
+import { PrimaryButton } from "../components/PrimaryButton";
 
 export default function CheckoutProdutPage() {
   return (
     <>
-      <Navbar className="bg-black"/>
+      <Navbar className="bg-black" />
 
       <main className="max-w-7xl mx-auto px-6 py-10 mt-20 mb-10">
         <h1 className="text-3xl font-semibold mb-8">Payment Details</h1>
@@ -17,9 +19,9 @@ export default function CheckoutProdutPage() {
             <div>
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-semibold">Your Order</h2>
-                <button className="bg-orange-500 text-white px-4 py-2 rounded text-sm">
+                <Link to={"/product"} className="w-25"><PrimaryButton>
                   + Add Menu
-                </button>
+                </PrimaryButton></Link>
               </div>
 
               <div className="space-y-4">
@@ -113,9 +115,7 @@ export default function CheckoutProdutPage() {
               </div>
             </div>
 
-            <button className="w-full bg-orange-500 text-white py-3 rounded mt-6">
-              Checkout
-            </button>
+            <Link to={"/history-order"}><PrimaryButton>Checkout</PrimaryButton></Link>   
 
             <p className="text-xs text-gray-500 mt-4">
               *Get Discount if you pay with Bank Central Asia

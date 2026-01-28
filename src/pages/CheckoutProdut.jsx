@@ -2,6 +2,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Input from "../components/Input";
 import { Mail, MapPin, User } from "lucide-react";
+import ImageProduct from "../assets/img/Image 31.png"
 
 export default function CheckoutProdut() {
   return (
@@ -28,7 +29,7 @@ export default function CheckoutProdut() {
                     className="flex gap-4 p-4 bg-gray-50"
                   >
                     <img
-                      src="https://images.unsplash.com/photo-1509042239860-f550ce710b93"
+                      src={ImageProduct}
                       alt="coffee"
                       className="w-24 h-24 object-cover"
                     />
@@ -65,7 +66,7 @@ export default function CheckoutProdut() {
 
               <div className="space-y-4">
                 <Input label={"Email"} type={"email"} placeholder={"Enter Your Email"} icon={Mail} />
-                <Input label={"Full Name"} type={"text"} placeholder={"Enter Your Fullname"} icon={User} />
+                <Input label={"Full Name"} type={"text"} placeholder={"Enter Your Full Name"} icon={User} />
                 <Input label={"Address"} type={"text"} placeholder={"Enter Your Address"} icon={MapPin} />
 
                 <div>

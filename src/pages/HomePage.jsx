@@ -148,43 +148,43 @@ export default function HomePage() {
             </section>
 
             {/* Testimonial Section */}
-            <section class="bg-linear-to-r from-gray-900 to-black py-24">
-                <div class="container mx-auto px-6">
-                    <div class="relative overflow-hidden">
-                        <div id="testimonialSlider" class="flex transition-transform duration-500 ease-in-out">
-                            <div class="min-w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center text-white">
-                                <div class="flex justify-center">
+            <section className="bg-linear-to-r from-gray-900 to-black py-24">
+                <div className="container mx-auto px-6">
+                    <div className="relative overflow-hidden">
+                        <div id="testimonialSlider" className="flex transition-transform duration-500 ease-in-out">
+                            <div className="min-w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center text-white">
+                                <div className="flex justify-center">
                                     <img src={imageTesti} alt="Viezh Robert"
-                                        class="w-105 h-65 object-cover"/>
+                                        className="w-105 h-65 object-cover"/>
                                 </div>
                                 <div>
-                                    <span class="text-xs tracking-widest text-orange-400 uppercase">
+                                    <span className="text-xs tracking-widest text-orange-400 uppercase">
                                         Testimonial
                                     </span>
-                                    <h3 class="text-2xl font-semibold mt-2">
+                                    <h3 className="text-2xl font-semibold mt-2">
                                         Viezh Robert
                                     </h3>
-                                    <p class="text-sm text-gray-400 mb-4">
+                                    <p className="text-sm text-gray-400 mb-4">
                                         Manager Coffee Shop
                                     </p>
-                                    <p class="text-gray-200 text-sm leading-relaxed mb-6 max-w-md">
+                                    <p className="text-gray-200 text-sm leading-relaxed mb-6 max-w-md">
                                         “Wow… I am very happy to spend my whole day here.
                                         The Wi-Fi is good, and the coffee and meals make me feel
                                         comfortable. Very recommended!”
                                     </p>
-                                    <div class="flex items-center gap-3 mb-6">
-                                        <div class="text-orange-400 text-lg">
+                                    <div className="flex items-center gap-3 mb-6">
+                                        <div className="text-orange-400 text-lg">
                                             ★ ★ ★ ★ ★
                                         </div>
-                                        <span class="text-sm text-gray-300">5.0</span>
+                                        <span className="text-sm text-gray-300">5.0</span>
                                     </div>
-                                    <div class="flex gap-3">
-                                        <button onclick="prevTestimonial()"
-                                            class="w-10 h-10 text-bold rounded-full border border-gray-500 flex items-center justify-center hover:border-orange-500 transition">
+                                    <div className="flex gap-3">
+                                        <button
+                                            className="w-10 h-10 text-bold rounded-full border border-gray-500 flex items-center justify-center hover:border-orange-500 transition">
                                             ←
                                         </button>
-                                        <button onclick="nextTestimonial()"
-                                            class="w-10 h-10 rounded-full bg-orange-500 text-black flex items-center justify-center hover:bg-orange-600 transition">
+                                        <button
+                                            className="w-10 h-10 rounded-full bg-orange-500 text-black flex items-center justify-center hover:bg-orange-600 transition">
                                             →
                                         </button>
                                     </div>

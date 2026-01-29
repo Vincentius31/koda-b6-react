@@ -1,8 +1,23 @@
 import { Search, ShoppingCart } from "lucide-react"
 import logoWhite from "../assets/img/Logo-White.png"
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 export default function Navbar({className = ""}) {
+  const navigate = useNavigate()
+  const [user, setUser] = useState(null)
+
+  useEffect(() => {
+    const loggedUser = JSON.parse(localStorage.getItem("user"))
+    setUser(loggedUser)
+  }, [])
+
+  const handleLogout = () => {
+    localStorage.removeItem("user")
+    setUser(null)
+    navigate("/login")
+  }
+
   return (
     <header className= {`absolute top-0 left-0 w-full z-50 ${className}`}>
       <nav className="flex items-center justify-between px-8 lg:px-20 py-6 text-white">
@@ -18,8 +33,26 @@ export default function Navbar({className = ""}) {
         <div className="hidden md:flex items-center gap-6" id="navAuth">
           <Link to={"/product"} className="hover:text-orange-400 transition"><Search className="w-5 h-5"/></Link>
           <Link to={"/checkout-product"} className="hover:text-orange-400 transition"><ShoppingCart className="w-5 h-5"/></Link>
-          <Link to={"/login"}  className="border border-white text-white px-5 py-2 rounded-lg text-sm hover:border-orange-400 hover:text-orange-400 transition">Sign In</Link>
-          <Link to={"/register"} className="bg-orange-500 text-white px-6 py-2 rounded-lg text-sm hover:bg-orange-600 transition">Sign Up</Link>
+          {user? (
+            <>
+              <Link to={"/profile"} className="border border-white text-white px-5 py-2 rounded-lg text-sm hover:border-orange-400 hover:text-orange-400 transition">
+                Profile
+              </Link>
+
+              <button onClick={handleLogout} className="bg-orange-500 text-white px-6 py-2 rounded-lg text-sm hover:bg-orange-600 transition">
+                Logout
+              </button>
+            </>
+          ):(
+            <>
+              <Link to={"/login"}  className="border border-white text-white px-5 py-2 rounded-lg text-sm hover:border-orange-400 hover:text-orange-400 transition">
+                Sign In
+              </Link>
+              <Link to={"/register"} className="bg-orange-500 text-white px-6 py-2 rounded-lg text-sm hover:bg-orange-600 transition">
+                Sign Up
+              </Link>
+            </>
+          )}
         </div>
       </nav>
     </header>

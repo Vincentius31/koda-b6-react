@@ -6,13 +6,13 @@ export default function ProductCard({ id, product, name, src, description, price
     return (
         <div className="relative bg-transparent">
             <div className="w-full aspect-square overflow-hidden">
-                <img src={src} alt={name} className="w-full h-70 object-cover" />
+                <img src={src} alt={name} className="w-full h-auto object-cover" />
             </div>
-            <div className="relative -mt-16.25 mx-3 bg-white shadow-lg p-3">
+            <div className="relative -mt-35 mx-3 bg-white shadow-lg p-8">
 
-                <h3 className="font-semibold text-lg mb-1">
+                <h3 className="font-semibold text-base mb-1">
                     {name}
-                </h3>
+                </h3>   
 
                 <p className="text-sm text-gray-500 mb-3">
                     {description}

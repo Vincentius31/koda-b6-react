@@ -2,7 +2,7 @@ import { ShoppingCart } from "lucide-react"
 import { PrimaryButton } from "./PrimaryButton"
 import { Link } from "react-router-dom";
 
-export default function ProductCard({ name, src, description, price }) {
+export default function ProductCard({ id, product, name, src, description, price }) {
     return (
         <div className="relative bg-transparent">
             <div className="w-full aspect-square overflow-hidden">
@@ -22,8 +22,8 @@ export default function ProductCard({ name, src, description, price }) {
                     {price}
                 </p>
                 <div className="flex items-center gap-2">
-                    <Link to={"/checkout-product"} className="w-full"><PrimaryButton>Buy</PrimaryButton></Link>
-                    <Link to={"/details-product"}><button
+                    <Link to={`/details-product/${id}`} className="w-full"><PrimaryButton>Buy</PrimaryButton></Link>
+                    <Link to={"/checkout-product"}><button
                         className="border border-orange-500 text-orange-500 bg-white p-3 rounded-lg hover:bg-orange-50 transition mt-6 ">
                         <ShoppingCart className="w-5 h-5" />
                     </button></Link>

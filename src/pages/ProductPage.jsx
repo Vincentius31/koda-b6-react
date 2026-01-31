@@ -6,8 +6,75 @@ import ProductCard from "../components/ProductCard"
 import Filter from "../components/Filter"
 import imageProduct from "../assets/img/image 27.png"
 import Footer from "../components/Footer"
+import { useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
+
+const promos = [
+    {
+        bg: "bg-[#88B788]",
+        img: imagePromoGreen,
+        title: "HAPPY MOTHER'S DAY!",
+        desc: "Get one of our favorite menu for free!",
+        note: "Klaim Kupon"
+    },
+    {
+        bg: "bg-[#88B788]",
+        img: imagePromoGreen,
+        title: "HAPPY MOTHER'S DAY!",
+        desc: "Get one of our favorite menu for free!",
+        note: "Klaim Kupon"
+    },
+    {
+        bg: "bg-[#88B788]",
+        img: imagePromoGreen,
+        title: "HAPPY MOTHER'S DAY!",
+        desc: "Get one of our favorite menu for free!",
+        note: "Klaim Kupon"
+    },
+    {
+        bg: "bg-[#F5C361]",
+        img: imagePromoYellow,
+        title: "Free Coffee",
+        desc: "Get a cup of coffee for free on sunday morning",
+        note: "Only at 7–9 AM",
+    }
+]
 
 export default function ProductPage() {
+    const [currentIndex, setCurrentIndex] = useState(0)
+
+    const nextPromo = () => {
+        setCurrentIndex((prev) =>
+            prev === promos.length - 1 ? 0 : prev + 1
+        )
+    }
+
+    const prevPromo = () => {
+        setCurrentIndex((prev) =>
+            prev === 0 ? promos.length - 1 : prev - 1
+        )
+    }
+
+    const [products, setProducts] = useState([])
+    const [currentPage, setCurrentPage] = useState(1)
+    const ITEMS_PER_PAGE = 6
+
+    useEffect(() => {
+        fetch("https://raw.githubusercontent.com/Vincentius31/koda-b6-react/refs/heads/main/src/data/menu.json")
+            .then(res => res.json())
+            .then(data => setProducts(data))
+            .catch(err => console.error(err))
+    }, [])
+
+    const totalPages = Math.ceil(products.length / ITEMS_PER_PAGE)
+
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
+    const endIndex = startIndex + ITEMS_PER_PAGE
+
+    const currentProducts = products.slice(startIndex, endIndex)
+
+
+
     return (
         <div>
             <Navbar className="bg-black" />
@@ -28,72 +95,65 @@ export default function ProductPage() {
 
             {/* Promo Section */}
             <section className="mt-10">
-                <div className="flex gap-250 pl-15">
-                    <h2 className="text-3xl font-semibold mb-4 ml-15">Today <span className="text-[#8E6447]">Promo</span></h2>
-                    <div className="flex gap-2 justify-items-end-safe">
-                        <button onclick="prevTestimonial()"
-                            class="w-10 h-10 text-bold rounded-full border border-gray-500 flex items-center justify-center hover:border-orange-500 transition">
+                <div className="flex justify-between items-center px-15">
+                    <h2 className="text-3xl font-semibold mb-4">
+                        Today <span className="text-[#8E6447]">Promo</span>
+                    </h2>
+
+                    <div className="flex gap-2">
+                        <button
+                            onClick={prevPromo}
+                            className="w-10 h-10 rounded-full border border-gray-500 flex items-center justify-center hover:border-orange-500 transition"
+                        >
                             ←
                         </button>
-                        <button onclick="nextTestimonial()"
-                            class="w-10 h-10 rounded-full bg-orange-500 text-black flex items-center justify-center hover:bg-orange-600 transition">
+                        <button
+                            onClick={nextPromo}
+                            className="w-10 h-10 rounded-full bg-orange-500 text-black flex items-center justify-center hover:bg-orange-600 transition"
+                        >
                             →
                         </button>
                     </div>
                 </div>
 
-                <div className="flex gap-4 overflow-x-auto pb-3 pl-15">
-                    <div className="min-w-70 bg-[#88B788] rounded-xl p-4 flex gap-3">
-                        <img src={imagePromoGreen} alt="image-promo" className="w-20 h-20" />
-                        <div>
-                            <p className="font-bold text-sm">HAPPY MOTHER'S DAY!</p>
-                            <p className="text-xs">
-                                Get one of our favorite menu for free!
-                            </p>
-                            <span className="text-xs text-[#FFFFFF]">Klaim Kupon</span>
-                        </div>
-                    </div>
-
-                    <div className="min-w-70 bg-[#88B788] rounded-xl p-4 flex gap-3">
-                        <img src={imagePromoGreen} alt="image-promo" className="w-20 h-20" />
-                        <div>
-                            <p className="font-bold text-sm">HAPPY MOTHER'S DAY!</p>
-                            <p className="text-xs">
-                                Get one of our favorite menu for free!
-                            </p>
-                            <span className="text-xs text-[#FFFFFF]">Klaim Kupon</span>
-                        </div>
-                    </div>
-
-                    <div className="min-w-70 bg-[#88B788] rounded-xl p-4 flex gap-3">
-                        <img src={imagePromoGreen} alt="image-promo" className="w-20 h-20" />
-                        <div>
-                            <p className="font-bold text-sm">HAPPY MOTHER'S DAY!</p>
-                            <p className="text-xs">
-                                Get one of our favorite menu for free!
-                            </p>
-                            <span className="text-xs text-[#FFFFFF]">Klaim Kupon</span>
-                        </div>
-                    </div>
-
-                    <div className="min-w-70 bg-[#F5C361] rounded-xl p-4 flex gap-3">
-                        <img src={imagePromoYellow} alt="image-promo" className="w-20 h-20" />
-                        <div>
-                            <p className="font-bold text-sm">Free Coffee</p>
-                            <p className="text-xs">
-                                Get a cup of coffee for free on sunday morning
-                            </p>
-                            <span className="text-xs">Only at 7–9 AM</span>
-                        </div>
+                <div className="overflow-hidden px-15">
+                    <div
+                        className="flex gap-4 transition-transform duration-500"
+                        style={{ transform: `translateX(-${currentIndex * 280}px)` }}
+                    >
+                        {promos.map((promo, index) => (
+                            <div
+                                key={index}
+                                className={`min-w-65 ${promo.bg} rounded-xl p-4 flex gap-3`}
+                            >
+                                <img
+                                    src={promo.img}
+                                    alt="promo"
+                                    className="w-20 h-20"
+                                />
+                                <div>
+                                    <p className="font-bold text-sm">{promo.title}</p>
+                                    <p className="text-xs">{promo.desc}</p>
+                                    <span className="text-xs">{promo.note}</span>
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 </div>
 
-                <div class="flex gap-2 mt-6 ml-15 pl-15">
-                    <span class="w-3 h-1.5 rounded-full bg-orange-500"></span>
-                    <span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>
-                    <span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>
+                <div className="flex gap-2 mt-6 px-15">
+                    {promos.map((_, index) => (
+                        <span
+                            key={index}
+                            className={`h-1.5 rounded-full transition-all ${index === currentIndex
+                                ? "w-4 bg-orange-500"
+                                : "w-1.5 bg-gray-300"
+                                }`}
+                        />
+                    ))}
                 </div>
             </section>
+
 
             <section>
                 <h2 className="text-2xl font-semibold mb-6 pl-30 pt-10">
@@ -105,58 +165,52 @@ export default function ProductPage() {
 
                     <div className="flex-2 max-w-175">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-10 auto-rows-fr">
-                            <ProductCard
-                                name={"Hazelnut Latte"}
-                                src={imageProduct}
-                                description={"You can explore the menu that we provide with fun and have their own taste and make your day better."}
-                                price={"IDR 20.000"}>
-                            </ProductCard>
-                            <ProductCard
-                                name={"Hazelnut Latte"}
-                                src={imageProduct}
-                                description={"You can explore the menu that we provide with fun and have their own taste and make your day better."}
-                                price={"IDR 20.000"}>
-                            </ProductCard>
-                            <ProductCard
-                                name={"Hazelnut Latte"}
-                                src={imageProduct}
-                                description={"You can explore the menu that we provide with fun and have their own taste and make your day better."}
-                                price={"IDR 20.000"}>
-                            </ProductCard>
-                            <ProductCard
-                                name={"Hazelnut Latte"}
-                                src={imageProduct}
-                                description={"You can explore the menu that we provide with fun and have their own taste and make your day better."}
-                                price={"IDR 20.000"}>
-                            </ProductCard>
-                            <ProductCard
-                                name={"Hazelnut Latte"}
-                                src={imageProduct}
-                                description={"You can explore the menu that we provide with fun and have their own taste and make your day better."}
-                                price={"IDR 20.000"}>
-                            </ProductCard>
-                            <ProductCard
-                                name={"Hazelnut Latte"}
-                                src={imageProduct}
-                                description={"You can explore the menu that we provide with fun and have their own taste and make your day better."}
-                                price={"IDR 20.000"}>
-                            </ProductCard>
+                            {currentProducts.map((item) => (
+                                <ProductCard
+                                    key={item.id}
+                                    id={item.id}
+                                    name={item.nameProduct}
+                                    src={item.imageDepan}
+                                    description={item.description}
+                                    price={`IDR ${item.priceDiscount}`}
+                                    product={item}
+                                />
+                            ))}
                         </div>
+
                     </div>
                 </div>
 
                 <div className="flex justify-center mt-10 gap-3 pb-10 pl-30">
-                    <button className="w-8 h-8 rounded-full bg-orange-500 text-white">
-                        1
+                    {Array.from({ length: totalPages }).map((_, index) => {
+                        const page = index + 1
+                        return (
+                            <button
+                                key={page}
+                                onClick={() => setCurrentPage(page)}
+                                className={`w-8 h-8 rounded-full ${currentPage === page
+                                    ? "bg-orange-500 text-white"
+                                    : "bg-gray-200"
+                                    }`}
+                            >
+                                {page}
+                            </button>
+                        )
+                    })}
+
+                    <button
+                        onClick={() =>
+                            setCurrentPage(prev => (prev < totalPages ? prev + 1 : 1))
+                        }
+                        className="w-8 h-8 rounded-full bg-orange-500 text-white"
+                    >
+                        →
                     </button>
-                    <button className="w-8 h-8 rounded-full bg-gray-200">2</button>
-                    <button className="w-8 h-8 rounded-full bg-gray-200">3</button>
-                    <button className="w-8 h-8 rounded-full bg-gray-200">4</button>
-                    <button className="w-8 h-8 rounded-full bg-orange-500 text-white">→</button>
                 </div>
+
             </section>
 
-            <Footer/>
+            <Footer />
         </div>
     )
 }

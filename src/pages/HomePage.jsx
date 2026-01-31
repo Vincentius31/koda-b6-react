@@ -2,17 +2,26 @@
 import Navbar from "../components/Navbar"
 import Footer from "../components/Footer"
 import ProductCard from "../components/ProductCard"
+import menuData from "../data/menu.json"
+import { useEffect, useState } from "react"
 
 // Import Image
 import imageRight from "../assets/img/Rectangle 287.png"
 import imageBarista from "../assets/img/Rectangle 291.png"
 import imageGlobal from "../assets/img/Huge Global.png"
 import { CircleCheck, MessageCircleMore } from "lucide-react"
-import imageProduct from "../assets/img/image 27.png"
 import imageTesti from "../assets/img/Rectangle 295.png"
 
-
 export default function HomePage() {
+    const [product, setProduct] = useState([])
+
+    useEffect(() => {
+        const favouriteProduct = menuData.filter(
+            item => item.statusFavourite === "true"
+        )
+        setProduct(favouriteProduct)
+    },[])
+
     return (
         <div>
             <Navbar />
@@ -106,30 +115,17 @@ export default function HomePage() {
                         Let’s choose and have a bit of people’s favorite. It might be yours too!
                     </p>
                     <div id="menu-favourite" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
-                        <ProductCard
-                            name={"Hazelnut Latte"}
-                            src={imageProduct}
-                            description={"You can explore the menu that we provide with fun and have their own taste and make your day better."}
-                            price={"IDR 20.000"}>
-                        </ProductCard>
-                        <ProductCard
-                            name={"Hazelnut Latte"}
-                            src={imageProduct}
-                            description={"You can explore the menu that we provide with fun and have their own taste and make your day better."}
-                            price={"IDR 20.000"}>
-                        </ProductCard>
-                        <ProductCard
-                            name={"Hazelnut Latte"}
-                            src={imageProduct}
-                            description={"You can explore the menu that we provide with fun and have their own taste and make your day better."}
-                            price={"IDR 20.000"}>
-                        </ProductCard>
-                        <ProductCard
-                            name={"Hazelnut Latte"}
-                            src={imageProduct}
-                            description={"You can explore the menu that we provide with fun and have their own taste and make your day better."}
-                            price={"IDR 20.000"}>
-                        </ProductCard>
+                        {product.length === 0 && (<p>Data produk kosong</p>)}
+
+                        {product.map(item => (
+                            <ProductCard
+                                key={item.id}
+                                name={item.nameProduct}
+                                src={item.imageDepan}
+                                description={item.description}
+                                price={`IDR ${Number(item.priceProduct).toLocaleString("id-ID")}`}
+                            />
+                        ))}
                     </div>
                 </div>
             </section>
@@ -155,7 +151,7 @@ export default function HomePage() {
                             <div className="min-w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center text-white">
                                 <div className="flex justify-center">
                                     <img src={imageTesti} alt="Viezh Robert"
-                                        className="w-105 h-65 object-cover"/>
+                                        className="w-105 h-65 object-cover" />
                                 </div>
                                 <div>
                                     <span className="text-xs tracking-widest text-orange-400 uppercase">
@@ -195,7 +191,7 @@ export default function HomePage() {
                 </div>
             </section>
 
-            <Footer/>
+            <Footer />
         </div>
     )
 }

@@ -13,14 +13,24 @@ import { CircleCheck, MessageCircleMore } from "lucide-react"
 import imageTesti from "../assets/img/Rectangle 295.png"
 
 export default function HomePage() {
-    const [product, setProduct] = useState([])
+    const [products, setProducts] = useState([])
 
     useEffect(() => {
-        const favouriteProduct = menuData.filter(
-            item => item.statusFavourite === "true"
-        )
-        setProduct(favouriteProduct)
-    },[])
+        fetch("https://raw.githubusercontent.com/Vincentius31/koda-b6-react/refs/heads/main/src/data/menu.json")
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error("Failed fetch data")
+                }
+                return res.json()
+            })
+            .then(data => {
+                setProducts(Array.isArray(data) ? data : [])
+            })
+            .catch(err => {
+                console.error(err)
+                setProducts([])
+            })
+    }, [])
 
     return (
         <div>
@@ -115,17 +125,20 @@ export default function HomePage() {
                         Let’s choose and have a bit of people’s favorite. It might be yours too!
                     </p>
                     <div id="menu-favourite" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
-                        {product.length === 0 && (<p>Data produk kosong</p>)}
+                        {products.length === 0 && (<p>Data produk kosong</p>)}
 
-                        {product.map(item => (
-                            <ProductCard
-                                key={item.id}
-                                name={item.nameProduct}
-                                src={item.imageDepan}
-                                description={item.description}
-                                price={`IDR ${Number(item.priceProduct).toLocaleString("id-ID")}`}
-                            />
-                        ))}
+                        {products
+                            .filter(item => item.statusFavourite === "true")
+                            .map(item => (
+                                <ProductCard
+                                    key={item.id}
+                                    id={item.id}
+                                    src={item.imageDepan}
+                                    name={item.nameProduct}
+                                    description={item.description}
+                                    price={`IDR ${item.priceProduct}`}
+                                />
+                            ))}
                     </div>
                 </div>
             </section>

@@ -29,7 +29,7 @@ const router = createBrowserRouter([
         element: <ForgotPassPage/>
     },
     {
-        path: "/details-product",
+        path: "/details-product/:id",
         element: <DetailProductPage/>
     },
     {

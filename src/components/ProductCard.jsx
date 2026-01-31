@@ -6,9 +6,9 @@ export default function ProductCard({ id, product, name, src, description, price
     return (
         <div className="relative bg-transparent">
             <div className="w-full aspect-square overflow-hidden">
-                <img src={src} alt={name} className="w-full h-auto object-cover" />
+                <img src={src} alt={name} className="w-full h-full object-cover" />
             </div>
-            <div className="relative -mt-35 mx-3 bg-white shadow-lg p-8">
+            <div className="relative -mt-25 mx-3 bg-white shadow-lg p-8">
 
                 <h3 className="font-semibold text-base mb-1">
                     {name}

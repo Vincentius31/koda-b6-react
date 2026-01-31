@@ -18,9 +18,9 @@
         "imageKedua" : "https://images.pexels.com/photos/15800980/pexels-photo-15800980.jpeg",
         "imageKetiga": "https://images.pexels.com/photos/8696529/pexels-photo-8696529.jpeg",
         "imageKeempat": "https://images.pexels.com/photos/12537509/pexels-photo-12537509.jpeg",
-        "nameProduct" : "Butterscotch Sea Salt Latte",
+        "nameProduct" : "Butterscotch Latte",
         "category": "Coffee",
-        "description" : "A luxurious blend of buttery sweetness and a pinch of sea salt.",
+        "description" : "A luxurious blend of buttery sweetness.",
         "priceProduct" : "27000",
         "priceDiscount": "24000",
         "statusFavourite": "true"
@@ -105,7 +105,7 @@
     },
     {
         "id": "9",
-        "imageDepan" : "/img/Image 30.png",
+        "imageDepan" : "https://images.pexels.com/photos/33722451/pexels-photo-33722451.jpeg",
         "imageKedua" : "/img/Image 32.png",
         "imageKetiga": "/img/Image 34.png",
         "imageKeempat": "/img/Image 33.png",
@@ -170,7 +170,7 @@
     },
     {
         "id": "14",
-        "imageDepan" : "/img/Image 30.png",
+        "imageDepan" : "https://images.pexels.com/photos/5112584/pexels-photo-5112584.jpeg",
         "imageKedua" : "/img/Image 32.png",
         "imageKetiga": "/img/Image 34.png",
         "imageKeempat": "/img/Image 33.png",

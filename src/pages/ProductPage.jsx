@@ -28,7 +28,7 @@ export default function ProductPage() {
 
             {/* Promo Section */}
             <section className="mt-10">
-                <div className="flex gap-200">
+                <div className="flex gap-250 pl-15">
                     <h2 className="text-3xl font-semibold mb-4 ml-15">Today <span className="text-[#8E6447]">Promo</span></h2>
                     <div className="flex gap-2 justify-items-end-safe">
                         <button onclick="prevTestimonial()"
@@ -42,7 +42,7 @@ export default function ProductPage() {
                     </div>
                 </div>
 
-                <div className="flex gap-4 overflow-x-auto pb-3">
+                <div className="flex gap-4 overflow-x-auto pb-3 pl-15">
                     <div className="min-w-70 bg-[#88B788] rounded-xl p-4 flex gap-3">
                         <img src={imagePromoGreen} alt="image-promo" className="w-20 h-20" />
                         <div>
@@ -88,7 +88,7 @@ export default function ProductPage() {
                     </div>
                 </div>
 
-                <div class="flex gap-2 mt-6 ml-15">
+                <div class="flex gap-2 mt-6 ml-15 pl-15">
                     <span class="w-3 h-1.5 rounded-full bg-orange-500"></span>
                     <span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>
                     <span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>
@@ -96,11 +96,11 @@ export default function ProductPage() {
             </section>
 
             <section>
-                <h2 className="text-2xl font-semibold mb-6 pl-10 pt-10">
+                <h2 className="text-2xl font-semibold mb-6 pl-30 pt-10">
                     Our <span className="text-orange-500">Product</span>
                 </h2>
 
-                <div className="flex flex-col lg:flex-row gap-8 pl-10">
+                <div className="flex flex-col lg:flex-row gap-50 pl-25">
                     <Filter />
 
                     <div className="flex-2 max-w-175">
@@ -145,7 +145,7 @@ export default function ProductPage() {
                     </div>
                 </div>
 
-                <div className="flex justify-center mt-10 gap-3 pb-10 pl-10">
+                <div className="flex justify-center mt-10 gap-3 pb-10 pl-30">
                     <button className="w-8 h-8 rounded-full bg-orange-500 text-white">
                         1
                     </button>

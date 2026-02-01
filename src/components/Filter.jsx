@@ -1,6 +1,6 @@
-export default function Filter() {
+export default function Filter({searchValue, onSearchChange, onSearch}) {
     return (
-        <aside className="bg-black text-white rounded-xl p-6 w-full lg:w-[260px] h-fit">
+        <aside className="bg-black text-white rounded-xl p-6 w-full lg:w-65 h-fit">
             {/* Header */}
             <div className="flex justify-between items-center mb-4">
                 <h3 className="font-semibold text-lg">Filter</h3>
@@ -15,7 +15,10 @@ export default function Filter() {
                 <div className="flex items-center bg-white rounded-lg overflow-hidden">
                     <input
                         type="text"
+                        value={searchValue}
                         placeholder="Search Your Product"
+                        onChange={(e) => onSearchChange(e.target.value)}
+                        onKeyDown={(e) => e.key === "Enter" && onSearch()}
                         className="flex-1 px-3 py-2 text-sm text-black outline-none"
                     />
                 </div>

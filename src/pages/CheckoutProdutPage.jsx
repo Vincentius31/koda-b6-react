@@ -1,49 +1,57 @@
-import { useLocation, useNavigate, Link } from "react-router-dom"
-import { useState, useEffect } from "react"
+import { useNavigate, Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useCart } from "../context/CartContext";
 
-import Navbar from "../components/Navbar"
-import Footer from "../components/Footer"
-import Input from "../components/Input"
-import { Mail, MapPin, User } from "lucide-react"
-import ImageProduct from "../assets/img/Image 31.png"
-import { PrimaryButton } from "../components/PrimaryButton"
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+import Input from "../components/Input";
+import { Mail, MapPin, User, X } from "lucide-react";
+import { PrimaryButton } from "../components/PrimaryButton";
 
-export default function CheckoutProdutPage() {
-  const { state } = useLocation()
-  const navigate = useNavigate()
+export default function CheckoutProductPage() {
+  const navigate = useNavigate();
+  const { cart, clearCart, removeFromCart } = useCart();
 
-  const order = state?.order
+  const [delivery, setDelivery] = useState("Dine In");
 
-  const [delivery, setDelivery] = useState("Dine In")
-  const [tax, setTax] = useState(4000)
+  const userData = JSON.parse(localStorage.getItem("user")) || {};
+  const [email, setEmail] = useState(userData.email || "");
+  const [fullName, setFullName] = useState(userData.name || "");
+  const [address, setAddress] = useState("");
 
-  // ❌ Kalau user akses langsung
   useEffect(() => {
-    if (!order) navigate("/product")
-  }, [order, navigate])
+    const localData = JSON.parse(localStorage.getItem("cart")) || [];
+    if (cart.length === 0 && localData.length === 0) {
+      navigate("/product");
+    }
+  }, [cart, navigate]);
 
-  if (!order) return null
+  if (cart.length === 0) return null;
 
-  const priceNumber = Number(
-    order.priceDiscount.replace(/\D/g, "")
-  )
+  const orderTotal = cart.reduce((acc, item) => acc + (item.price * item.qty), 0);
 
-  const orderTotal = priceNumber * order.quantity
-  const subTotal = orderTotal + tax
+  const deliveryFee = delivery === "Door Delivery" ? 10000 : 0;
+
+  const tax = orderTotal * 0.1;
+  const subTotal = orderTotal + tax + deliveryFee;
 
   const handleCheckout = () => {
-    const history = JSON.parse(localStorage.getItem("orders")) || []
+    const history = JSON.parse(localStorage.getItem("orders")) || [];
 
     history.push({
-      ...order,
+      items: cart,
+      customer: { email, fullName, address },
       delivery,
+      deliveryFee,
+      tax: tax,
       total: subTotal,
       date: new Date().toISOString(),
-    })
+    });
 
-    localStorage.setItem("orders", JSON.stringify(history))
-    navigate("/history-order")
-  }
+    localStorage.setItem("orders", JSON.stringify(history));
+    clearCart();
+    navigate("/history-order");
+  };
 
   return (
     <>
@@ -53,123 +61,135 @@ export default function CheckoutProdutPage() {
         <h1 className="text-3xl font-semibold mb-8">Payment Details</h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* LEFT */}
           <div className="lg:col-span-2 space-y-10">
-            {/* ORDER */}
-            <div>
+
+            <section>
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-semibold">Your Order</h2>
-                <Link to="/product" className="w-25">
-                  <PrimaryButton>+ Add Menu</PrimaryButton>
-                </Link>
-              </div>
-
-              <div className="space-y-4">
-                <div className="flex gap-4 p-4 bg-gray-50">
-                  <img
-                    src={ImageProduct}
-                    alt="coffee"
-                    className="w-24 h-24 object-cover"
-                  />
-
-                  <div className="flex-1">
-                    <span className="inline-block text-xs bg-red-500 text-white px-2 py-1 rounded mb-1">
-                      FLASH SALE
-                    </span>
-
-                    <h3 className="font-semibold">{order.name}</h3>
-
-                    <p className="text-sm text-gray-500">
-                      {order.quantity}pcs | {order.size} | {order.temperature} | {delivery}
-                    </p>
-
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className="line-through text-sm text-gray-400">
-                        {order.priceNormal}
-                      </span>
-                      <span className="font-semibold text-orange-500">
-                        {order.priceDiscount}
-                      </span>
-                    </div>
-                  </div>
+                <div className="w-30">
+                  <PrimaryButton onClick={() => navigate("/product")}>
+                    + Add Menu
+                  </PrimaryButton>
                 </div>
               </div>
-            </div>
-
-            {/* PAYMENT INFO */}
-            <div>
-              <h2 className="text-lg font-semibold mb-4">
-                Payment Info & Delivery
-              </h2>
 
               <div className="space-y-4">
-                <Input label="Email" type="email" placeholder="Enter Your Email" icon={Mail} />
-                <Input label="Full Name" type="text" placeholder="Enter Your Full Name" icon={User} />
-                <Input label="Address" type="text" placeholder="Enter Your Address" icon={MapPin} />
+                {cart.map((item, index) => (
+                  <div key={index} className="flex gap-4 p-4 bg-gray-50 rounded-lg relative">
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="w-24 h-24 object-cover rounded-md"
+                    />
 
-                {/* DELIVERY */}
+                    <div className="flex-1">
+                      <span className="inline-block text-xs bg-red-500 text-white px-2 py-1 rounded mb-1">
+                        FLASH SALE
+                      </span>
+                      <h3 className="font-semibold">{item.name}</h3>
+                      <p className="text-sm text-gray-500">
+                        {item.qty}pcs | {item.size} | {item.temperature}
+                      </p>
+                      <p className="font-semibold text-orange-500 mt-1">
+                        IDR {item.price.toLocaleString("id-ID")}
+                      </p>
+                    </div>
+
+                    <button
+                      onClick={() => removeFromCart(item.id, item.size, item.temperature)}
+                      className="text-gray-400 hover:text-red-500 transition"
+                    >
+                      <X size={20} color="red" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            <section>
+              <h2 className="text-lg font-semibold mb-4">Payment Info & Delivery</h2>
+              <div className="space-y-4">
+                <Input
+                  label="Email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter Your Email"
+                  icon={Mail}
+                />
+                <Input
+                  label="Full Name"
+                  type="text"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  placeholder="Enter Your Full Name"
+                  icon={User}
+                />
+                <Input
+                  label="Address"
+                  type="text"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  placeholder="Enter Your Address"
+                  icon={MapPin}
+                />
+
                 <div>
-                  <p className="mb-2 text-sm font-medium">Delivery</p>
+                  <p className="mb-2 text-sm font-medium">Delivery Method</p>
                   <div className="flex gap-3">
                     {["Dine In", "Door Delivery", "Pick Up"].map(item => (
                       <button
                         key={item}
                         onClick={() => setDelivery(item)}
-                        className={`px-4 py-2 border rounded ${delivery === item
-                            ? "border-orange-500 text-orange-500"
-                            : ""
+                        className={`px-4 py-2 border rounded-lg transition ${delivery === item
+                          ? "border-orange-500 text-orange-500 bg-orange-50"
+                          : "border-gray-200"
                           }`}
                       >
-                        {item}
+                        {item} {item === "Door Delivery"}
                       </button>
                     ))}
                   </div>
                 </div>
               </div>
-            </div>
+            </section>
           </div>
 
-          {/* RIGHT SUMMARY */}
-          <div className="bg-gray-50 p-6 rounded-lg h-fit">
-            <h2 className="font-semibold mb-4">Total</h2>
+          <section className="bg-gray-50 p-6 rounded-lg h-fit sticky top-28">
+            <h2 className="font-semibold mb-4 text-xl">Order Summary</h2>
 
-            <div className="space-y-2 text-sm">
+            <div className="space-y-3 text-sm">
               <div className="flex justify-between">
-                <span>Order</span>
-                <span>IDR {orderTotal.toLocaleString("id-ID")}</span>
+                <span className="text-gray-600">Total Price ({cart.length} items)</span>
+                <span className="font-medium">IDR {orderTotal.toLocaleString("id-ID")}</span>
               </div>
               <div className="flex justify-between">
-                <span>Delivery</span>
-                <span>IDR 0</span>
+                <span className="text-gray-600">Delivery</span>
+                <span className={deliveryFee > 0 ? "font-medium" : "text-green-600 font-medium"}>
+                  {deliveryFee > 0 ? `IDR ${deliveryFee.toLocaleString("id-ID")}` : "FREE"}
+                </span>
               </div>
               <div className="flex justify-between">
-                <span>Tax</span>
-                <span>IDR {tax.toLocaleString("id-ID")}</span>
+                <span className="text-gray-600">Tax (10%)</span>
+                <span className="font-medium">IDR {tax.toLocaleString("id-ID")}</span>
               </div>
 
-              <hr className="my-2" />
+              <hr className="my-4 border-dashed" />
 
-              <div className="flex justify-between font-semibold">
+              <div className="flex justify-between text-lg font-bold">
                 <span>Sub Total</span>
-                <span>IDR {subTotal.toLocaleString("id-ID")}</span>
+                <span className="text-orange-500">IDR {subTotal.toLocaleString("id-ID")}</span>
               </div>
             </div>
 
-            <button
-              onClick={handleCheckout}
-              className="w-full"
-            >
-              <PrimaryButton>Checkout</PrimaryButton>
-            </button>
-
-            <p className="text-xs text-gray-500 mt-4">
-              *Get Discount if you pay with Bank Central Asia
-            </p>
-          </div>
+            <div className="w-full mt-6">
+              <PrimaryButton onClick={handleCheckout}>Confirm Payment</PrimaryButton>
+            </div>
+          </section>
         </div>
       </main>
 
       <Footer />
     </>
-  )
+  );
 }

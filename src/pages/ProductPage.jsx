@@ -1,13 +1,14 @@
+// Component
 import Navbar from "../components/Navbar"
+import ProductCard from "../components/ProductCard"
+import Filter from "../components/Filter"
+import Footer from "../components/Footer"
+
+// Image
 import imageHero from "../assets/img/Rectangle 299.png"
 import imagePromoGreen from "../assets/img/person-product.png"
 import imagePromoYellow from "../assets/img/person2-product.png"
-import ProductCard from "../components/ProductCard"
-import Filter from "../components/Filter"
-import imageProduct from "../assets/img/image 27.png"
-import Footer from "../components/Footer"
 import { useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
 
 const promos = [
     {
@@ -42,22 +43,23 @@ const promos = [
 
 export default function ProductPage() {
     const [currentIndex, setCurrentIndex] = useState(0)
+    const [products, setProducts] = useState([])
+    const [currentPage, setCurrentPage] = useState(1)
+    const [searchValue, setSearchValue] = useState("")
+
+    const ITEMS_PER_PAGE = 6
 
     const nextPromo = () => {
-        setCurrentIndex((prev) =>
+        setCurrentIndex(prev =>
             prev === promos.length - 1 ? 0 : prev + 1
         )
     }
 
     const prevPromo = () => {
-        setCurrentIndex((prev) =>
+        setCurrentIndex(prev =>
             prev === 0 ? promos.length - 1 : prev - 1
         )
     }
-
-    const [products, setProducts] = useState([])
-    const [currentPage, setCurrentPage] = useState(1)
-    const ITEMS_PER_PAGE = 6
 
     useEffect(() => {
         fetch("https://raw.githubusercontent.com/Vincentius31/koda-b6-react/refs/heads/main/src/data/menu.json")
@@ -66,12 +68,16 @@ export default function ProductPage() {
             .catch(err => console.error(err))
     }, [])
 
-    const totalPages = Math.ceil(products.length / ITEMS_PER_PAGE)
+    const filteredProducts = products.filter(item =>
+        item.nameProduct
+            ?.toLowerCase()
+            .includes(searchValue.toLowerCase())
+    )
 
+    const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE)
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
     const endIndex = startIndex + ITEMS_PER_PAGE
-
-    const currentProducts = products.slice(startIndex, endIndex)
+    const currentProducts = filteredProducts.slice(startIndex, endIndex)
 
 
 
@@ -161,7 +167,11 @@ export default function ProductPage() {
                 </h2>
 
                 <div className="flex flex-col lg:flex-row gap-50 pl-25">
-                    <Filter />
+                    <Filter
+                        searchValue={searchValue}
+                        onSearchChange={setSearchValue}
+                        onSearch={() => setCurrentPage(1)}
+                    />
 
                     <div className="flex-2 max-w-175">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-10 auto-rows-fr">

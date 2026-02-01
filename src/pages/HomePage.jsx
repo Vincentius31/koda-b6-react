@@ -2,7 +2,6 @@
 import Navbar from "../components/Navbar"
 import Footer from "../components/Footer"
 import ProductCard from "../components/ProductCard"
-import menuData from "../data/menu.json"
 import { useEffect, useState } from "react"
 
 // Import Image

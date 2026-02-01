@@ -114,7 +114,7 @@
         "description" : "A rich blend of chocolate, milk tea, and nutty hazelnut.",
         "priceProduct" : 23000,
         "priceDiscount": 19000,
-        "statusFavourite": "true"
+        "statusFavourite": true
     },
     {
         "id": 10,
@@ -127,7 +127,7 @@
         "description" : "Bold, premium cocoa for the ultimate chocolate lover.",
         "priceProduct" : 23000,
         "priceDiscount": 19000,
-        "statusFavourite": "false"
+        "statusFavourite": false
     },
     {
         "id": 11,

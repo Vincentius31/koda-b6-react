@@ -1,6 +1,6 @@
 [
     {
-        "id": "1",
+        "id": 1,
         "imageDepan" : "https://images.pexels.com/photos/2074122/pexels-photo-2074122.jpeg",
         "imageKedua" : "https://images.pexels.com/photos/5192027/pexels-photo-5192027.jpeg",
         "imageKetiga": "https://images.pexels.com/photos/9329429/pexels-photo-9329429.jpeg",
@@ -8,12 +8,12 @@
         "nameProduct" : "Hazelnut Latte",
         "category": "Coffee",
         "description" : "Smooth espresso and milk with a toasted nutty finish.",
-        "priceProduct" : "28000",
-        "priceDiscount" : "26000",
-        "statusFavourite": "true"
+        "priceProduct" : 28000,
+        "priceDiscount" : 26000,
+        "statusFavourite": true
     },
     {
-        "id": "2",
+        "id": 2,
         "imageDepan" : "https://images.pexels.com/photos/12540692/pexels-photo-12540692.png",
         "imageKedua" : "https://images.pexels.com/photos/15800980/pexels-photo-15800980.jpeg",
         "imageKetiga": "https://images.pexels.com/photos/8696529/pexels-photo-8696529.jpeg",
@@ -21,12 +21,12 @@
         "nameProduct" : "Butterscotch Latte",
         "category": "Coffee",
         "description" : "A luxurious blend of buttery sweetness.",
-        "priceProduct" : "27000",
-        "priceDiscount": "24000",
-        "statusFavourite": "true"
+        "priceProduct" : 27000,
+        "priceDiscount": 24000,
+        "statusFavourite": true
     },
     {
-        "id": "3",
+        "id": 3,
         "imageDepan" : "https://images.pexels.com/photos/17558645/pexels-photo-17558645.jpeg",
         "imageKedua" : "https://images.pexels.com/photos/20854091/pexels-photo-20854091.jpeg",
         "imageKetiga": "https://images.pexels.com/photos/18635173/pexels-photo-18635173.jpeg",
@@ -34,12 +34,12 @@
         "nameProduct" : "Caramel Latte",
         "category": "Coffee",
         "description" : "A classic favorite featuring rich espresso and sweet caramel sauce.",
-        "priceProduct" : "28000",
-        "priceDiscount": "24000",
-        "statusFavourite": "false"
+        "priceProduct" : 28000,
+        "priceDiscount": 24000,
+        "statusFavourite": false
     },
     {
-        "id": "4",
+        "id": 4,
         "imageDepan" : "https://images.pexels.com/photos/11512980/pexels-photo-11512980.jpeg",
         "imageKedua" : "https://images.pexels.com/photos/5741238/pexels-photo-5741238.jpeg",
         "imageKetiga": "https://images.pexels.com/photos/33094632/pexels-photo-33094632.jpeg",
@@ -47,12 +47,12 @@
         "nameProduct" : "Honey Macchiato Cream Americano",
         "category": "Coffee",
         "description" : "Bold black coffee sweetened with honey and topped with silky cream.",
-        "priceProduct" : "21000",
-        "priceDiscount" : "19000",
-        "statusFavourite": "false"
+        "priceProduct" : 21000,
+        "priceDiscount" : 19000,
+        "statusFavourite": false
     },
     {
-        "id": "5",
+        "id": 5,
         "imageDepan" : "https://images.pexels.com/photos/15801079/pexels-photo-15801079.jpeg",
         "imageKedua" : "https://images.pexels.com/photos/33094574/pexels-photo-33094574.jpeg",
         "imageKetiga": "https://images.pexels.com/photos/19154599/pexels-photo-19154599.jpeg",
@@ -60,12 +60,12 @@
         "nameProduct" : "Butterscotch Aren Latte",
         "category": "Coffee",
         "description" : "A unique mix of creamy butterscotch and authentic palm sugar.",
-        "priceProduct" : "22000",
-        "priceDiscount": "18000",
-        "statusFavourite": "false"
+        "priceProduct" : 22000,
+        "priceDiscount": 18000,
+        "statusFavourite": false
     },
     {
-        "id": "6",
+        "id": 6,
         "imageDepan" : "/img/Image 30.png",
         "imageKedua" : "/img/Image 32.png",
         "imageKetiga": "/img/Image 34.png",
@@ -73,12 +73,12 @@
         "nameProduct" : "Honey Latte",
         "category": "Coffee",
         "description" : "A gentle, naturally sweetened latte with pure floral honey.",
-        "priceProduct" : "24000",
-        "priceDiscount": "20000",
-        "statusFavourite": "false"
+        "priceProduct" : 24000,
+        "priceDiscount": 20000,
+        "statusFavourite": false
     },
     {
-        "id": "7",
+        "id": 7,
         "imageDepan" : "/img/Image 30.png",
         "imageKedua" : "/img/Image 32.png",
         "imageKetiga": "/img/Image 34.png",
@@ -86,12 +86,12 @@
         "nameProduct" : "Spanish Latte",
         "category": "Coffee",
         "description" : "Extra creamy and sweet, made with premium condensed milk.",
-        "priceProduct" : "21000",
-        "priceDiscount": "18000",
-        "statusFavourite": "false"
+        "priceProduct" : 21000,
+        "priceDiscount": 18000,
+        "statusFavourite": false
     },
     {
-        "id": "8",
+        "id": 8,
         "imageDepan" : "/img/Image 30.png",
         "imageKedua" : "/img/Image 32.png",
         "imageKetiga": "/img/Image 34.png",
@@ -99,12 +99,12 @@
         "nameProduct" : "Creamy Aren Latte",
         "category": "Coffee",
         "description" : "Our signature palm sugar coffee with an extra smooth, velvety texture.",
-        "priceProduct" : "24000",
-        "priceDiscount": "20000",
-        "statusFavourite": "false"
+        "priceProduct" : 24000,
+        "priceDiscount": 20000,
+        "statusFavourite": false
     },
     {
-        "id": "9",
+        "id": 9,
         "imageDepan" : "https://images.pexels.com/photos/33722451/pexels-photo-33722451.jpeg",
         "imageKedua" : "/img/Image 32.png",
         "imageKetiga": "/img/Image 34.png",
@@ -112,12 +112,12 @@
         "nameProduct" : "Hazelnut Choco Milk Tea",
         "category": "Non Coffee",
         "description" : "A rich blend of chocolate, milk tea, and nutty hazelnut.",
-        "priceProduct" : "23000",
-        "priceDiscount": "19000",
+        "priceProduct" : 23000,
+        "priceDiscount": 19000,
         "statusFavourite": "true"
     },
     {
-        "id": "10",
+        "id": 10,
         "imageDepan" : "/img/Image 30.png",
         "imageKedua" : "/img/Image 32.png",
         "imageKetiga": "/img/Image 34.png",
@@ -125,12 +125,12 @@
         "nameProduct" : "Signature Chocolate",
         "category": "Non Coffee",
         "description" : "Bold, premium cocoa for the ultimate chocolate lover.",
-        "priceProduct" : "23000",
-        "priceDiscount": "19000",
+        "priceProduct" : 23000,
+        "priceDiscount": 19000,
         "statusFavourite": "false"
     },
     {
-        "id": "11",
+        "id": 11,
         "imageDepan" : "/img/Image 30.png",
         "imageKedua" : "/img/Image 32.png",
         "imageKetiga": "/img/Image 34.png",
@@ -138,12 +138,12 @@
         "nameProduct" : "Matcha Latte",
         "category": "Non Coffee",
         "description" : "Authentic Japanese green tea whisked with fresh, creamy milk.",
-        "priceProduct" : "27000",
-        "priceDiscount": "25000",
-        "statusFavourite": "false"
+        "priceProduct" : 27000,
+        "priceDiscount": 25000,
+        "statusFavourite": false
     },
     {
-        "id": "12",
+        "id": 12,
         "imageDepan" : "/img/Image 30.png",
         "imageKedua" : "/img/Image 32.png",
         "imageKetiga": "/img/Image 34.png",
@@ -151,12 +151,12 @@
         "nameProduct" : "Lemon Black Tea",
         "category": "Non Coffee",
         "description" : "A bright and refreshing balance of bold tea and zesty lemon.",
-        "priceProduct" : "19000",
-        "priceDiscount": "15000",
-        "statusFavourite": "false"
+        "priceProduct" : 19000,
+        "priceDiscount": 15000,
+        "statusFavourite": false
     },
     {
-        "id": "13",
+        "id": 13,
         "imageDepan" : "/img/Image 30.png",
         "imageKedua" : "/img/Image 32.png",
         "imageKetiga": "/img/Image 34.png",
@@ -164,9 +164,9 @@
         "nameProduct" : "Avocado Caramel",
         "category": "Non Coffee",
         "description" : "A creamy avocado delight finished with a sweet caramel swirl.",
-        "priceProduct" : "23000",
-        "priceDiscount": "19000",
-        "statusFavourite": "false"
+        "priceProduct" : 23000,
+        "priceDiscount": 19000,
+        "statusFavourite": false
     },
     {
         "id": "14",
@@ -177,12 +177,12 @@
         "nameProduct" : "Strawberry Cromboloni",
         "category": "Food",
         "description" : "Crispy, flaky pastry filled with luscious strawberry cream.",
-        "priceProduct" : "28000",
-        "priceDiscount": "25000",
-        "statusFavourite": "true"
+        "priceProduct" : 28000,
+        "priceDiscount": 25000,
+        "statusFavourite": true
     },
     {
-        "id": "15",
+        "id": 15,
         "imageDepan" : "/img/Image 30.png",
         "imageKedua" : "/img/Image 32.png",
         "imageKetiga": "/img/Image 34.png",
@@ -190,12 +190,12 @@
         "nameProduct" : "Sugar Donut",
         "category": "Food",
         "description" : "Soft, fluffy donut classic coated in fine powdered sugar.",
-        "priceProduct" : "12000",
-        "priceDiscount": "10000",
-        "statusFavourite": "false"
+        "priceProduct" : 12000,
+        "priceDiscount": 10000,
+        "statusFavourite": false
     },
     {
-        "id": "16",
+        "id": 16,
         "imageDepan" : "/img/Image 30.png",
         "imageKedua" : "/img/Image 32.png",
         "imageKetiga": "/img/Image 34.png",
@@ -203,12 +203,12 @@
         "nameProduct" : "Chocochip Cookies",
         "category": "Food",
         "description" : "Crunchy cookies packed with melting chocolate chips.",
-        "priceProduct" : "16000",
-        "priceDiscount": "14000",
-        "statusFavourite": "false"
+        "priceProduct" : 16000,
+        "priceDiscount": 14000,
+        "statusFavourite": false
     },
     {
-        "id": "17",
+        "id": 17,
         "imageDepan" : "/img/Image 30.png",
         "imageKedua" : "/img/Image 32.png",
         "imageKetiga": "/img/Image 34.png",
@@ -216,12 +216,12 @@
         "nameProduct" : "Chocolate Croissant",
         "category": "Food",
         "description" : "Flaky, buttery layers with a rich chocolate center.",
-        "priceProduct" : "21000",
-        "priceDiscount": "19000",
-        "statusFavourite": "false"
+        "priceProduct" : 21000,
+        "priceDiscount": 19000,
+        "statusFavourite": false
     },
     {
-        "id": "18",
+        "id": 18,
         "imageDepan" : "/img/Image 30.png",
         "imageKedua" : "/img/Image 32.png",
         "imageKetiga": "/img/Image 34.png",
@@ -229,8 +229,8 @@
         "nameProduct" : "Plain Croissant",
         "category": "Food",
         "description" : "A golden, buttery French classic—perfectly airy and crisp.",
-        "priceProduct" : "20000",
-        "priceDiscount": "18000",
-        "statusFavourite": "false"
+        "priceProduct" : 20000,
+        "priceDiscount": 18000,
+        "statusFavourite": false
     }
 ]

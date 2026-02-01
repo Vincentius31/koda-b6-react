@@ -20,8 +20,8 @@ export default function CheckoutProductPage() {
   const [address, setAddress] = useState("");
 
   useEffect(() => {
-    const localData = JSON.parse(localStorage.getItem("cart")) || [];
-    if (cart.length === 0 && localData.length === 0) {
+    const localCart = JSON.parse(localStorage.getItem("cart")) || [];
+    if (cart.length === 0 && localCart.length === 0) {
       navigate("/product");
     }
   }, [cart, navigate]);
@@ -29,13 +29,16 @@ export default function CheckoutProductPage() {
   if (cart.length === 0) return null;
 
   const orderTotal = cart.reduce((acc, item) => acc + (item.price * item.qty), 0);
-
   const deliveryFee = delivery === "Door Delivery" ? 10000 : 0;
-
   const tax = orderTotal * 0.1;
   const subTotal = orderTotal + tax + deliveryFee;
 
   const handleCheckout = () => {
+    if (!email || !fullName || (delivery === "Door Delivery" && !address)) {
+      alert("Please fill in all required fields!");
+      return;
+    }
+
     const history = JSON.parse(localStorage.getItem("orders")) || [];
 
     history.push({
@@ -66,7 +69,7 @@ export default function CheckoutProductPage() {
             <section>
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-semibold">Your Order</h2>
-                <div className="w-30">
+                <div className="w-36">
                   <PrimaryButton onClick={() => navigate("/product")}>
                     + Add Menu
                   </PrimaryButton>
@@ -75,7 +78,7 @@ export default function CheckoutProductPage() {
 
               <div className="space-y-4">
                 {cart.map((item, index) => (
-                  <div key={index} className="flex gap-4 p-4 bg-gray-50 rounded-lg relative">
+                  <div key={`${item.id}-${item.size}-${index}`} className="flex gap-4 p-4 bg-gray-50 rounded-lg relative">
                     <img
                       src={item.image}
                       alt={item.name}
@@ -83,7 +86,7 @@ export default function CheckoutProductPage() {
                     />
 
                     <div className="flex-1">
-                      <span className="inline-block text-xs bg-red-500 text-white px-2 py-1 rounded mb-1">
+                      <span className="inline-block text-xs bg-red-500 text-white px-2 py-1 rounded mb-1 font-bold">
                         FLASH SALE
                       </span>
                       <h3 className="font-semibold">{item.name}</h3>
@@ -96,8 +99,9 @@ export default function CheckoutProductPage() {
                     </div>
 
                     <button
+                      type="button"
                       onClick={() => removeFromCart(item.id, item.size, item.temperature)}
-                      className="text-gray-400 hover:text-red-500 transition"
+                      className="text-gray-400 hover:text-red-500 transition self-start"
                     >
                       <X size={20} color="red" />
                     </button>
@@ -130,23 +134,24 @@ export default function CheckoutProductPage() {
                   type="text"
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
-                  placeholder="Enter Your Address"
+                  placeholder={delivery === "Door Delivery" ? "Enter Complete Address" : "Enter Address (Optional)"}
                   icon={MapPin}
                 />
 
                 <div>
                   <p className="mb-2 text-sm font-medium">Delivery Method</p>
-                  <div className="flex gap-3">
+                  <div className="flex flex-wrap gap-3">
                     {["Dine In", "Door Delivery", "Pick Up"].map(item => (
                       <button
                         key={item}
+                        type="button"
                         onClick={() => setDelivery(item)}
                         className={`px-4 py-2 border rounded-lg transition ${delivery === item
-                          ? "border-orange-500 text-orange-500 bg-orange-50"
-                          : "border-gray-200"
+                          ? "border-orange-500 text-orange-500 bg-orange-50 font-medium"
+                          : "border-gray-200 text-gray-600 hover:bg-gray-50"
                           }`}
                       >
-                        {item} {item === "Door Delivery"}
+                        {item} {item === "Door Delivery" && "(+10k)"}
                       </button>
                     ))}
                   </div>
@@ -155,34 +160,32 @@ export default function CheckoutProductPage() {
             </section>
           </div>
 
-          <section className="bg-gray-50 p-6 rounded-lg h-fit sticky top-28">
+          <section className="bg-gray-50 p-6 rounded-lg h-fit lg:top-28 border border-gray-100">
             <h2 className="font-semibold mb-4 text-xl">Order Summary</h2>
 
             <div className="space-y-3 text-sm">
               <div className="flex justify-between">
                 <span className="text-gray-600">Total Price ({cart.length} items)</span>
-                <span className="font-medium">IDR {orderTotal.toLocaleString("id-ID")}</span>
+                <span className="font-medium text-gray-900">IDR {orderTotal.toLocaleString("id-ID")}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Delivery</span>
-                <span className={deliveryFee > 0 ? "font-medium" : "text-green-600 font-medium"}>
+                <span className={deliveryFee > 0 ? "font-medium text-gray-900" : "text-green-600 font-bold"}>
                   {deliveryFee > 0 ? `IDR ${deliveryFee.toLocaleString("id-ID")}` : "FREE"}
                 </span>
               </div>
-              <div className="flex justify-between">
+              <div className="flex justify-between border-b pb-3">
                 <span className="text-gray-600">Tax (10%)</span>
-                <span className="font-medium">IDR {tax.toLocaleString("id-ID")}</span>
+                <span className="font-medium text-gray-900">IDR {tax.toLocaleString("id-ID")}</span>
               </div>
 
-              <hr className="my-4 border-dashed" />
-
-              <div className="flex justify-between text-lg font-bold">
-                <span>Sub Total</span>
+              <div className="flex justify-between text-lg font-bold pt-2">
+                <span className="text-gray-800">Sub Total</span>
                 <span className="text-orange-500">IDR {subTotal.toLocaleString("id-ID")}</span>
               </div>
             </div>
 
-            <div className="w-full mt-6">
+            <div className="mt-8">
               <PrimaryButton onClick={handleCheckout}>Confirm Payment</PrimaryButton>
             </div>
           </section>

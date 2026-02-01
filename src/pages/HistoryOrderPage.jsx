@@ -15,7 +15,7 @@ export default function HistoryOrder() {
 
     const formatDate = (dateString) => {
         const options = { day: 'numeric', month: 'long', year: 'numeric' };
-        return new Date(dateString).toLocaleDateString('en-GB', options);
+        return new Date(dateString).toLocaleDateString('id-ID', options);
     };
 
     return (
@@ -57,7 +57,9 @@ export default function HistoryOrder() {
                                         <div>
                                             <p className="text-sm text-gray-500">No. Order</p>
                                             <p className="font-semibold text-sm">#ORD-{index + 1000}</p>
-                                            <Link to={"/detail-order"} className="text-orange-500 text-xs hover:underline">View Details</Link>
+                                            <Link to={`/detail-order/${orders.length - 1 - index}`} className="text-orange-500 text-sm">
+                                                Views Order Detail
+                                            </Link>
                                         </div>
 
                                         <div>

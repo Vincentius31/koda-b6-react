@@ -1,14 +1,15 @@
 import { useState, useEffect } from "react";
-import { useParams, useLocation, Link } from "react-router-dom";
+import { useParams, useLocation, useNavigate } from "react-router-dom"; 
 import { ShoppingCart } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import ProductCard from "../components/ProductCard";
-import { useCart } from "../context/CartContext"; 
+import { useCart } from "../context/CartContext";
 
 export default function DetailProductPage() {
     const { id } = useParams();
     const location = useLocation();
+    const navigate = useNavigate(); 
     const { addToCart } = useCart();
 
     const [product, setProduct] = useState(location.state?.product || null);
@@ -44,7 +45,7 @@ export default function DetailProductPage() {
         return <p className="p-6">Product not found</p>;
     }
 
-    const handleAddToCart = () => {
+    const handleAddToCart = (isBuyNow = false) => {
         const newItem = {
             id: product.id,
             name: product.nameProduct,
@@ -55,6 +56,12 @@ export default function DetailProductPage() {
             temperature: temperature
         };
         addToCart(newItem);
+
+        if (isBuyNow) {
+            navigate("/checkout-product");
+        } else {
+            alert("Added to cart!");
+        }
     };
 
     const startIndex = (currentPage - 1) * ITEM_PER_PAGE;
@@ -67,8 +74,6 @@ export default function DetailProductPage() {
 
             <section className="max-w-7xl mx-auto px-4 py-12">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-20">
-
-                    {/* --- KODE DARI PRODUCT GALLERY --- */}
                     <div>
                         <div className="w-auto aspect-square overflow-hidden mb-4 mt-25">
                             <img
@@ -86,7 +91,6 @@ export default function DetailProductPage() {
                         </div>
                     </div>
 
-                    {/* --- KODE DARI PRODUCT INFO --- */}
                     <div className="mt-25">
                         <span className="inline-block bg-red-500 text-white text-xs px-3 py-1 rounded-full mb-3">
                             FLASH SALE!
@@ -105,7 +109,6 @@ export default function DetailProductPage() {
 
                         <p className="text-gray-600 mb-6 leading-relaxed">{product.description}</p>
 
-                        {/* Quantity Selector */}
                         <div className="mb-6">
                             <p className="font-medium mb-2">Quantity</p>
                             <div className="flex items-center gap-4">
@@ -115,7 +118,6 @@ export default function DetailProductPage() {
                             </div>
                         </div>
 
-                        {/* Size Selector */}
                         <div className="mb-6">
                             <p className="font-medium mb-2">Choose Size</p>
                             <div className="flex gap-3">
@@ -131,7 +133,6 @@ export default function DetailProductPage() {
                             </div>
                         </div>
 
-                        {/* Temperature Selector */}
                         <div className="mb-8">
                             <p className="font-medium mb-2">Hot / Ice?</p>
                             <div className="flex gap-3">
@@ -147,13 +148,12 @@ export default function DetailProductPage() {
                             </div>
                         </div>
 
-                        {/* Action Buttons */}
                         <div className="flex gap-4">
-                            <button onClick={handleAddToCart} className="flex-1 bg-orange-500 hover:bg-orange-600 text-white py-4 rounded-xl font-bold transition">
+                            <button onClick={() => handleAddToCart(true)} className="flex-1 bg-orange-500 hover:bg-orange-600 text-white py-4 rounded-xl font-bold transition">
                                 Buy Now
                             </button>
                             <button
-                                onClick={handleAddToCart}
+                                onClick={() => handleAddToCart(false)}
                                 className="px-6 py-4 border border-orange-500 text-orange-500 rounded-xl hover:bg-orange-50 transition"
                             >
                                 <ShoppingCart />
@@ -162,7 +162,6 @@ export default function DetailProductPage() {
                     </div>
                 </div>
 
-                {/* --- RECOMMENDATION SECTION --- */}
                 <section>
                     <h2 className="text-3xl font-semibold mb-10">
                         Recommendation <span className="text-[#8E6447]">For You</span>
@@ -170,6 +169,7 @@ export default function DetailProductPage() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
                         {currentItems.map(item => (
                             <ProductCard
+                                key={item.id}
                                 id={item.id}
                                 name={item.nameProduct}
                                 src={item.imageDepan}
@@ -179,7 +179,6 @@ export default function DetailProductPage() {
                         ))}
                     </div>
 
-                    {/* Pagination Controls */}
                     <div className="flex justify-center items-center gap-3 mt-12">
                         {Array.from({ length: totalPages }).map((_, index) => (
                             <button

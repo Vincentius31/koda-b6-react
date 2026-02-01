@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
 import { PrimaryButton } from './PrimaryButton'
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function ProductInfo({ name, priceNormal, priceDiscount, descriptionProduct, }) {
+    const navigate = useNavigate()
+
     const [quantity, setQuantity] = useState(1)
     const [size, setSize] = useState("Regular")
     const [temperature, setTemperature] = useState("Ice")
@@ -17,6 +19,35 @@ export default function ProductInfo({ name, priceNormal, priceDiscount, descript
         temperature
     }
 
+    const handleBuy = () => {
+        navigate("/checkout-product", {
+            state: { order: orderData }
+        })
+    }
+
+    const handleAddToCart = () => {
+        const user = JSON.parse(localStorage.getItem("user"))
+
+        if (!user) {
+            alert("Please login first")
+            return
+        }
+
+        const cartKey = `cart_${user.email}`
+        const existingCart = JSON.parse(localStorage.getItem(cartKey)) || []
+
+        const newItem = {
+            ...orderData,
+            qty: quantity
+        }
+
+        localStorage.setItem(
+            cartKey,
+            JSON.stringify([...existingCart, newItem])
+        )
+
+        alert(`✅ Product added to cart! Total item: ${existingCart.length + 1}`)
+    }
 
     return (
         <div className='ml-8 mt-20'>
@@ -97,24 +128,18 @@ export default function ProductInfo({ name, priceNormal, priceDiscount, descript
 
             {/* Actions */}
             <div className="flex gap-4">
-                <Link
-                    to="/checkout-product"
-                    state={{ order: orderData }}
-                    className="w-60"
-                >
-                    <PrimaryButton>Buy</PrimaryButton>
-                </Link>
-                <Link
-                    to="/checkout-product"
-                    state={{ order: orderData }}
-                    className="mt-6"
-                >
-                    <button className="border border-orange-500 text-orange-500 px-8 py-3 rounded-lg flex items-center gap-2">
-                        🛒 Add to cart
-                    </button>
-                </Link>
+                <div className="w-60">
+                    <PrimaryButton onClick={handleBuy}>
+                        Buy
+                    </PrimaryButton>
+                </div>
 
-
+                <button
+                    onClick={handleAddToCart}
+                    className="mt-6 border border-orange-500 text-orange-500 px-8 py-3 rounded-lg flex items-center gap-2 hover:bg-orange-50"
+                >
+                    🛒 Add to cart
+                </button>
             </div>
         </div>
     )

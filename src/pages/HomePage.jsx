@@ -127,17 +127,19 @@ export default function HomePage() {
                         {products.length === 0 && (<p>Data produk kosong</p>)}
 
                         {products
-                            .filter(item => item.statusFavourite === "true")
+                            .filter(item => item.statusFavourite === true)
                             .map(item => (
                                 <ProductCard
                                     key={item.id}
                                     id={item.id}
-                                    src={item.imageDepan}
                                     name={item.nameProduct}
+                                    src={item.imageDepan}
                                     description={item.description}
-                                    price={`IDR ${item.priceProduct}`}
+                                    price={item.priceDiscount}
                                 />
-                            ))}
+
+                            ))
+                        }
                     </div>
                 </div>
             </section>

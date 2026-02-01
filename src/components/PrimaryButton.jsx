@@ -1,4 +1,4 @@
-export const PrimaryButton = ({ children, onClick, type = "button" }) => {
+export const PrimaryButton = ({ children, onClick, type = "submit" }) => {
   return (
     <button
       type={type}
@@ -7,5 +7,5 @@ export const PrimaryButton = ({ children, onClick, type = "button" }) => {
     >
       {children}
     </button>
-  )
-}
+  );
+};

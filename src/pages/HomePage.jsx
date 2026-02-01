@@ -130,7 +130,6 @@ export default function HomePage() {
                             .filter(item => item.statusFavourite === true)
                             .map(item => (
                                 <ProductCard
-                                    key={item.id}
                                     id={item.id}
                                     name={item.nameProduct}
                                     src={item.imageDepan}

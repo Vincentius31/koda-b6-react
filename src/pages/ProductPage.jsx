@@ -177,13 +177,11 @@ export default function ProductPage() {
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-10 auto-rows-fr">
                             {currentProducts.map((item) => (
                                 <ProductCard
-                                    key={item.id}
                                     id={item.id}
                                     name={item.nameProduct}
                                     src={item.imageDepan}
                                     description={item.description}
-                                    price={`IDR ${item.priceDiscount}`}
-                                    product={item}
+                                    price={item.priceDiscount}
                                 />
                             ))}
                         </div>

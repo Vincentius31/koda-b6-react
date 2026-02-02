@@ -36,7 +36,7 @@ export default function ProductCard({
                 <h3 className="font-semibold text-base mb-1">{name}</h3>
                 <p className="text-sm text-gray-500 mb-3">{description}</p>
                 <p className="font-bold mb-4 text-[#FF8906] text-xl">
-                    Rp {Number(price).toLocaleString("id-ID")}
+                    IDR {Number(price).toLocaleString("id-ID")}
                 </p>
 
                 <div className="flex items-center gap-2">

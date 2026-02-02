@@ -4,24 +4,30 @@ import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 
 export default function DetailOrderPage() {
-    const { id } = useParams(); 
+    const { id } = useParams();
     const navigate = useNavigate();
     const [orderDetail, setOrderDetail] = useState(null);
 
     useEffect(() => {
-        const history = JSON.parse(localStorage.getItem("orders")) || [];
-        const selectedOrder = history[id];
+        const userData = JSON.parse(localStorage.getItem("currentUser"));
+        if (userData && userData.email) {
+            const storageKey = `orders_${userData.email}`;
+            const history = JSON.parse(localStorage.getItem(storageKey)) || [];
+            const selectedOrder = history[id];
 
-        if (selectedOrder) {
-            setOrderDetail(selectedOrder);
+            if (selectedOrder) {
+                setOrderDetail(selectedOrder);
+            } else {
+                navigate("/history-order");
+            }
         } else {
-            navigate("/history-order");
+            navigate("/login");
         }
     }, [id, navigate]);
 
     if (!orderDetail) return null;
 
-    const formattedDate = new Date(orderDetail.date).toLocaleDateString('id-ID', {
+    const formattedDate = new Date(orderDetail.date).toLocaleDateString('en-GB', {
         day: 'numeric',
         month: 'long',
         year: 'numeric',
@@ -114,5 +120,5 @@ export default function DetailOrderPage() {
 
             <Footer />
         </>
-    )
+    );
 }

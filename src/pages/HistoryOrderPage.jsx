@@ -9,13 +9,20 @@ export default function HistoryOrder() {
     const [orders, setOrders] = useState([]);
 
     useEffect(() => {
-        const savedOrders = JSON.parse(localStorage.getItem("orders")) || [];
-        setOrders(savedOrders.reverse());
+        const userData = JSON.parse(localStorage.getItem("currentUser"));
+        if (userData && userData.email) {
+            const storageKey = `orders_${userData.email}`;
+            const savedOrders = JSON.parse(localStorage.getItem(storageKey)) || [];
+            setOrders(savedOrders);
+        }
     }, []);
 
     const formatDate = (dateString) => {
-        const options = { day: 'numeric', month: 'long', year: 'numeric' };
-        return new Date(dateString).toLocaleDateString('id-ID', options);
+        return new Date(dateString).toLocaleDateString('en-GB', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+        });
     };
 
     return (

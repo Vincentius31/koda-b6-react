@@ -10,6 +10,8 @@ import CheckoutProdutPage from './pages/CheckoutProdutPage'
 import HistoryOrder from './pages/HistoryOrderPage'
 import DetailOrderPage from './pages/DetailOrderPage'
 import ProfilePage from './pages/ProfilePage'
+import AdminLayout from './pages/admin/AdminLayout'
+import Dashboard from './pages/admin/Dashboard'
 
 const router = createBrowserRouter([
     {
@@ -51,6 +53,16 @@ const router = createBrowserRouter([
     {
         path: "/profile",
         element: <ProfilePage/>
+    },
+    {
+        path: "/admin",
+        element: <AdminLayout/>,
+        children:[
+            {
+                path: "dashboard",
+                element:<Dashboard/>
+            }
+        ]
     }
 ])
 

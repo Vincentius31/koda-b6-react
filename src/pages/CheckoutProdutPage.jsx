@@ -55,7 +55,7 @@ export default function CheckoutProductPage() {
       deliveryFee,
       tax: tax,
       total: subTotal,
-      date: new Date().toISOString(),
+      date: new Date().toLocaleString(),
     });
 
     localStorage.setItem(storageKey, JSON.stringify(history));

@@ -27,7 +27,7 @@ export default function DetailOrderPage() {
 
     if (!orderDetail) return null;
 
-    const formattedDate = new Date(orderDetail.date).toLocaleDateString('en-GB', {
+    const formattedDate = new Date(orderDetail.date).toLocaleDateString('id-ID', {
         day: 'numeric',
         month: 'long',
         year: 'numeric',

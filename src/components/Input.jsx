@@ -1,4 +1,10 @@
-export default function Input({ label, type, placeholder, icon: Icon, register, error, ...rest }) {
+// Deskripsi Props:
+// 1. Icon : Mengambil prop bernama icon dan Mengubah menjadi Icon agar dapat di render sebagai component (Penggunaan libary Lucide React Icon)
+// 2. register: Digunakan untuk intregasi libary React Hook Form 
+// 3. error: pesan validasi jika terjadi error
+
+
+export default function Input({ label, type, placeholder, icon: Icon, register, error, ...res}) {
     return (
         <div className="form-group">
             <label className="block text-sm mb-2">{label}</label>
@@ -9,7 +15,7 @@ export default function Input({ label, type, placeholder, icon: Icon, register, 
                     placeholder={placeholder}
                     className="w-full outline-none border-none bg-transparent"
                     {...register}
-                    {...rest}    
+                    {...res}
                 />
             </div>
 

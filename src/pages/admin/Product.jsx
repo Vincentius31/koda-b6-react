@@ -1,5 +1,7 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Plus, Search, Filter, Pencil, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
+import AddProductModal from '../../components/modal/admin/AddProductModal';
+import EditProductModal from '../../components/modal/admin/EditProductModal';
 
 export default function Product() {
     const products = [
@@ -8,7 +10,10 @@ export default function Product() {
         { id: 3, name: 'Kopi Susu', price: 'IDR 40.000', desc: 'Cold brewing is a method of brewing that ...', size: 'R,L,XL,250gr', method: 'Dine In', stock: 200, img: 'https://via.placeholder.com/40' },
         { id: 4, name: 'Espresso Supreme', price: 'IDR 40.000', desc: 'Cold brewing is a method of brewing that ...', size: 'R,L,XL,250gr', method: 'Deliver', stock: 200, img: 'https://via.placeholder.com/40' },
         { id: 5, name: 'Caramel Velvet Latte', price: 'IDR 40.000', desc: 'Cold brewing is a method of brewing that ...', size: 'R,L,XL,250gr', method: 'Deliver, Dine In', stock: 200, img: 'https://via.placeholder.com/40' },
-    ];
+    ]
+
+    const [showAddModal, setShowAddModal] = useState(false)
+    const [showEditModal, setShowEditModal] = useState(false)
 
     return (
         <div className="space-y-4">
@@ -17,7 +22,7 @@ export default function Product() {
 
             {/* Action Bar */}
             <div className="flex flex-col md:flex-row justify-between items-end gap-4">
-                <button className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2.5 rounded-lg flex items-center gap-2 transition-colors font-medium text-sm shadow-sm shadow-orange-200">
+                <button onClick={() => setShowAddModal(true)} className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2.5 rounded-lg flex items-center gap-2 transition-colors font-medium text-sm shadow-sm shadow-orange-200">
                     <Plus size={18} />
                     Add Product
                 </button>
@@ -75,7 +80,7 @@ export default function Product() {
                                     <td className="px-4 py-4 text-gray-600">{product.stock}</td>
                                     <td className="px-4 py-4">
                                         <div className="flex items-center justify-center gap-2">
-                                            <button className="p-1.5 text-orange-400 hover:bg-orange-50 rounded-md transition-colors">
+                                            <button onClick={() => setShowEditModal(true)} className="p-1.5 text-orange-400 hover:bg-orange-50 rounded-md transition-colors">
                                                 <Pencil size={16} />
                                             </button>
                                             <button className="p-1.5 text-red-400 hover:bg-red-50 rounded-md transition-colors">
@@ -109,6 +114,9 @@ export default function Product() {
                     </div>
                 </div>
             </div>
+            {/* Modal */}
+            <AddProductModal isOpen={showAddModal} onClose={() => setShowAddModal(false)} />
+            <EditProductModal isOpen={showEditModal} onClose={() => setShowEditModal(false)} />
         </div>
     )
 }

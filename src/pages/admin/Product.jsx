@@ -11,9 +11,9 @@ export default function Product() {
     ];
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-4">
             {/* Title Section */}
-            <h2 className="text-2xl font-base text-gray-800">Product List</h2>
+            <h2 className="text-xl font-base text-gray-800">Product List</h2>
 
             {/* Action Bar */}
             <div className="flex flex-col md:flex-row justify-between items-end gap-4">
@@ -24,7 +24,7 @@ export default function Product() {
 
                 <div className="flex items-center gap-3 w-full md:w-auto">
                     <div className="flex flex-col gap-1 w-full md:w-64">
-                        <label className="text-[10px] text-gray-400">Search Product</label>
+                        <label className="text-base text-gray-400">Search Product</label>
                         <div className="relative">
                             <input
                                 type="text"
@@ -67,7 +67,7 @@ export default function Product() {
                                     </td>
                                     <td className="px-4 py-4 font-medium text-gray-700">{product.name}</td>
                                     <td className="px-4 py-4 text-gray-600">{product.price}</td>
-                                    <td className="px-4 py-4 text-gray-400 text-[11px] leading-relaxed max-w-[150px]">
+                                    <td className="px-4 py-4 text-gray-400 text-[11px] leading-relaxed max-w-37.5">
                                         {product.desc}
                                     </td>
                                     <td className="px-4 py-4 text-gray-600">{product.size}</td>
@@ -90,11 +90,11 @@ export default function Product() {
                 </div>
 
                 {/* Pagination */}
-                <div className="px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4 text-[12px] text-gray-400 border-t border-gray-50">
+                <div className="px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4 text-[12px] text-black border-t border-gray-50">
                     <p>Show 5 product of 100 product</p>
                     <div className="flex items-center gap-2">
-                        <button className="p-1 hover:text-gray-600"><ChevronLeft size={16} /></button>
-                        <span className="flex gap-4">
+                        <button className="p-1 hover:text-gray-600">Prev</button>
+                        <span className="flex gap-6">
                             <span className="text-orange-500 font-bold">1</span>
                             <span className="cursor-pointer hover:text-gray-600">2</span>
                             <span className="cursor-pointer hover:text-gray-600">3</span>
@@ -104,7 +104,7 @@ export default function Product() {
                             <span className="cursor-pointer hover:text-gray-600">9</span>
                         </span>
                         <button className="p-1 hover:text-gray-600 flex items-center gap-1 font-medium">
-                            Next <ChevronRight size={16} />
+                            Next
                         </button>
                     </div>
                 </div>

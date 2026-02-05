@@ -6,12 +6,12 @@ export default function EditOrderModal({ isOpen, onClose, orderNumber = "#12354-
         <>
             {/* Backdrop */}
             <div
-                className={`fixed inset-0 bg-black/20 backdrop-blur-[2px] z-[60] transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+                className={`fixed inset-0 bg-black/20 backdrop-blur-[2px] z-60 transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
                 onClick={onClose}
             />
 
             {/* Drawer Container */}
-            <div className={`fixed right-0 top-0 h-full w-full max-w-[500px] bg-white z-[70] shadow-2xl transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+            <div className={`fixed right-0 top-0 h-full w-full max-w-125 bg-white z-70 shadow-2xl transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
 
                 <div className="h-full flex flex-col p-8 relative">
                     {/* Header & Close Button */}

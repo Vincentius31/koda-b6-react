@@ -13,6 +13,7 @@ import ProfilePage from './pages/ProfilePage'
 import AdminLayout from './pages/admin/AdminLayout'
 import Dashboard from './pages/admin/Dashboard'
 import Product from './pages/admin/Product'
+import Order from './pages/admin/Order'
 
 const router = createBrowserRouter([
     {
@@ -66,6 +67,10 @@ const router = createBrowserRouter([
             {
                 path: "product",
                 element: <Product/>
+            },
+            {
+                path: "order",
+                element: <Order/>
             }
         ]
     }

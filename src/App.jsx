@@ -12,6 +12,7 @@ import DetailOrderPage from './pages/DetailOrderPage'
 import ProfilePage from './pages/ProfilePage'
 import AdminLayout from './pages/admin/AdminLayout'
 import Dashboard from './pages/admin/Dashboard'
+import Product from './pages/admin/Product'
 
 const router = createBrowserRouter([
     {
@@ -61,6 +62,10 @@ const router = createBrowserRouter([
             {
                 path: "dashboard",
                 element:<Dashboard/>
+            },
+            {
+                path: "product",
+                element: <Product/>
             }
         ]
     }

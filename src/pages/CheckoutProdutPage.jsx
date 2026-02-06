@@ -4,7 +4,7 @@ import { useCart } from "../context/CartContext";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Input from "../components/Input";
-import { Mail, MapPin, User, X } from "lucide-react";
+import { Mail, MapPin, User, X, ShoppingCart } from "lucide-react";
 import { PrimaryButton } from "../components/PrimaryButton";
 
 export default function CheckoutProductPage() {
@@ -12,20 +12,10 @@ export default function CheckoutProductPage() {
   const { cart, clearCart, removeFromCart } = useCart();
   const [delivery, setDelivery] = useState("Dine In");
 
-  // Penyesuaian Key ke "currentUser"
   const userData = JSON.parse(localStorage.getItem("currentUser")) || {};
   const [email, setEmail] = useState(userData.email || "");
   const [fullName, setFullName] = useState(userData.fullName || "");
   const [address, setAddress] = useState("");
-
-  useEffect(() => {
-    const localCart = JSON.parse(localStorage.getItem("cart")) || [];
-    if (cart.length === 0 && localCart.length === 0) {
-      navigate("/product");
-    }
-  }, [cart, navigate]);
-
-  if (cart.length === 0) return null;
 
   const orderTotal = cart.reduce((acc, item) => acc + (item.price * item.qty), 0);
   const deliveryFee = delivery === "Door Delivery" ? 10000 : 0;
@@ -33,6 +23,11 @@ export default function CheckoutProductPage() {
   const subTotal = orderTotal + tax + deliveryFee;
 
   const handleCheckout = () => {
+    if (cart.length === 0) {
+      alert("Your cart is empty. Please add some products first!");
+      return;
+    }
+
     const activeUser = JSON.parse(localStorage.getItem("currentUser"));
 
     if (!activeUser || !activeUser.email) {
@@ -77,23 +72,32 @@ export default function CheckoutProductPage() {
                   <PrimaryButton onClick={() => navigate("/product")}>+ Add Menu</PrimaryButton>
                 </div>
               </div>
+
               <div className="space-y-4">
-                {cart.map((item, index) => (
-                  <div key={`${item.id}-${index}`} className="flex gap-4 p-4 bg-gray-50 rounded-lg relative">
-                    <img src={item.image} alt={item.name} className="w-24 h-24 object-cover rounded-md" />
-                    <div className="flex-1">
-                      <span className="inline-block text-xs bg-red-500 text-white px-2 py-1 rounded mb-1 font-bold">FLASH SALE</span>
-                      <h3 className="font-semibold">{item.name}</h3>
-                      <p className="text-sm text-gray-500">{item.qty}pcs | {item.size} | {item.temperature}</p>
-                      <p className="font-semibold text-orange-500 mt-1">IDR {item.price.toLocaleString("id-ID")}</p>
+                {cart.length > 0 ? (
+                  cart.map((item, index) => (
+                    <div key={`${item.id}-${index}`} className="flex gap-4 p-4 bg-gray-50 rounded-lg relative">
+                      <img src={item.image} alt={item.name} className="w-24 h-24 object-cover rounded-md" />
+                      <div className="flex-1">
+                        <span className="inline-block text-xs bg-red-500 text-white px-2 py-1 rounded mb-1 font-bold">FLASH SALE</span>
+                        <h3 className="font-semibold">{item.name}</h3>
+                        <p className="text-sm text-gray-500">{item.qty}pcs | {item.size} | {item.temperature}</p>
+                        <p className="font-semibold text-orange-500 mt-1">IDR {item.price.toLocaleString("id-ID")}</p>
+                      </div>
+                      <button type="button" onClick={() => removeFromCart(item.id, item.size, item.temperature)} className="text-gray-400 hover:text-red-500">
+                        <X size={20} />
+                      </button>
                     </div>
-                    <button type="button" onClick={() => removeFromCart(item.id, item.size, item.temperature)} className="text-gray-400 hover:text-red-500">
-                      <X size={20} />
-                    </button>
+                  ))
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-10 bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
+                    <ShoppingCart className="w-12 h-12 text-gray-300 mb-2" />
+                    <p className="text-gray-500 italic">Your cart is currently empty.</p>
                   </div>
-                ))}
+                )}
               </div>
             </section>
+
             <section>
               <h2 className="text-lg font-semibold mb-4">Payment Info & Delivery</h2>
               <div className="space-y-4">
@@ -113,6 +117,7 @@ export default function CheckoutProductPage() {
               </div>
             </section>
           </div>
+
           <section className="bg-gray-50 p-6 rounded-lg h-fit lg:sticky lg:top-28 border border-gray-100">
             <h2 className="font-semibold mb-4 text-xl">Order Summary</h2>
             <div className="space-y-3 text-sm">

@@ -13,7 +13,7 @@ export default function DetailOrderPage() {
         if (userData && userData.email) {
             const storageKey = `orders_${userData.email}`;
             const history = JSON.parse(localStorage.getItem(storageKey)) || [];
-            const selectedOrder = history[id];
+            const selectedOrder = history.find(item => item.orderId === id);
 
             if (selectedOrder) {
                 setOrderDetail(selectedOrder);
@@ -41,7 +41,7 @@ export default function DetailOrderPage() {
 
             <section className="max-w-7xl mx-auto px-6 py-14 mt-20">
                 <h1 className="text-4xl font-medium mb-2">
-                    Order <span className='font-extrabold'>#ORD-{parseInt(id) + 1000}</span>
+                    {orderDetail.orderId}
                 </h1>
                 <p className="text-gray-500 mb-12">{formattedDate}</p>
 

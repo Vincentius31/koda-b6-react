@@ -63,8 +63,8 @@ export default function HistoryOrder() {
                                     <div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-4 items-center">
                                         <div>
                                             <p className="text-sm text-gray-500">No. Order</p>
-                                            <p className="font-semibold text-sm">#ORD-{index + 1}</p>
-                                            <Link to={`/detail-order/${orders.length - 1 - index}`} className="text-orange-500 text-sm">
+                                            <p className="font-semibold text-sm">{order.orderId}</p>
+                                            <Link to={`/detail-order/${order.orderId}`} className="text-orange-500 text-sm">
                                                 Views Order Detail
                                             </Link>
                                         </div>

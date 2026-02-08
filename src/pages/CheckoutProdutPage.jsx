@@ -40,10 +40,17 @@ export default function CheckoutProductPage() {
       return;
     }
 
+    const now = new Date();
+    const datePart = now.toISOString().split('T')[0].replace(/-/g, '');
+    const timePart = now.getHours().toString().padStart(2, '0') + now.getMinutes().toString().padStart(2, '0'); 
+    const randomPart = Math.floor(1000 + Math.random() * 9000); 
+    const newOrderId = `ORD-${datePart}-${timePart}-${randomPart}`;
+
     const storageKey = `orders_${activeUser.email}`;
     const history = JSON.parse(localStorage.getItem(storageKey)) || [];
 
     history.push({
+      orderId: newOrderId,
       items: cart,
       customer: { email, fullName, address },
       delivery,

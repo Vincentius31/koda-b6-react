@@ -10,7 +10,8 @@
         "description" : "Smooth espresso and milk with a toasted nutty finish.",
         "priceProduct" : 28000,
         "priceDiscount" : 26000,
-        "statusFavourite": true
+        "statusFavourite": true,
+        "promoType": "Flash Sale"
     },
     {
         "id": 2,
@@ -23,7 +24,8 @@
         "description" : "A luxurious blend of buttery sweetness.",
         "priceProduct" : 27000,
         "priceDiscount": 24000,
-        "statusFavourite": true
+        "statusFavourite": true,
+        "promoType": "Buy 1 get 1"
     },
     {
         "id": 3,
@@ -36,7 +38,8 @@
         "description" : "A classic favorite featuring rich espresso and sweet caramel sauce.",
         "priceProduct" : 28000,
         "priceDiscount": 24000,
-        "statusFavourite": false
+        "statusFavourite": false,
+        "promoType": "Flash Sale"
     },
     {
         "id": 4,
@@ -49,7 +52,8 @@
         "description" : "Bold black coffee sweetened with honey and topped with silky cream.",
         "priceProduct" : 21000,
         "priceDiscount" : 19000,
-        "statusFavourite": false
+        "statusFavourite": false,
+        "promoType": "Cheap"
     },
     {
         "id": 5,
@@ -62,7 +66,8 @@
         "description" : "A unique mix of creamy butterscotch and authentic palm sugar.",
         "priceProduct" : 22000,
         "priceDiscount": 18000,
-        "statusFavourite": false
+        "statusFavourite": false,
+        "promoType": "Birthday Package"
     },
     {
         "id": 6,
@@ -75,7 +80,8 @@
         "description" : "A gentle, naturally sweetened latte with pure floral honey.",
         "priceProduct" : 24000,
         "priceDiscount": 20000,
-        "statusFavourite": false
+        "statusFavourite": false,
+        "promoType": "Cheap"
     },
     {
         "id": 7,
@@ -88,7 +94,8 @@
         "description" : "Extra creamy and sweet, made with premium condensed milk.",
         "priceProduct" : 21000,
         "priceDiscount": 18000,
-        "statusFavourite": false
+        "statusFavourite": false,
+        "promoType": "Buy 1 get 1"
     },
     {
         "id": 8,
@@ -101,7 +108,8 @@
         "description" : "Our signature palm sugar coffee with an extra smooth, velvety texture.",
         "priceProduct" : 24000,
         "priceDiscount": 20000,
-        "statusFavourite": false
+        "statusFavourite": false,
+        "promoType": "Flash Sale"
     },
     {
         "id": 9,
@@ -114,7 +122,8 @@
         "description" : "A rich blend of chocolate, milk tea, and nutty hazelnut.",
         "priceProduct" : 23000,
         "priceDiscount": 19000,
-        "statusFavourite": true
+        "statusFavourite": true,
+        "promoType": "Birthday Package"
     },
     {
         "id": 10,
@@ -127,7 +136,8 @@
         "description" : "Bold, premium cocoa for the ultimate chocolate lover.",
         "priceProduct" : 23000,
         "priceDiscount": 19000,
-        "statusFavourite": false
+        "statusFavourite": false,
+        "promoType": "Cheap"
     },
     {
         "id": 11,
@@ -140,7 +150,8 @@
         "description" : "Authentic Japanese green tea whisked with fresh, creamy milk.",
         "priceProduct" : 27000,
         "priceDiscount": 25000,
-        "statusFavourite": false
+        "statusFavourite": false,
+        "promoType": "Flash Sale"
     },
     {
         "id": 12,
@@ -153,7 +164,8 @@
         "description" : "A bright and refreshing balance of bold tea and zesty lemon.",
         "priceProduct" : 19000,
         "priceDiscount": 15000,
-        "statusFavourite": false
+        "statusFavourite": false,
+        "promoType": "Cheap"
     },
     {
         "id": 13,
@@ -166,7 +178,8 @@
         "description" : "A creamy avocado delight finished with a sweet caramel swirl.",
         "priceProduct" : 23000,
         "priceDiscount": 19000,
-        "statusFavourite": false
+        "statusFavourite": false,
+        "promoType": "Buy 1 get 1"
     },
     {
         "id": "14",
@@ -179,7 +192,8 @@
         "description" : "Crispy, flaky pastry filled with luscious strawberry cream.",
         "priceProduct" : 28000,
         "priceDiscount": 25000,
-        "statusFavourite": true
+        "statusFavourite": true,
+        "promoType": "Birthday Package"
     },
     {
         "id": 15,
@@ -192,7 +206,8 @@
         "description" : "Soft, fluffy donut classic coated in fine powdered sugar.",
         "priceProduct" : 12000,
         "priceDiscount": 10000,
-        "statusFavourite": false
+        "statusFavourite": false,
+        "promoType": "Cheap"
     },
     {
         "id": 16,
@@ -205,7 +220,8 @@
         "description" : "Crunchy cookies packed with melting chocolate chips.",
         "priceProduct" : 16000,
         "priceDiscount": 14000,
-        "statusFavourite": false
+        "statusFavourite": false,
+        "promoType": "Flash Sale"
     },
     {
         "id": 17,
@@ -218,7 +234,8 @@
         "description" : "Flaky, buttery layers with a rich chocolate center.",
         "priceProduct" : 21000,
         "priceDiscount": 19000,
-        "statusFavourite": false
+        "statusFavourite": false,
+        "promoType": "Buy 1 get 1"
     },
     {
         "id": 18,
@@ -231,6 +248,7 @@
         "description" : "A golden, buttery French classic—perfectly airy and crisp.",
         "priceProduct" : 20000,
         "priceDiscount": 18000,
-        "statusFavourite": false
+        "statusFavourite": false,
+        "promoType": "Cheap"
     }
 ]

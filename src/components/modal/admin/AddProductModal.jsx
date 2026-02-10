@@ -2,8 +2,6 @@ import React from 'react';
 import { X, Image as ImageIcon, ChevronDown } from 'lucide-react';
 
 export default function AddProductModal({ isOpen, onClose }) {
-    if (!isOpen) return null
-
     return (
         <>
             <div

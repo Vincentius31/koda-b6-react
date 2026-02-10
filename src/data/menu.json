@@ -11,7 +11,11 @@
         "priceProduct" : 28000,
         "priceDiscount" : 26000,
         "statusFavourite": true,
-        "promoType": "Flash Sale"
+        "promoType": "Flash Sale",
+        "size": ["Regular", "Medium", "Large"],
+        "temp": ["Ice", "Hot"],
+        "method": ["Dine In", "Door Delivery", "Pick Up"],
+        "stock": 50
     },
     {
         "id": 2,
@@ -25,7 +29,11 @@
         "priceProduct" : 27000,
         "priceDiscount": 24000,
         "statusFavourite": true,
-        "promoType": "Buy 1 get 1"
+        "promoType": "Buy 1 get 1",
+        "size": ["Regular", "Medium", "Large"],
+        "temp": ["Ice", "Hot"],
+        "method": ["Dine In", "Door Delivery", "Pick Up"],
+        "stock": 50
     },
     {
         "id": 3,
@@ -39,7 +47,11 @@
         "priceProduct" : 28000,
         "priceDiscount": 24000,
         "statusFavourite": false,
-        "promoType": "Flash Sale"
+        "promoType": "Flash Sale",
+        "size": ["Regular", "Medium", "Large"],
+        "temp": ["Ice", "Hot"],
+        "method": ["Dine In", "Door Delivery", "Pick Up"],
+        "stock": 50
     },
     {
         "id": 4,
@@ -53,7 +65,11 @@
         "priceProduct" : 21000,
         "priceDiscount" : 19000,
         "statusFavourite": false,
-        "promoType": "Cheap"
+        "promoType": "Cheap",
+        "size": ["Regular", "Medium", "Large"],
+        "temp": ["Ice", "Hot"],
+        "method": ["Dine In", "Door Delivery", "Pick Up"],
+        "stock": 50
     },
     {
         "id": 5,
@@ -67,7 +83,11 @@
         "priceProduct" : 22000,
         "priceDiscount": 18000,
         "statusFavourite": false,
-        "promoType": "Birthday Package"
+        "promoType": "Birthday Package",
+        "size": ["Regular", "Medium", "Large"],
+        "temp": ["Ice", "Hot"],
+        "method": ["Dine In", "Door Delivery", "Pick Up"],
+        "stock": 50
     },
     {
         "id": 6,
@@ -81,7 +101,11 @@
         "priceProduct" : 24000,
         "priceDiscount": 20000,
         "statusFavourite": false,
-        "promoType": "Cheap"
+        "promoType": "Cheap",
+        "size": ["Regular", "Medium", "Large"],
+        "temp": ["Ice", "Hot"],
+        "method": ["Dine In", "Door Delivery", "Pick Up"],
+        "stock": 50
     },
     {
         "id": 7,
@@ -95,7 +119,11 @@
         "priceProduct" : 21000,
         "priceDiscount": 18000,
         "statusFavourite": false,
-        "promoType": "Buy 1 get 1"
+        "promoType": "Buy 1 get 1",
+        "size": ["Regular", "Medium", "Large"],
+        "temp": ["Ice", "Hot"],
+        "method": ["Dine In", "Door Delivery", "Pick Up"],
+        "stock": 50
     },
     {
         "id": 8,
@@ -109,7 +137,11 @@
         "priceProduct" : 24000,
         "priceDiscount": 20000,
         "statusFavourite": false,
-        "promoType": "Flash Sale"
+        "promoType": "Flash Sale",
+        "size": ["Regular", "Medium", "Large"],
+        "temp": ["Ice", "Hot"],
+        "method": ["Dine In", "Door Delivery", "Pick Up"],
+        "stock": 50
     },
     {
         "id": 9,
@@ -123,7 +155,11 @@
         "priceProduct" : 23000,
         "priceDiscount": 19000,
         "statusFavourite": true,
-        "promoType": "Birthday Package"
+        "promoType": "Birthday Package",
+        "size": ["Regular", "Medium", "Large"],
+        "temp": ["Ice", "Hot"],
+        "method": ["Dine In", "Door Delivery", "Pick Up"],
+        "stock": 50
     },
     {
         "id": 10,
@@ -137,7 +173,11 @@
         "priceProduct" : 23000,
         "priceDiscount": 19000,
         "statusFavourite": false,
-        "promoType": "Cheap"
+        "promoType": "Cheap",
+        "size": ["Regular", "Medium", "Large"],
+        "temp": ["Ice", "Hot"],
+        "method": ["Dine In", "Door Delivery", "Pick Up"],
+        "stock": 50
     },
     {
         "id": 11,
@@ -151,7 +191,11 @@
         "priceProduct" : 27000,
         "priceDiscount": 25000,
         "statusFavourite": false,
-        "promoType": "Flash Sale"
+        "promoType": "Flash Sale",
+        "size": ["Regular", "Medium", "Large"],
+        "temp": ["Ice", "Hot"],
+        "method": ["Dine In", "Door Delivery", "Pick Up"],
+        "stock": 50
     },
     {
         "id": 12,
@@ -165,7 +209,11 @@
         "priceProduct" : 19000,
         "priceDiscount": 15000,
         "statusFavourite": false,
-        "promoType": "Cheap"
+        "promoType": "Cheap",
+        "size": ["Regular", "Medium", "Large"],
+        "temp": ["Ice", "Hot"],
+        "method": ["Dine In", "Door Delivery", "Pick Up"],
+        "stock": 50
     },
     {
         "id": 13,
@@ -179,7 +227,11 @@
         "priceProduct" : 23000,
         "priceDiscount": 19000,
         "statusFavourite": false,
-        "promoType": "Buy 1 get 1"
+        "promoType": "Buy 1 get 1",
+        "size": ["Regular", "Medium", "Large"],
+        "temp": ["Ice", "Hot"],
+        "method": ["Dine In", "Door Delivery", "Pick Up"],
+        "stock": 50
     },
     {
         "id": "14",
@@ -193,7 +245,11 @@
         "priceProduct" : 28000,
         "priceDiscount": 25000,
         "statusFavourite": true,
-        "promoType": "Birthday Package"
+        "promoType": "Birthday Package",
+        "size": ["Regular", "Medium", "Large"],
+        "temp": ["Ice", "Hot"],
+        "method": ["Dine In", "Door Delivery", "Pick Up"],
+        "stock": 50
     },
     {
         "id": 15,
@@ -207,7 +263,11 @@
         "priceProduct" : 12000,
         "priceDiscount": 10000,
         "statusFavourite": false,
-        "promoType": "Cheap"
+        "promoType": "Cheap",
+        "size": ["Regular", "Medium", "Large"],
+        "temp": ["Ice", "Hot"],
+        "method": ["Dine In", "Door Delivery", "Pick Up"],
+        "stock": 50
     },
     {
         "id": 16,
@@ -221,7 +281,11 @@
         "priceProduct" : 16000,
         "priceDiscount": 14000,
         "statusFavourite": false,
-        "promoType": "Flash Sale"
+        "promoType": "Flash Sale",
+        "size": ["Regular", "Medium", "Large"],
+        "temp": ["Ice", "Hot"],
+        "method": ["Dine In", "Door Delivery", "Pick Up"],
+        "stock": 50
     },
     {
         "id": 17,
@@ -235,7 +299,11 @@
         "priceProduct" : 21000,
         "priceDiscount": 19000,
         "statusFavourite": false,
-        "promoType": "Buy 1 get 1"
+        "promoType": "Buy 1 get 1",
+        "size": ["Regular", "Medium", "Large"],
+        "temp": ["Ice", "Hot"],
+        "method": ["Dine In", "Door Delivery", "Pick Up"],
+        "stock": 50
     },
     {
         "id": 18,
@@ -249,6 +317,10 @@
         "priceProduct" : 20000,
         "priceDiscount": 18000,
         "statusFavourite": false,
-        "promoType": "Cheap"
+        "promoType": "Cheap",
+        "size": ["Regular", "Medium", "Large"],
+        "temp": ["Ice", "Hot"],
+        "method": ["Dine In", "Door Delivery", "Pick Up"],
+        "stock": 50
     }
 ]

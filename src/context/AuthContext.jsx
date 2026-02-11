@@ -1,4 +1,4 @@
-import { createContext, useContext } from "react";
+import { createContext, useContext, useEffect } from "react";
 import useLocalStorage from "../hooks/useLocalStorage";
 
 const AuthContext = createContext();
@@ -7,10 +7,24 @@ export function AuthProvider({ children }) {
   const [users, setUsers] = useLocalStorage("users", []);
   const [currentUser, setCurrentUser] = useLocalStorage("currentUser", null);
 
+  useEffect(() => {
+    const adminEmail = "admin@coffee.com";
+    const isAdminExist = users.find(u => u.email === adminEmail);
+
+    if (!isAdminExist) {
+      const defaultAdmin = {
+        fullName: "Administrator",
+        email: adminEmail,
+        password: "admin123",
+        role: "admin"
+      };
+      setUsers([...users, defaultAdmin]);
+    }
+  }, [users, setUsers]);
+
   // REGISTER
   const registerUser = (data) => {
     const emailExist = users.find(u => u.email === data.email);
-
     if (emailExist) {
       return { success: false, message: "Email sudah terdaftar" };
     }
@@ -18,7 +32,8 @@ export function AuthProvider({ children }) {
     const newUser = {
       fullName: data.fullname,
       email: data.email,
-      password: data.password
+      password: data.password,
+      role: "user"
     };
 
     setUsers([...users, newUser]);
@@ -36,24 +51,15 @@ export function AuthProvider({ children }) {
     }
 
     setCurrentUser(user);
-    return { success: true, user };
+    return { success: true, user }; 
   };
 
-  // LOGOUT
   const logout = () => {
     setCurrentUser(null);
   };
 
   return (
-    <AuthContext.Provider
-      value={{
-        users,
-        currentUser,
-        registerUser,
-        loginUser,
-        logout
-      }}
-    >
+    <AuthContext.Provider value={{ users, currentUser, registerUser, loginUser, logout }}>
       {children}
     </AuthContext.Provider>
   );

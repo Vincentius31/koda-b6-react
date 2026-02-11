@@ -1,16 +1,24 @@
-import { Outlet, Link, useLocation } from 'react-router-dom';
+import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Coffee, ShoppingCart, Users, LogOut, Search, ShoppingBag } from 'lucide-react';
 import logoBrown from "../../assets/img/Logo-Brown.png"
+import { useAuth } from '../../context/AuthContext';
 
 export default function AdminLayout() {
-    const location = useLocation()
+    const location = useLocation();
+    const navigate = useNavigate();
+    const { currentUser, logout } = useAuth();
+
+    const handleLogout = () => {
+        logout();
+        navigate("/login");
+    };
 
     const menuItems = [
         { name: "Dashboard", path: "/admin/dashboard", icon: <LayoutDashboard size={20} /> },
         { name: "Product", path: "/admin/product", icon: <Coffee size={20} /> },
         { name: "Order", path: "/admin/order", icon: <ShoppingCart size={20} /> },
         { name: "User", path: "/admin/user", icon: <Users size={20} /> }
-    ]
+    ];
     return (
         <div className="flex min-h-screen bg-gray-50 font-sans">
             {/* SIDEBAR */}
@@ -29,22 +37,19 @@ export default function AdminLayout() {
                             key={item.name}
                             to={item.path}
                             className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${location.pathname === item.path
-                                    ? 'bg-orange-500 text-white shadow-md shadow-orange-200'
-                                    : 'text-gray-400 hover:bg-orange-50 hover:text-orange-500'
+                                ? 'bg-orange-500 text-white shadow-md shadow-orange-200'
+                                : 'text-gray-400 hover:bg-orange-50 hover:text-orange-500'
                                 }`}
                         >
                             {item.icon}
                             <span className="font-medium">{item.name}</span>
                         </Link>
                     ))}
-                </nav>
-
-                <div className="px-4 mt-auto">
-                    <button className="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-red-500 w-full transition-colors">
+                    <button onClick={handleLogout} className="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-red-500 w-full transition-colors">
                         <LogOut size={20} />
                         <span className="font-medium">Keluar</span>
                     </button>
-                </div>
+                </nav>
             </aside>
 
             {/* MAIN CONTENT AREA */}

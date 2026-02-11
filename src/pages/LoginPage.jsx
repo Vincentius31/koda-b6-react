@@ -44,7 +44,12 @@ export default function LoginPage() {
     }
 
     alert("Login berhasil");
-    navigate("/");
+
+    if (result.user?.role === "admin") {
+      navigate("/admin/dashboard");
+    } else {
+      navigate("/");
+    }
   };
 
   return (
@@ -65,7 +70,7 @@ export default function LoginPage() {
 
           <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
 
-            <Input 
+            <Input
               label="Email"
               type="email"
               placeholder="Enter Your Email"
@@ -74,7 +79,7 @@ export default function LoginPage() {
               error={errors.email?.message}
             />
 
-            <Password 
+            <Password
               label="Password"
               placeholder="Enter Your Password"
               register={register("password")}

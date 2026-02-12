@@ -13,9 +13,7 @@ export default function Product() {
     const [search, setSearch] = useState("");
     const [filteredProducts, setFilteredProducts] = useState([]);
 
-
     useEffect(() => {
-
         if (products.length > 0) return;
 
         const fetchData = async () => {
@@ -26,18 +24,7 @@ export default function Product() {
 
                 const data = await res.json();
 
-                const formatted = data.map(item => ({
-                    id: item.id,
-                    name: item.nameProduct,
-                    price: `IDR ${item.priceProduct.toLocaleString("id-ID")}`,
-                    desc: item.description,
-                    size: item.size.join(", "),
-                    method: item.method.join(", "),
-                    stock: item.stock,
-                    img: item.imageProduct?.[0] || "https://via.placeholder.com/40"
-                }));
-
-                setProducts(formatted);
+                setProducts(data);
 
             } catch (err) {
                 console.error("Fetch gagal:", err);
@@ -45,7 +32,6 @@ export default function Product() {
         };
 
         fetchData();
-
     }, []);
 
     useEffect(() => {
@@ -54,7 +40,7 @@ export default function Product() {
 
     useEffect(() => {
         const result = products.filter(product =>
-            product.name.toLowerCase().includes(search.toLowerCase())
+            product.nameProduct.toLowerCase().includes(search.toLowerCase())
         );
 
         setFilteredProducts(result);
@@ -74,7 +60,6 @@ export default function Product() {
         setProducts(updatedProducts);
     };
 
-
     return (
         <div className="space-y-4">
             <h2 className="text-xl font-base text-gray-800">Product List</h2>
@@ -89,10 +74,17 @@ export default function Product() {
                     <div className="flex flex-col gap-1 w-full md:w-64">
                         <label className="text-base text-gray-400">Search Product</label>
                         <div className="relative">
-                            <input type="text" placeholder="Enter Product Name" value={search} onChange={(e) => setSearch(e.target.value)} className="w-full pl-4 pr-10 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-orange-500" />
+                            <input
+                                type="text"
+                                placeholder="Enter Product Name"
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                                className="w-full pl-4 pr-10 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-orange-500"
+                            />
                             <Search className="absolute right-3 top-2.5 text-gray-400" size={16} />
                         </div>
                     </div>
+
                     <button className="bg-orange-500 hover:bg-orange-600 text-white p-2.5 rounded-lg mt-auto flex items-center gap-2 transition-colors">
                         <Filter size={18} />
                         <span className="text-sm font-medium pr-1">Filter</span>
@@ -116,31 +108,75 @@ export default function Product() {
                                 <th className="px-4 py-4 text-center">Action</th>
                             </tr>
                         </thead>
+
                         <tbody className="divide-y divide-gray-50">
                             {filteredProducts.map((product) => (
                                 <tr key={product.id} className="hover:bg-gray-50/50 transition-colors">
-                                    <td className="px-6 py-4 text-center"><input type="checkbox" className="rounded" /></td>
+
+                                    <td className="px-6 py-4 text-center">
+                                        <input type="checkbox" className="rounded" />
+                                    </td>
+
+                                    {/* IMAGE */}
                                     <td className="px-4 py-4">
-                                        <img src={product.img} alt={product.name} className="w-10 h-10 rounded-lg object-cover bg-gray-100" />
+                                        <img
+                                            src={product.imageProduct?.[0]}
+                                            alt={product.nameProduct}
+                                            className="w-10 h-10 rounded-lg object-cover bg-gray-100"
+                                        />
                                     </td>
-                                    <td className="px-4 py-4 font-medium text-gray-700">{product.name}</td>
-                                    <td className="px-4 py-4 text-gray-600">{product.price}</td>
+
+                                    {/* NAME */}
+                                    <td className="px-4 py-4 font-medium text-gray-700">
+                                        {product.nameProduct}
+                                    </td>
+
+                                    {/* PRICE */}
+                                    <td className="px-4 py-4 text-gray-600">
+                                        IDR {product.priceProduct.toLocaleString("id-ID")}
+                                    </td>
+
+                                    {/* DESC */}
                                     <td className="px-4 py-4 text-gray-400 text-[11px] leading-relaxed max-w-37.5">
-                                        {product.desc}
+                                        {product.description}
                                     </td>
-                                    <td className="px-4 py-4 text-gray-600">{product.size}</td>
-                                    <td className="px-4 py-4 text-gray-600">{product.method}</td>
-                                    <td className="px-4 py-4 text-gray-600">{product.stock}</td>
+
+                                    {/* SIZE */}
+                                    <td className="px-4 py-4 text-gray-600">
+                                        {product.size.join(", ")}
+                                    </td>
+
+                                    {/* METHOD */}
+                                    <td className="px-4 py-4 text-gray-600">
+                                        {product.method.join(", ")}
+                                    </td>
+
+                                    {/* STOCK */}
+                                    <td className="px-4 py-4 text-gray-600">
+                                        {product.stock}
+                                    </td>
+
+                                    {/* ACTION */}
                                     <td className="px-4 py-4">
                                         <div className="flex items-center justify-center gap-2">
-                                            <button onClick={() => setShowEditModal(true)} className="p-1.5 text-orange-400 hover:bg-orange-50 rounded-md transition-colors">
+
+                                            <button
+                                                onClick={() => setShowEditModal(true)}
+                                                className="p-1.5 text-orange-400 hover:bg-orange-50 rounded-md transition-colors"
+                                            >
                                                 <Pencil size={16} />
                                             </button>
-                                            <button onClick={() => handleDelete(product.id)} className="p-1.5 text-red-400 hover:bg-red-50 rounded-md transition-colors">
+
+                                            <button
+                                                onClick={() => handleDelete(product.id)}
+                                                className="p-1.5 text-red-400 hover:bg-red-50 rounded-md transition-colors"
+                                            >
                                                 <Trash2 size={16} />
                                             </button>
+
                                         </div>
                                     </td>
+
                                 </tr>
                             ))}
                         </tbody>
@@ -149,6 +185,7 @@ export default function Product() {
 
                 <div className="px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4 text-[12px] text-black border-t border-gray-50">
                     <p>Show {products.length} product</p>
+
                     <div className="flex items-center gap-2">
                         <button className="p-1 hover:text-gray-600">Prev</button>
                         <span className="text-orange-500 font-bold">1</span>

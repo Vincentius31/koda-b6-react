@@ -10,6 +10,10 @@ export default function Product() {
     const [showAddModal, setShowAddModal] = useState(false)
     const [showEditModal, setShowEditModal] = useState(false)
 
+    const [search, setSearch] = useState("");
+    const [filteredProducts, setFilteredProducts] = useState([]);
+
+
     useEffect(() => {
 
         if (products.length > 0) return;
@@ -44,6 +48,18 @@ export default function Product() {
 
     }, []);
 
+    useEffect(() => {
+        setFilteredProducts(products);
+    }, [products]);
+
+    useEffect(() => {
+        const result = products.filter(product =>
+            product.name.toLowerCase().includes(search.toLowerCase())
+        );
+
+        setFilteredProducts(result);
+    }, [search, products]);
+
 
     return (
         <div className="space-y-4">
@@ -59,7 +75,7 @@ export default function Product() {
                     <div className="flex flex-col gap-1 w-full md:w-64">
                         <label className="text-base text-gray-400">Search Product</label>
                         <div className="relative">
-                            <input type="text" placeholder="Enter Product Name" className="w-full pl-4 pr-10 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-orange-500" />
+                            <input type="text" placeholder="Enter Product Name" value={search} onChange={(e) => setSearch(e.target.value)} className="w-full pl-4 pr-10 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-orange-500" />
                             <Search className="absolute right-3 top-2.5 text-gray-400" size={16} />
                         </div>
                     </div>
@@ -87,7 +103,7 @@ export default function Product() {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-50">
-                            {products.map((product) => (
+                            {filteredProducts.map((product) => (
                                 <tr key={product.id} className="hover:bg-gray-50/50 transition-colors">
                                     <td className="px-6 py-4 text-center"><input type="checkbox" className="rounded" /></td>
                                     <td className="px-4 py-4">

@@ -60,6 +60,20 @@ export default function Product() {
         setFilteredProducts(result);
     }, [search, products]);
 
+    const handleDelete = (id) => {
+        const isConfirmed = window.confirm(
+            "Apakah kamu yakin ingin menghapus product ini?"
+        );
+
+        if (!isConfirmed) return;
+
+        const updatedProducts = products.filter(
+            (product) => product.id !== id
+        );
+
+        setProducts(updatedProducts);
+    };
+
 
     return (
         <div className="space-y-4">
@@ -122,7 +136,7 @@ export default function Product() {
                                             <button onClick={() => setShowEditModal(true)} className="p-1.5 text-orange-400 hover:bg-orange-50 rounded-md transition-colors">
                                                 <Pencil size={16} />
                                             </button>
-                                            <button className="p-1.5 text-red-400 hover:bg-red-50 rounded-md transition-colors">
+                                            <button onClick={() => handleDelete(product.id)} className="p-1.5 text-red-400 hover:bg-red-50 rounded-md transition-colors">
                                                 <Trash2 size={16} />
                                             </button>
                                         </div>

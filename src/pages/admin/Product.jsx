@@ -1,26 +1,54 @@
-import React, { useState } from 'react'
-import { Plus, Search, Filter, Pencil, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
+import React, { useState, useEffect } from 'react'
+import { Plus, Search, Filter, Pencil, Trash2 } from 'lucide-react';
 import AddProductModal from '../../components/modal/admin/AddProductModal';
 import EditProductModal from '../../components/modal/admin/EditProductModal';
+import useLocalStorage from '../../hooks/useLocalStorage';
 
 export default function Product() {
-    const products = [
-        { id: 1, name: 'Caramel Machiato', price: 'IDR 40.000', desc: 'Cold brewing is a method of brewing that ...', size: 'R,L,XL,250gr', method: 'Deliver, Dine In', stock: 200, img: 'https://via.placeholder.com/40' },
-        { id: 2, name: 'Hazelnut Latte', price: 'IDR 40.000', desc: 'Cold brewing is a method of brewing that ...', size: 'R,L,XL,250gr', method: 'Deliver, Dine In', stock: 200, img: 'https://via.placeholder.com/40' },
-        { id: 3, name: 'Kopi Susu', price: 'IDR 40.000', desc: 'Cold brewing is a method of brewing that ...', size: 'R,L,XL,250gr', method: 'Dine In', stock: 200, img: 'https://via.placeholder.com/40' },
-        { id: 4, name: 'Espresso Supreme', price: 'IDR 40.000', desc: 'Cold brewing is a method of brewing that ...', size: 'R,L,XL,250gr', method: 'Deliver', stock: 200, img: 'https://via.placeholder.com/40' },
-        { id: 5, name: 'Caramel Velvet Latte', price: 'IDR 40.000', desc: 'Cold brewing is a method of brewing that ...', size: 'R,L,XL,250gr', method: 'Deliver, Dine In', stock: 200, img: 'https://via.placeholder.com/40' },
-    ]
+    const [products, setProducts] = useLocalStorage("products", []);
 
     const [showAddModal, setShowAddModal] = useState(false)
     const [showEditModal, setShowEditModal] = useState(false)
 
+    useEffect(() => {
+
+        if (products.length > 0) return;
+
+        const fetchData = async () => {
+            try {
+                const res = await fetch(
+                    "https://raw.githubusercontent.com/Vincentius31/koda-b6-react/main/src/data/menu.json"
+                );
+
+                const data = await res.json();
+
+                const formatted = data.map(item => ({
+                    id: item.id,
+                    name: item.nameProduct,
+                    price: `IDR ${item.priceProduct.toLocaleString("id-ID")}`,
+                    desc: item.description,
+                    size: item.size.join(", "),
+                    method: item.method.join(", "),
+                    stock: item.stock,
+                    img: item.imageProduct?.[0] || "https://via.placeholder.com/40"
+                }));
+
+                setProducts(formatted);
+
+            } catch (err) {
+                console.error("Fetch gagal:", err);
+            }
+        };
+
+        fetchData();
+
+    }, []);
+
+
     return (
         <div className="space-y-4">
-            {/* Title Section */}
             <h2 className="text-xl font-base text-gray-800">Product List</h2>
 
-            {/* Action Bar */}
             <div className="flex flex-col md:flex-row justify-between items-end gap-4">
                 <button onClick={() => setShowAddModal(true)} className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2.5 rounded-lg flex items-center gap-2 transition-colors font-medium text-sm shadow-sm shadow-orange-200">
                     <Plus size={18} />
@@ -31,11 +59,7 @@ export default function Product() {
                     <div className="flex flex-col gap-1 w-full md:w-64">
                         <label className="text-base text-gray-400">Search Product</label>
                         <div className="relative">
-                            <input
-                                type="text"
-                                placeholder="Enter Product Name"
-                                className="w-full pl-4 pr-10 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-orange-500"
-                            />
+                            <input type="text" placeholder="Enter Product Name" className="w-full pl-4 pr-10 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-orange-500" />
                             <Search className="absolute right-3 top-2.5 text-gray-400" size={16} />
                         </div>
                     </div>
@@ -46,7 +70,6 @@ export default function Product() {
                 </div>
             </div>
 
-            {/* Table Section */}
             <div className="bg-white border border-gray-100 rounded-xl shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left text-sm">
@@ -94,27 +117,16 @@ export default function Product() {
                     </table>
                 </div>
 
-                {/* Pagination */}
                 <div className="px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4 text-[12px] text-black border-t border-gray-50">
-                    <p>Show 5 product of 100 product</p>
+                    <p>Show {products.length} product</p>
                     <div className="flex items-center gap-2">
                         <button className="p-1 hover:text-gray-600">Prev</button>
-                        <span className="flex gap-6">
-                            <span className="text-orange-500 font-bold">1</span>
-                            <span className="cursor-pointer hover:text-gray-600">2</span>
-                            <span className="cursor-pointer hover:text-gray-600">3</span>
-                            <span className="cursor-pointer hover:text-gray-600">4</span>
-                            <span className="cursor-pointer hover:text-gray-600">5</span>
-                            <span>...</span>
-                            <span className="cursor-pointer hover:text-gray-600">9</span>
-                        </span>
-                        <button className="p-1 hover:text-gray-600 flex items-center gap-1 font-medium">
-                            Next
-                        </button>
+                        <span className="text-orange-500 font-bold">1</span>
+                        <button className="p-1 hover:text-gray-600">Next</button>
                     </div>
                 </div>
             </div>
-            {/* Modal */}
+
             <AddProductModal isOpen={showAddModal} onClose={() => setShowAddModal(false)} />
             <EditProductModal isOpen={showEditModal} onClose={() => setShowEditModal(false)} />
         </div>

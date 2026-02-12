@@ -10,26 +10,10 @@ import imageBarista from "../assets/img/Rectangle 291.png"
 import imageGlobal from "../assets/img/Huge Global.png"
 import { CircleCheck, MessageCircleMore } from "lucide-react"
 import imageTesti from "../assets/img/Rectangle 295.png"
+import useLocalStorage from "../hooks/useLocalStorage"
 
 export default function HomePage() {
-    const [products, setProducts] = useState([])
-
-    useEffect(() => {
-        fetch("https://raw.githubusercontent.com/Vincentius31/koda-b6-react/refs/heads/main/src/data/menu.json")
-            .then(res => {
-                if (!res.ok) {
-                    throw new Error("Failed fetch data")
-                }
-                return res.json()
-            })
-            .then(data => {
-                setProducts(Array.isArray(data) ? data : [])
-            })
-            .catch(err => {
-                console.error(err)
-                setProducts([])
-            })
-    }, [])
+    const [products] = useLocalStorage("products", [])
 
     return (
         <div>
@@ -130,9 +114,10 @@ export default function HomePage() {
                             .filter(item => item.statusFavourite === true)
                             .map(item => (
                                 <ProductCard
+                                    key={item.id}
                                     id={item.id}
                                     name={item.nameProduct}
-                                    src={item.imageDepan}
+                                    src={item.imageProduct ? item.imageProduct[0] : ""}
                                     description={item.description}
                                     price={item.priceDiscount}
                                 />

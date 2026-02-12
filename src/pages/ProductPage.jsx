@@ -6,6 +6,7 @@ import imageHero from "../assets/img/Rectangle 299.png"
 import imagePromoGreen from "../assets/img/person-product.png"
 import imagePromoYellow from "../assets/img/person2-product.png"
 import { useEffect, useState } from "react"
+import useLocalStorage from "../hooks/useLocalStorage" 
 
 const promos = [
     { bg: "bg-[#88B788]", img: imagePromoGreen, title: "HAPPY MOTHER'S DAY!", desc: "Get one of our favorite menu for free!", note: "Klaim Kupon" },
@@ -16,7 +17,9 @@ const promos = [
 
 export default function ProductPage() {
     const [currentIndex, setCurrentIndex] = useState(0)
-    const [products, setProducts] = useState([])
+
+    const [products] = useLocalStorage("products", [])
+
     const [currentPage, setCurrentPage] = useState(1)
     const ITEMS_PER_PAGE = 6
 
@@ -35,12 +38,6 @@ export default function ProductPage() {
     const nextPromo = () => setCurrentIndex(prev => prev === promos.length - 1 ? 0 : prev + 1)
     const prevPromo = () => setCurrentIndex(prev => prev === 0 ? promos.length - 1 : prev - 1)
 
-    useEffect(() => {
-        fetch("https://raw.githubusercontent.com/Vincentius31/koda-b6-react/refs/heads/main/src/data/menu.json")
-            .then(res => res.json())
-            .then(data => setProducts(data))
-            .catch(err => console.error(err))
-    }, [])
 
     const handleApplyFilter = () => {
         setAppliedFilters({
@@ -129,8 +126,18 @@ export default function ProductPage() {
                     <div className="flex-2 max-w-180 ml-18">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-10 auto-rows-fr">
                             {currentProducts.map((item) => (
-                                <ProductCard key={item.id} id={item.id} name={item.nameProduct} src={item.imageDepan} description={item.description} price={item.priceDiscount} />
+                                <ProductCard
+                                    key={item.id}
+                                    id={item.id}
+                                    name={item.nameProduct}
+                                    src={item.imageProduct ? item.imageProduct[0] : ""}
+                                    description={item.description}
+                                    price={item.priceDiscount}
+                                />
                             ))}
+                            {currentProducts.length === 0 && (
+                                <p className="col-span-full text-center py-20 text-gray-500">Produk tidak ditemukan.</p>
+                            )}
                         </div>
                     </div>
                 </div>

@@ -5,12 +5,15 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import ProductCard from "../components/ProductCard";
 import { useCart } from "../context/CartContext";
+import useLocalStorage from "../hooks/useLocalStorage";
 
 export default function DetailProductPage() {
     const { id } = useParams();
     const location = useLocation();
     const navigate = useNavigate(); 
     const { addToCart } = useCart();
+
+    const [products] = useLocalStorage("products", []);
 
     const [product, setProduct] = useState(location.state?.product || null);
     const [recommended, setRecommended] = useState([]);
@@ -22,24 +25,18 @@ export default function DetailProductPage() {
     const [temperature, setTemperature] = useState("Ice");
 
     useEffect(() => {
-        fetch("https://raw.githubusercontent.com/Vincentius31/koda-b6-react/refs/heads/main/src/data/menu.json")
-            .then(res => res.json())
-            .then(data => {
-                const found = data.find(item => String(item.id) === id);
-                setProduct(found || null);
+        if (products && products.length > 0) {
+            const found = products.find(item => String(item.id) === id);
+            setProduct(found || null);
 
-                const filtered = data.filter(item => String(item.id) !== id);
-                setRecommended(filtered);
-            })
-            .catch(() => {
-                setProduct(null);
-                setRecommended([]);
-            });
+            const filtered = products.filter(item => String(item.id) !== id);
+            setRecommended(filtered);
+        }
 
         setQuantity(1);
         setSize("Regular");
         setTemperature("Ice");
-    }, [id]);
+    }, [id, products]);
 
     if (!product) {
         return <p className="p-6">Product not found</p>;
@@ -49,7 +46,7 @@ export default function DetailProductPage() {
         const newItem = {
             id: product.id,
             name: product.nameProduct,
-            image: product.imageDepan,
+            image: product.imageProduct ? product.imageProduct[0] : "",
             price: Number(product.priceDiscount),
             qty: quantity,
             size: size,
@@ -77,15 +74,19 @@ export default function DetailProductPage() {
                     <div>
                         <div className="w-auto aspect-square overflow-hidden mb-4 mt-25">
                             <img
-                                src={product.imageDepan}
+                                src={product.imageProduct ? product.imageProduct[0] : ""}
                                 alt={product.nameProduct}
                                 className="w-full h-full object-cover"
                             />
                         </div>
                         <div className="grid grid-cols-3 gap-4">
-                            {[product.imageKedua, product.imageKetiga, product.imageKeempat].map((img, idx) => (
+                            {[1, 2, 3].map((idx) => (
                                 <div key={idx} className="aspect-square overflow-hidden cursor-pointer border hover:border-orange-500">
-                                    <img src={img} alt="thumbnail" className="w-full h-full object-cover" />
+                                    <img 
+                                        src={product.imageProduct ? product.imageProduct[idx] : ""} 
+                                        alt="thumbnail" 
+                                        className="w-full h-full object-cover" 
+                                    />
                                 </div>
                             ))}
                         </div>
@@ -93,7 +94,7 @@ export default function DetailProductPage() {
 
                     <div className="mt-25">
                         <span className="inline-block bg-red-500 text-white text-xs px-3 py-1 rounded-full mb-3">
-                            FLASH SALE!
+                            {product.promoType || "FLASH SALE!"}
                         </span>
                         <h1 className="text-4xl font-semibold mb-2">{product.nameProduct}</h1>
 
@@ -104,7 +105,7 @@ export default function DetailProductPage() {
 
                         <div className="flex items-center gap-2 mb-4 text-sm">
                             <div className="text-orange-400">★★★★★</div>
-                            <span className="text-gray-600">5.0 | 200+ Review</span>
+                            <span className="text-gray-600">{product.rating} | 200+ Review</span>
                         </div>
 
                         <p className="text-gray-600 mb-6 leading-relaxed">{product.description}</p>
@@ -172,7 +173,7 @@ export default function DetailProductPage() {
                                 key={item.id}
                                 id={item.id}
                                 name={item.nameProduct}
-                                src={item.imageDepan}
+                                src={item.imageProduct ? item.imageProduct[0] : ""}
                                 description={item.description}
                                 price={item.priceDiscount}
                             />

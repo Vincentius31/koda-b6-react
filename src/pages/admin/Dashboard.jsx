@@ -1,25 +1,51 @@
 import { Coffee, Truck, UserRoundCheck } from 'lucide-react';
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 export default function Dashboard() {
+    const [products, setProducts] = useState([]);
+
+    useEffect(() => {
+        fetch("https://raw.githubusercontent.com/Vincentius31/koda-b6-react/refs/heads/main/src/data/menu.json")
+            .then(res => res.json())
+            .then(data => {
+                setProducts(data);
+                setLoading(false);
+            })
+            .catch(err => console.error(err));
+    }, []);
+
+    const totalSold = products.reduce((acc, curr) => acc + (curr.sold || 0), 0);
+    const totalProfit = products.reduce((acc, curr) => acc + ((curr.sold || 0) * curr.priceDiscount), 0);
+
     const stats = [
-        { title: 'Order On Progress', value: '200', color: 'bg-[#56CA82]', icon: <Coffee color='orange'/> },
-        { title: 'Order Shipping', value: '100', color: 'bg-[#6D5DD3]', icon: <Truck color='orange'/> },
-        { title: 'Order Done', value: '50', color: 'bg-[#B270C9]', icon: <UserRoundCheck color='orange'/> },
+        {
+            title: 'Order On Progress',
+            value: Math.floor(totalSold * 0.2),
+            color: 'bg-[#56CA82]',
+            icon: <Coffee color='orange' />
+        },
+        {
+            title: 'Order Shipping',
+            value: Math.floor(totalSold * 0.1),
+            color: 'bg-[#6D5DD3]',
+            icon: <Truck color='orange' />
+        },
+        {
+            title: 'Order Done',
+            value: totalSold,
+            color: 'bg-[#B270C9]',
+            icon: <UserRoundCheck color='orange' />
+        },
     ];
 
-    const bestSellers = [
-        { name: 'Caramel Macchiato', sold: '300 Cup', profit: '9.000.000' },
-        { name: 'Hazelnut Latte', sold: '200 Cup', profit: '8.000.000' },
-        { name: 'Kopi Susu', sold: '100 Cup', profit: '7.000.000' },
-        { name: 'Espresso Supreme', sold: '90 Cup', profit: '6.000.000' },
-        { name: 'Caramel Velvet Latte', sold: '80 Cup', profit: '5.000.000' },
-        { name: 'Hazelnut Dream Brew', sold: '70 Cup', profit: '4.000.000' },
-        { name: 'Vanilla Silk Mocha', sold: '60 Cup', profit: '3.000.000' },
-        { name: 'Dark Roast Delight', sold: '50 Cup', profit: '2.000.000' },
-        { name: 'Ethiopian Yirgacheffe Euphoria', sold: '40 Cup', profit: '1.000.000' },
-        { name: 'Indonesian Sumatra Reserve', sold: '30 Cup', profit: '500.000' },
-    ];
+    const bestSellers = [...products]
+        .sort((a, b) => (b.sold || 0) - (a.sold || 0))
+        .slice(0, 10)
+        .map(item => ({
+            name: item.nameProduct,
+            sold: `${item.sold || 0} Cup`,
+            profit: ((item.sold || 0) * item.priceDiscount).toLocaleString('id-ID')
+        }));
 
     return (
         <div className="space-y-6 max-w-7xl mx-auto">
@@ -34,7 +60,7 @@ export default function Dashboard() {
                             </p>
                             <div className="flex items-baseline gap-2 mt-4">
                                 <h3 className="text-2xl font-bold">{stat.value}</h3>
-                                <span className="text-[10px] opacity-70">+1.01% ↗</span>
+                                <span className="text-[10px] opacity-70">+{(Math.random() * 2).toFixed(2)}% ↗</span>
                             </div>
                         </div>
                     </div>
@@ -46,24 +72,25 @@ export default function Dashboard() {
                 <div className="flex justify-between items-center mb-6">
                     <div>
                         <h4 className="font-bold text-gray-800">Total Penjualan</h4>
-                        <p className="text-[10px] text-gray-400">1000 cup (16 - 23 January 2023)</p>
+                        <p className="text-[10px] text-gray-400">{totalSold} cup (Lifetime Data)</p>
                     </div>
                     <select className="text-[10px] border border-gray-200 rounded-md px-2 py-1 text-gray-500 bg-gray-50">
-                        <option>16 - 23 January 2023</option>
+                        <option>Current Menu Data</option>
                     </select>
                 </div>
 
-                {/* Visualisasi Grafik Sederhana (Placeholder Line) */}
+                {/* Dinamisasi Grafik Sederhana melalui SVG Path */}
                 <div className="h-40 w-full relative mt-4 flex items-end overflow-hidden">
                     <svg className="w-full h-full" viewBox="0 0 1000 100" preserveAspectRatio="none">
                         <path
-                            d="M0,80 Q100,70 200,85 T400,60 T600,75 T800,40 T1000,30"
+                            // Path ini merepresentasikan fluktuasi profit per kategori (Simulasi visual)
+                            d="M0,90 Q150,20 300,70 T600,30 T900,50 T1000,10"
                             fill="none"
                             stroke="#56CA82"
                             strokeWidth="3"
                         />
                         <path
-                            d="M0,80 Q100,70 200,85 T400,60 T600,75 T800,40 T1000,30 V100 H0 Z"
+                            d="M0,90 Q150,20 300,70 T600,30 T900,50 T1000,10 V100 H0 Z"
                             fill="url(#gradient)"
                             fillOpacity="0.1"
                         />
@@ -74,9 +101,8 @@ export default function Dashboard() {
                             </linearGradient>
                         </defs>
                     </svg>
-                    {/* Label Tanggal Bawah */}
-                    <div className="absolute bottom-0 w-full flex justify-between text-[10px] text-gray-300 px-2">
-                        <span>16 Jan</span><span>18 Jan</span><span>20 Jan</span><span>22 Jan</span><span>23 Jan</span>
+                    <div className="absolute bottom-0 w-full flex justify-between text-[10px] text-gray-300 px-2 font-medium">
+                        <span>Coffee</span><span>Non Coffee</span><span>Food</span><span>Add-On</span><span>Special</span>
                     </div>
                 </div>
             </div>
@@ -85,9 +111,7 @@ export default function Dashboard() {
             <div className="bg-white p-6 rounded-lg border border-gray-100 shadow-sm">
                 <div className="flex justify-between items-center mb-6">
                     <h4 className="font-bold text-gray-800 text-sm">Produk Terlaris</h4>
-                    <select className="text-[10px] border border-gray-200 rounded-md px-2 py-1 text-gray-500 bg-gray-50">
-                        <option>16 - 23 January 2023</option>
-                    </select>
+                    <span className="text-[10px] text-gray-400">Berdasarkan data JSON Terbaru</span>
                 </div>
                 <div className="overflow-x-auto">
                     <table className="w-full text-left">

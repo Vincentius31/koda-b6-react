@@ -12,8 +12,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
-
-import { useAuth } from "../context/AuthContext";
+import { useDispatch } from "react-redux";
+import { registerUser } from "../components/redux/authslice";
 
 const schema = yup.object({
   fullname: yup.string().required("Full name wajib diisi"),
@@ -27,7 +27,7 @@ const schema = yup.object({
 
 export default function RegisterPage() {
   const navigate = useNavigate();
-  const { registerUser } = useAuth();
+  const dispatch = useDispatch();
 
   const {
     register,
@@ -38,15 +38,18 @@ export default function RegisterPage() {
   });
 
   const onSubmit = (data) => {
-    const result = registerUser(data);
+    try {
+      dispatch(registerUser({
+        fullname: data.fullname,
+        email: data.email,
+        password: data.password
+      }));
 
-    if (!result.success) {
-      alert(result.message);
-      return;
+      alert("Register berhasil");
+      navigate("/login");
+    } catch (error) {
+      alert(error.message);
     }
-
-    alert("Register berhasil");
-    navigate("/login");
   };
 
   return (

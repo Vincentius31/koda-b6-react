@@ -15,8 +15,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-
-import { useAuth } from "../context/AuthContext";
+import { useDispatch } from "react-redux";
+import { loginUser } from "../components/redux/authslice";
 
 const schema = yup.object({
   email: yup.string().email("Email tidak valid").required("Email wajib diisi"),
@@ -25,7 +25,7 @@ const schema = yup.object({
 
 export default function LoginPage() {
   const navigate = useNavigate();
-  const { loginUser } = useAuth();
+  const dispatch = useDispatch();
 
   const {
     register,
@@ -36,19 +36,21 @@ export default function LoginPage() {
   });
 
   const onSubmit = (data) => {
-    const result = loginUser(data.email, data.password);
+    try {
+      dispatch(loginUser({
+        email: data.email,
+        password: data.password
+      }));
 
-    if (!result.success) {
-      alert(result.message);
-      return;
-    }
+      alert("Login berhasil");
 
-    alert("Login berhasil");
-
-    if (result.user?.role === "admin") {
-      navigate("/admin/dashboard");
-    } else {
-      navigate("/");
+      if (data.email === "admin@coffee.com") {
+        navigate("/admin/dashboard");
+      } else {
+        navigate("/");
+      }
+    } catch (error) {
+      alert(error.message);
     }
   };
 

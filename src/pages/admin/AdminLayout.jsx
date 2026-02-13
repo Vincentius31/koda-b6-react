@@ -1,15 +1,18 @@
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Coffee, ShoppingCart, Users, LogOut, Search, ShoppingBag } from 'lucide-react';
 import logoBrown from "../../assets/img/Logo-Brown.png"
-import { useAuth } from '../../context/AuthContext';
+import { useSelector, useDispatch } from 'react-redux';
+import { logout } from '../../components/redux/authslice';
 
 export default function AdminLayout() {
     const location = useLocation();
     const navigate = useNavigate();
-    const { currentUser, logout } = useAuth();
+    const dispatch = useDispatch();
+
+    const currentUser = useSelector((state) => state.auth.currentUser);
 
     const handleLogout = () => {
-        logout();
+        dispatch(logout());
         navigate("/login");
     };
 
@@ -19,6 +22,7 @@ export default function AdminLayout() {
         { name: "Order", path: "/admin/order", icon: <ShoppingCart size={20} /> },
         { name: "User", path: "/admin/user", icon: <Users size={20} /> }
     ];
+
     return (
         <div className="flex min-h-screen bg-gray-50 font-sans">
             {/* SIDEBAR */}
@@ -64,17 +68,17 @@ export default function AdminLayout() {
                             alt="Admin"
                             className="w-8 h-8 rounded-full border border-gray-200 object-cover"
                         />
-                        <span className="text-sm font-medium text-gray-700">Admin</span>
+                        <span className="text-sm font-medium text-gray-700">
+                            {currentUser?.fullName || "Admin"}
+                        </span>
                         <span className="text-[10px] text-gray-400">▼</span>
                     </div>
                 </header>
 
-                {/* CONTENT DARI OUTLET */}
-                <main className="p-8 bg-gray-50/50 min-h-[calc(100-64px)]">
+                <main className="p-8 bg-gray-50/50 min-h-[calc(100vh-64px)]">
                     <Outlet />
                 </main>
             </div>
         </div>
-
     )
 }

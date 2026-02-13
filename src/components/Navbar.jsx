@@ -1,14 +1,18 @@
 import { Search, ShoppingCart } from "lucide-react";
 import logoWhite from "../assets/img/Logo-White.png";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+
+import { useSelector, useDispatch } from "react-redux";
+import { logout } from "../components/redux/authslice";
 
 export default function Navbar({ className = "" }) {
   const navigate = useNavigate();
-  const { currentUser, logout } = useAuth();
+  const dispatch = useDispatch();
+
+  const currentUser = useSelector((state) => state.auth.currentUser);
 
   const handleLogout = () => {
-    logout();              
+    dispatch(logout());
     navigate("/login");
   };
 
@@ -36,6 +40,7 @@ export default function Navbar({ className = "" }) {
             <ShoppingCart className="w-5 h-5" />
           </Link>
 
+          {/* Logika tampilan tetap sama, hanya sumber datanya yang berubah */}
           {currentUser ? (
             <>
               <Link

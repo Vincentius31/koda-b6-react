@@ -1,15 +1,19 @@
 import { createRoot } from "react-dom/client";
 import App from "./App";
-import { AuthProvider } from "./context/AuthContext";
 import { CartProvider } from "./context/CartContext";
+import { Provider } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react";
+import { store, persistor } from "./components/redux/store";
 
-const el = document.getElementById("root");
-const root = createRoot(el);
+const el = document.getElementById("root")
+const root = createRoot(el)
 
 root.render(
-  <AuthProvider>
-    <CartProvider>
-      <App />
-    </CartProvider>
-  </AuthProvider>
-);
+  <Provider store={store}>
+    <PersistGate loading={null} persistor={persistor}>
+      <CartProvider>
+        <App />
+      </CartProvider>
+    </PersistGate>
+  </Provider>
+)

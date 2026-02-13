@@ -28,7 +28,7 @@ export default function Navbar({ className = "" }) {
         </div>
 
         <div className="hidden md:flex items-center gap-6" id="navAuth">
-          <Link to="/product" className="hover:text-orange-400 transition">
+          <Link to="/history-order" className="hover:text-orange-400 transition">
             <Search className="w-5 h-5" />
           </Link>
 

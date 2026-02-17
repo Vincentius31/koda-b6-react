@@ -13,6 +13,9 @@ export default function Product() {
     const [search, setSearch] = useState("");
     const [filteredProducts, setFilteredProducts] = useState([]);
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 5;
+
     useEffect(() => {
         if (products.length > 0) return;
 
@@ -21,16 +24,12 @@ export default function Product() {
                 const res = await fetch(
                     "https://raw.githubusercontent.com/Vincentius31/koda-b6-react/main/src/data/menu.json"
                 );
-
                 const data = await res.json();
-
                 setProducts(data);
-
             } catch (err) {
                 console.error("Fetch gagal:", err);
             }
         };
-
         fetchData();
     }, []);
 
@@ -42,21 +41,19 @@ export default function Product() {
         const result = products.filter(product =>
             product.nameProduct.toLowerCase().includes(search.toLowerCase())
         );
-
         setFilteredProducts(result);
+        setCurrentPage(1);
     }, [search, products]);
 
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = filteredProducts.slice(indexOfFirstItem, indexOfLastItem);
+    const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+
     const handleDelete = (id) => {
-        const isConfirmed = window.confirm(
-            "Apakah kamu yakin ingin menghapus product ini?"
-        );
-
+        const isConfirmed = window.confirm("Apakah kamu yakin ingin menghapus product ini?");
         if (!isConfirmed) return;
-
-        const updatedProducts = products.filter(
-            (product) => product.id !== id
-        );
-
+        const updatedProducts = products.filter((product) => product.id !== id);
         setProducts(updatedProducts);
     };
 
@@ -110,14 +107,11 @@ export default function Product() {
                         </thead>
 
                         <tbody className="divide-y divide-gray-50">
-                            {filteredProducts.map((product) => (
+                            {currentItems.map((product) => (
                                 <tr key={product.id} className="hover:bg-gray-50/50 transition-colors">
-
                                     <td className="px-6 py-4 text-center">
                                         <input type="checkbox" className="rounded" />
                                     </td>
-
-                                    {/* IMAGE */}
                                     <td className="px-4 py-4">
                                         <img
                                             src={product.imageProduct?.[0]}
@@ -125,58 +119,40 @@ export default function Product() {
                                             className="w-10 h-10 rounded-lg object-cover bg-gray-100"
                                         />
                                     </td>
-
-                                    {/* NAME */}
                                     <td className="px-4 py-4 font-medium text-gray-700">
                                         {product.nameProduct}
                                     </td>
-
-                                    {/* PRICE */}
                                     <td className="px-4 py-4 text-gray-600">
                                         IDR {product.priceProduct.toLocaleString("id-ID")}
                                     </td>
-
-                                    {/* DESC */}
                                     <td className="px-4 py-4 text-gray-400 text-[11px] leading-relaxed max-w-37.5">
                                         {product.description}
                                     </td>
-
-                                    {/* SIZE */}
                                     <td className="px-4 py-4 text-gray-600">
                                         {product.size.join(", ")}
                                     </td>
-
-                                    {/* METHOD */}
                                     <td className="px-4 py-4 text-gray-600">
                                         {product.method.join(", ")}
                                     </td>
-
-                                    {/* STOCK */}
                                     <td className="px-4 py-4 text-gray-600">
                                         {product.stock}
                                     </td>
-
-                                    {/* ACTION */}
                                     <td className="px-4 py-4">
                                         <div className="flex items-center justify-center gap-2">
-
                                             <button
                                                 onClick={() => setShowEditModal(true)}
                                                 className="p-1.5 text-orange-400 hover:bg-orange-50 rounded-md transition-colors"
                                             >
                                                 <Pencil size={16} />
                                             </button>
-
                                             <button
                                                 onClick={() => handleDelete(product.id)}
                                                 className="p-1.5 text-red-400 hover:bg-red-50 rounded-md transition-colors"
                                             >
                                                 <Trash2 size={16} />
                                             </button>
-
                                         </div>
                                     </td>
-
                                 </tr>
                             ))}
                         </tbody>
@@ -184,12 +160,42 @@ export default function Product() {
                 </div>
 
                 <div className="px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4 text-[12px] text-black border-t border-gray-50">
-                    <p>Show {products.length} product</p>
+                    <p>Show {currentItems.length} of {filteredProducts.length} products</p>
 
                     <div className="flex items-center gap-2">
-                        <button className="p-1 hover:text-gray-600">Prev</button>
-                        <span className="text-orange-500 font-bold">1</span>
-                        <button className="p-1 hover:text-gray-600">Next</button>
+                        {/* Tombol Prev */}
+                        <button
+                            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                            disabled={currentPage === 1}
+                            className={`px-2 py-1 ${currentPage === 1 ? 'text-gray-300 cursor-not-allowed' : 'hover:text-orange-500 transition-colors'}`}
+                        >
+                            Prev
+                        </button>
+
+                        {/* Nomor Halaman (1, 2, 3...) */}
+                        <div className="flex items-center gap-1">
+                            {Array.from({ length: totalPages }, (_, index) => (
+                                <button
+                                    key={index + 1}
+                                    onClick={() => setCurrentPage(index + 1)}
+                                    className={`w-7 h-7 rounded-md flex items-center justify-center transition-all ${currentPage === index + 1
+                                            ? 'bg-orange-500 text-white font-bold shadow-sm'
+                                            : 'text-gray-500 hover:bg-orange-50 hover:text-orange-500'
+                                        }`}
+                                >
+                                    {index + 1}
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* Tombol Next */}
+                        <button
+                            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                            disabled={currentPage === totalPages || totalPages === 0}
+                            className={`px-2 py-1 ${currentPage === totalPages || totalPages === 0 ? 'text-gray-300 cursor-not-allowed' : 'hover:text-orange-500 transition-colors'}`}
+                        >
+                            Next
+                        </button>
                     </div>
                 </div>
             </div>

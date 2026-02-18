@@ -1,15 +1,18 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+const savedUsers = JSON.parse(localStorage.getItem("users")) || [
+  {
+    fullName: "Administrator",
+    email: "admin@coffee.com",
+    password: "admin123",
+    role: "admin"
+  }
+];
+const savedCurrentUser = JSON.parse(localStorage.getItem("currentUser")) || null;
+
 const initialState = {
-  users: [
-    {
-      fullName: "Administrator",
-      email: "admin@coffee.com",
-      password: "admin123",
-      role: "admin"
-    }
-  ],
-  currentUser: null,
+  users: savedUsers,
+  currentUser: savedCurrentUser,
 };
 
 const authSlice = createSlice({
@@ -30,7 +33,10 @@ const authSlice = createSlice({
         password,
         role: "user"
       };
+      
       state.users.push(newUser);
+      // SIMPAN KE LOCALSTORAGE
+      localStorage.setItem("users", JSON.stringify(state.users));
     },
     loginUser: (state, action) => {
       const { email, password } = action.payload;
@@ -43,9 +49,12 @@ const authSlice = createSlice({
       }
 
       state.currentUser = user;
+      // SIMPAN KE LOCALSTORAGE
+      localStorage.setItem("currentUser", JSON.stringify(user));
     },
     logout: (state) => {
       state.currentUser = null;
+      localStorage.removeItem("currentUser");
     },
   },
 });

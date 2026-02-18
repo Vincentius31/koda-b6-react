@@ -82,7 +82,7 @@ export default function Product() {
 
             <div className="bg-white border border-gray-100 rounded-xl shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
-                    <table className="w-full text-left text-sm">
+                    <table className="w-full text-sm text-center">
                         <thead className="bg-white border-b border-gray-50">
                             <tr className="text-gray-400 font-medium">
                                 <th className="px-6 py-4 w-12 text-center"><input type="checkbox" className="rounded" /></th>
@@ -91,6 +91,7 @@ export default function Product() {
                                 <th className="px-4 py-4">Price</th>
                                 <th className="px-4 py-4">Desc</th>
                                 <th className="px-4 py-4">Product Size</th>
+                                <th className="px-4 py-4">Temperature</th>
                                 <th className="px-4 py-4">Method</th>
                                 <th className="px-4 py-4">Stock</th>
                                 <th className="px-4 py-4 text-center">Action</th>
@@ -105,6 +106,7 @@ export default function Product() {
                                     <td className="px-4 py-4 text-gray-600">IDR {product.priceProduct.toLocaleString("id-ID")}</td>
                                     <td className="px-4 py-4 text-gray-400 text-[11px] leading-relaxed max-w-37.5">{product.description}</td>
                                     <td className="px-4 py-4 text-gray-600">{product.size.join(", ")}</td>
+                                    <td className="px-4 py-4 text-gray-600">{product.temp.join(", ")}</td>
                                     <td className="px-4 py-4 text-gray-600">{product.method.join(", ")}</td>
                                     <td className="px-4 py-4 text-gray-600">{product.stock}</td>
                                     <td className="px-4 py-4 text-center">

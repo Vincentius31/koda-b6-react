@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { X, ChevronDown, Trash2 } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { X, Trash2, Link, Upload } from 'lucide-react';
 
 export default function EditProductModal({ isOpen, onClose, productData, onSave }) {
     const [formData, setFormData] = useState({
@@ -11,6 +11,9 @@ export default function EditProductModal({ isOpen, onClose, productData, onSave 
         imageProduct: []
     });
 
+    const [imageUrlInput, setImageUrlInput] = useState("");
+    const fileInputRef = useRef(null);
+
     useEffect(() => {
         if (productData) {
             setFormData(productData);
@@ -18,6 +21,27 @@ export default function EditProductModal({ isOpen, onClose, productData, onSave 
     }, [productData, isOpen]);
 
     if (!isOpen) return null;
+
+    const handleAddImageViaLink = () => {
+        if (imageUrlInput.trim() !== "") {
+            setFormData(prev => ({
+                ...prev,
+                imageProduct: [...prev.imageProduct, imageUrlInput]
+            }));
+            setImageUrlInput("");
+        }
+    };
+
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const localUrl = URL.createObjectURL(file);
+            setFormData(prev => ({
+                ...prev,
+                imageProduct: [...prev.imageProduct, localUrl]
+            }));
+        }
+    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -44,40 +68,77 @@ export default function EditProductModal({ isOpen, onClose, productData, onSave 
                     <h2 className="text-2xl font-bold text-gray-900 mb-8">Edit Product</h2>
 
                     <div className="space-y-5">
-                        {/* Photo Section */}
-                        <div className="space-y-2">
+                        {/* PHOTO SECTION UPDATED */}
+                        <div className="space-y-3">
                             <label className="block text-sm font-bold text-[#1F2937]">Photo Product</label>
-                            <div className="flex flex-wrap gap-4">
+
+                            {/* Preview Foto */}
+                            <div className="flex flex-wrap gap-4 mb-4">
                                 {formData.imageProduct?.map((img, idx) => (
                                     <div key={idx} className="relative group">
-                                        <img
-                                            src={img}
-                                            className="w-20 h-20 rounded-xl object-cover bg-gray-100 border border-gray-100"
-                                            alt={`product-${idx}`}
-                                        />
+                                        <img src={img} className="w-20 h-20 rounded-xl object-cover bg-gray-100 border border-gray-100" alt="prev" />
                                         <button
                                             onClick={() => {
                                                 const newImages = formData.imageProduct.filter((_, i) => i !== idx);
                                                 setFormData({ ...formData, imageProduct: newImages });
                                             }}
-                                            className="absolute -top-2 -right-2 bg-white shadow-md p-1.5 rounded-full hover:bg-red-50 transition-colors border border-red-100 group-hover:scale-110"
-                                            title="Delete Photo"
+                                            className="absolute -top-2 -right-2 bg-white shadow-md p-1.5 rounded-full hover:bg-red-50 border border-red-100"
                                         >
-                                            <Trash2 size={14} className="text-red-500" />
+                                            <Trash2 size={12} className="text-red-500" />
                                         </button>
                                     </div>
                                 ))}
-
-                                {formData.imageProduct?.length === 0 && (
-                                    <div className="w-20 h-20 rounded-xl border-2 border-dashed border-gray-200 flex items-center justify-center text-gray-400 text-[10px] text-center px-2">
-                                        No Image
-                                    </div>
-                                )}
                             </div>
 
-                            <button className="bg-[#FF8A00] text-black px-8 py-2 rounded-lg text-xs font-bold mt-1 hover:bg-orange-400 transition-colors">
-                                Upload New
-                            </button>
+                            {/* Pilihan Upload: Link & File */}
+                            <div className="space-y-3 p-4 bg-gray-50 rounded-xl border border-gray-100">
+                                {/* Option 1: URL Link */}
+                                <div className="space-y-1">
+                                    <p className="text-[11px] font-bold text-gray-400 uppercase">Option 1: Image URL</p>
+                                    <div className="flex gap-2">
+                                        <div className="relative flex-1">
+                                            <input
+                                                type="text"
+                                                placeholder="Paste image link here..."
+                                                value={imageUrlInput}
+                                                onChange={(e) => setImageUrlInput(e.target.value)}
+                                                className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-xs focus:ring-1 focus:ring-orange-500 outline-none"
+                                            />
+                                            <Link size={14} className="absolute left-3 top-2.5 text-gray-400" />
+                                        </div>
+                                        <button
+                                            onClick={handleAddImageViaLink}
+                                            className="bg-orange-500 text-white px-3 py-2 rounded-lg text-xs font-bold hover:bg-orange-600 transition-colors"
+                                        >
+                                            Add
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div className="relative py-1">
+                                    <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-gray-200"></span></div>
+                                    <div className="relative flex justify-center text-[10px] uppercase"><span className="bg-gray-50 px-2 text-gray-400 font-bold">OR</span></div>
+                                </div>
+
+                                {/* Option 2: File Upload */}
+                                <div className="space-y-1">
+                                    <p className="text-[11px] font-bold text-gray-400 uppercase">Option 2: From Device</p>
+                                    <input
+                                        type="file"
+                                        ref={fileInputRef}
+                                        onChange={handleFileChange}
+                                        className="hidden"
+                                        accept="image/*"
+                                    />
+                                    <button
+                                        onClick={() => fileInputRef.current.click()}
+                                        className="w-full flex items-center justify-center gap-2 bg-white border border-gray-200 text-gray-700 py-2 rounded-lg text-xs font-bold hover:bg-gray-100 transition-colors"
+                                    >
+                                        <Upload size={14} />
+                                        Choose File
+                                    </button>
+                                </div>
+                            </div>
                         </div>
 
                         {/* Product Name */}

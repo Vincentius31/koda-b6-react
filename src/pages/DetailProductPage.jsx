@@ -31,10 +31,13 @@ export default function DetailProductPage() {
 
       const filtered = products.filter(item => String(item.id) !== id);
       setRecommended(filtered);
+
+      if (found && found.size && found.size.length > 0) {
+        setSize(found.size[0]);
+      }
     }
 
     setQuantity(1);
-    setSize("Regular");
     setTemperature("Ice");
   }, [id, products]);
 
@@ -122,15 +125,36 @@ export default function DetailProductPage() {
             <div className="mb-6">
               <p className="font-medium mb-2">Choose Size</p>
               <div className="flex gap-3">
-                {["Regular", "Medium", "Large"].map(item => (
-                  <button
-                    key={item}
-                    onClick={() => setSize(item)}
-                    className={`px-5 py-2 rounded-lg border transition ${size === item ? "border-orange-500 text-orange-500 bg-orange-50" : "text-gray-500 border-gray-200"}`}
-                  >
-                    {item}
+                {product.size && product.size.length > 0 ? (
+                  product.size.map((item) => {
+                    // Logika Mapping untuk tampilan User
+                    const displayLabels = {
+                      "R": "Regular",
+                      "M": "Medium",
+                      "L": "Large"
+                    };
+
+                    // Jika ada di mapping gunakan nama lengkap, jika tidak (seperti 250 gr) gunakan aslinya
+                    const label = displayLabels[item] || item;
+
+                    return (
+                      <button
+                        key={item}
+                        onClick={() => setSize(item)}
+                        className={`px-5 py-2 rounded-lg border transition ${size === item
+                            ? "border-orange-500 text-orange-500 bg-orange-50"
+                            : "text-gray-500 border-gray-200"
+                          }`}
+                      >
+                        {label}
+                      </button>
+                    );
+                  })
+                ) : (
+                  <button className="px-5 py-2 rounded-lg border border-orange-500 text-orange-500 bg-orange-50">
+                    Regular
                   </button>
-                ))}
+                )}
               </div>
             </div>
 

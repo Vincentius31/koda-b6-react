@@ -51,6 +51,16 @@ export default function EditProductModal({ isOpen, onClose, productData, onSave 
         }));
     };
 
+    const handleSizeToggle = (sizeName) => {
+        setFormData(prev => {
+            const currentSizes = prev.size || [];
+            const newSizes = currentSizes.includes(sizeName)
+                ? currentSizes.filter(s => s !== sizeName)
+                : [...currentSizes, sizeName];
+            return { ...prev, size: newSizes };
+        });
+    };
+
     const handleSubmit = () => {
         onSave(formData);
     };
@@ -181,12 +191,17 @@ export default function EditProductModal({ isOpen, onClose, productData, onSave 
                         <div className="space-y-2">
                             <label className="block text-sm font-bold text-[#1F2937]">Product Size</label>
                             <div className="flex flex-wrap gap-3">
-                                {['R', 'L', 'XL', '250 gr', '500 gr'].map((size) => (
+                                {['Regular', 'Medium', 'Large', '250 gr', '500 gr'].map((sizeItem) => (
                                     <button
-                                        key={size}
-                                        className={`px-5 py-2 rounded-xl text-sm font-bold transition-all ${formData.size?.includes(size) ? 'bg-[#FF8A00] text-black' : 'border border-gray-200 text-gray-500'}`}
+                                        key={sizeItem}
+                                        type="button"
+                                        onClick={() => handleSizeToggle(sizeItem)}
+                                        className={`px-5 py-2 rounded-xl text-sm font-bold transition-all ${formData.size?.includes(sizeItem)
+                                                ? 'bg-[#FF8A00] text-black shadow-sm border-[#FF8A00]'
+                                                : 'border border-gray-200 text-gray-500 hover:bg-gray-50'
+                                            }`}
                                     >
-                                        {size}
+                                        {sizeItem === "Regular" ? "R" : sizeItem === "Medium" ? "M" : sizeItem === "Large" ? "L" : sizeItem}
                                     </button>
                                 ))}
                             </div>

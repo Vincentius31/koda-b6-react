@@ -47,14 +47,37 @@ export default function EditProductModal({ isOpen, onClose, productData, onSave 
                         {/* Photo Section */}
                         <div className="space-y-2">
                             <label className="block text-sm font-bold text-[#1F2937]">Photo Product</label>
-                            <div className="flex gap-4">
+                            <div className="flex flex-wrap gap-4">
                                 {formData.imageProduct?.map((img, idx) => (
-                                    <div key={idx} className="relative">
-                                        <img src={img} className="w-16 h-16 rounded-xl object-cover bg-gray-100" alt="prev" />
+                                    <div key={idx} className="relative group">
+                                        <img
+                                            src={img}
+                                            className="w-20 h-20 rounded-xl object-cover bg-gray-100 border border-gray-100"
+                                            alt={`product-${idx}`}
+                                        />
+                                        <button
+                                            onClick={() => {
+                                                const newImages = formData.imageProduct.filter((_, i) => i !== idx);
+                                                setFormData({ ...formData, imageProduct: newImages });
+                                            }}
+                                            className="absolute -top-2 -right-2 bg-white shadow-md p-1.5 rounded-full hover:bg-red-50 transition-colors border border-red-100 group-hover:scale-110"
+                                            title="Delete Photo"
+                                        >
+                                            <Trash2 size={14} className="text-red-500" />
+                                        </button>
                                     </div>
                                 ))}
+
+                                {formData.imageProduct?.length === 0 && (
+                                    <div className="w-20 h-20 rounded-xl border-2 border-dashed border-gray-200 flex items-center justify-center text-gray-400 text-[10px] text-center px-2">
+                                        No Image
+                                    </div>
+                                )}
                             </div>
-                            <button className="bg-[#FF8A00] text-black px-8 py-2 rounded-lg text-xs font-bold mt-1">Upload</button>
+
+                            <button className="bg-[#FF8A00] text-black px-8 py-2 rounded-lg text-xs font-bold mt-1 hover:bg-orange-400 transition-colors">
+                                Upload New
+                            </button>
                         </div>
 
                         {/* Product Name */}

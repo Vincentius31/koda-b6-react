@@ -58,6 +58,14 @@ export default function Product() {
         setShowEditModal(false);
     };
 
+    const handleAddProduct = (newProduct) => {
+        const newId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
+        const finalProduct = { ...newProduct, id: newId };
+
+        setProducts([...products, finalProduct]);
+        setShowAddModal(false);
+    };
+
     return (
         <div className="space-y-4">
             <h2 className="text-xl font-base text-gray-800">Product List</h2>
@@ -140,8 +148,8 @@ export default function Product() {
                 </div>
             </div>
 
-            <AddProductModal isOpen={showAddModal} onClose={() => setShowAddModal(false)} />
-            <EditProductModal isOpen={showEditModal} onClose={() => setShowEditModal(false)} productData={selectedProduct} onSave={handleUpdateProduct}/>
+            <AddProductModal isOpen={showAddModal} onClose={() => setShowAddModal(false)} onSave={handleAddProduct} />
+            <EditProductModal isOpen={showEditModal} onClose={() => setShowEditModal(false)} productData={selectedProduct} onSave={handleUpdateProduct} />
         </div>
     )
 }

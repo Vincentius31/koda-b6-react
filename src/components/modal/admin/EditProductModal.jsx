@@ -5,10 +5,15 @@ export default function EditProductModal({ isOpen, onClose, productData, onSave 
     const [formData, setFormData] = useState({
         nameProduct: "",
         priceProduct: 0,
+        priceDiscount: 0,
         description: "",
         stock: 0,
         size: [],
-        imageProduct: []
+        temp: [],
+        method: [],
+        imageProduct: [],
+        category: "",
+        rating: 0    
     });
 
     const [imageUrlInput, setImageUrlInput] = useState("");
@@ -68,6 +73,16 @@ export default function EditProductModal({ isOpen, onClose, productData, onSave 
                 ? currentTemps.filter(t => t !== tempValue)
                 : [...currentTemps, tempValue];
             return { ...prev, temp: newTemps };
+        });
+    };
+
+    const handleMethodToggle = (methodValue) => {
+        setFormData(prev => {
+            const currentMethods = prev.method || [];
+            const newMethods = currentMethods.includes(methodValue)
+                ? currentMethods.filter(m => m !== methodValue)
+                : [...currentMethods, methodValue];
+            return { ...prev, method: newMethods };
         });
     };
 
@@ -227,11 +242,31 @@ export default function EditProductModal({ isOpen, onClose, productData, onSave 
                                         type="button"
                                         onClick={() => handleTempToggle(tempItem)}
                                         className={`px-6 py-2 rounded-xl text-sm font-bold transition-all ${formData.temp?.includes(tempItem)
-                                                ? 'bg-[#FF8A00] text-black shadow-sm border-[#FF8A00]'
-                                                : 'border border-gray-200 text-gray-500 hover:bg-gray-50'
+                                            ? 'bg-[#FF8A00] text-black shadow-sm border-[#FF8A00]'
+                                            : 'border border-gray-200 text-gray-500 hover:bg-gray-50'
                                             }`}
                                     >
                                         {tempItem}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Method Section */}
+                        <div className="space-y-2">
+                            <label className="block text-sm font-bold text-[#1F2937]">Delivery Method Options</label>
+                            <div className="flex flex-wrap gap-3">
+                                {['Dine In', 'Door Delivery', 'Pick Up'].map((methodItem) => (
+                                    <button
+                                        key={methodItem}
+                                        type="button"
+                                        onClick={() => handleMethodToggle(methodItem)}
+                                        className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${formData.method?.includes(methodItem)
+                                            ? 'bg-[#FF8A00] text-black shadow-sm border-[#FF8A00]'
+                                            : 'border border-gray-200 text-gray-500 hover:bg-gray-50'
+                                            }`}
+                                    >
+                                        {methodItem}
                                     </button>
                                 ))}
                             </div>

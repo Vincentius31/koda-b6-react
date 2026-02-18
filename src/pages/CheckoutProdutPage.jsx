@@ -42,8 +42,8 @@ export default function CheckoutProductPage() {
 
     const now = new Date();
     const datePart = now.toISOString().split('T')[0].replace(/-/g, '');
-    const timePart = now.getHours().toString().padStart(2, '0') + now.getMinutes().toString().padStart(2, '0'); 
-    const randomPart = Math.floor(1000 + Math.random() * 9000); 
+    const timePart = now.getHours().toString().padStart(2, '0') + now.getMinutes().toString().padStart(2, '0');
+    const randomPart = Math.floor(1000 + Math.random() * 9000);
     const newOrderId = `ORD-${datePart}${timePart}${randomPart}`;
 
     const storageKey = `orders_${activeUser.email}`;
@@ -114,11 +114,21 @@ export default function CheckoutProductPage() {
                 <div>
                   <p className="mb-2 text-sm font-medium">Delivery Method</p>
                   <div className="flex flex-wrap gap-3">
-                    {["Dine In", "Door Delivery", "Pick Up"].map(item => (
-                      <button key={item} type="button" onClick={() => setDelivery(item)} className={`px-4 py-2 border rounded-lg transition ${delivery === item ? "border-orange-500 text-orange-500 bg-orange-50 font-medium" : "border-gray-200 text-gray-600"}`}>
-                        {item} {item === "Door Delivery" && "(+10k)"}
-                      </button>
-                    ))}
+                    {["Dine In", "Door Delivery", "Pick Up"].map(item => {
+                      return (
+                        <button
+                          key={item}
+                          type="button"
+                          onClick={() => setDelivery(item)}
+                          className={`px-4 py-2 border rounded-lg transition ${delivery === item
+                              ? "border-orange-500 text-orange-500 bg-orange-50 font-medium"
+                              : "border-gray-200 text-gray-600"
+                            }`}
+                        >
+                          {item} {item === "Door Delivery" && "(+10k)"}
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               </div>

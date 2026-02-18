@@ -89,6 +89,8 @@ export default function Product() {
                                 <th className="px-4 py-4">Image</th>
                                 <th className="px-4 py-4">Product Name</th>
                                 <th className="px-4 py-4">Price</th>
+                                <th className="px-4 py-4">Price Discount</th>
+                                <th className="px-4 py-4">Promo Type</th>
                                 <th className="px-4 py-4">Desc</th>
                                 <th className="px-4 py-4">Product Size</th>
                                 <th className="px-4 py-4">Temperature</th>
@@ -104,6 +106,8 @@ export default function Product() {
                                     <td className="px-4 py-4"><img src={product.imageProduct?.[0]} alt={product.nameProduct} className="w-10 h-10 rounded-lg object-cover bg-gray-100" /></td>
                                     <td className="px-4 py-4 font-medium text-gray-700">{product.nameProduct}</td>
                                     <td className="px-4 py-4 text-gray-600">IDR {product.priceProduct.toLocaleString("id-ID")}</td>
+                                    <td className="px-4 py-4 text-gray-600">IDR {product.priceDiscount.toLocaleString("id-ID")}</td>
+                                    <td className="px-4 py-4 font-medium text-gray-700">{product.promoType}</td>
                                     <td className="px-4 py-4 text-gray-400 text-[11px] leading-relaxed max-w-37.5">{product.description}</td>
                                     <td className="px-4 py-4 text-gray-600">{product.size.join(", ")}</td>
                                     <td className="px-4 py-4 text-gray-600">{product.temp.join(", ")}</td>

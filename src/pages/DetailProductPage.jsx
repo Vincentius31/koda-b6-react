@@ -1,200 +1,152 @@
+import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { useParams, useLocation, useNavigate } from "react-router-dom"; 
-import { ShoppingCart } from "lucide-react";
+import { useCart } from "../context/CartContext";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import ProductCard from "../components/ProductCard";
-import { useCart } from "../context/CartContext";
-import useLocalStorage from "../hooks/useLocalStorage";
+import Input from "../components/Input";
+import { Mail, MapPin, User, X, ShoppingCart } from "lucide-react";
+import { PrimaryButton } from "../components/PrimaryButton";
 
-export default function DetailProductPage() {
-    const { id } = useParams();
-    const location = useLocation();
-    const navigate = useNavigate(); 
-    const { addToCart } = useCart();
+export default function CheckoutProductPage() {
+  const navigate = useNavigate();
+  const { cart, clearCart, removeFromCart } = useCart();
+  const [delivery, setDelivery] = useState("Dine In");
 
-    const [products] = useLocalStorage("products", []);
+  const [email, setEmail] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [address, setAddress] = useState("");
 
-    const [product, setProduct] = useState(location.state?.product || null);
-    const [recommended, setRecommended] = useState([]);
-    const [currentPage, setCurrentPage] = useState(1);
-    const ITEM_PER_PAGE = 3;
+  useEffect(() => {
+    const userData = JSON.parse(localStorage.getItem("currentUser"));
+    if (userData) {
+      setEmail(userData.email || "");
+      setFullName(userData.fullName || "");
+    }
+  }, []);
 
-    const [quantity, setQuantity] = useState(1);
-    const [size, setSize] = useState("Regular");
-    const [temperature, setTemperature] = useState("Ice");
+  const orderTotal = cart.reduce((acc, item) => acc + (item.price * item.qty), 0);
+  const deliveryFee = delivery === "Door Delivery" ? 10000 : 0;
+  const tax = orderTotal * 0.1;
+  const subTotal = orderTotal + tax + deliveryFee;
 
-    useEffect(() => {
-        if (products && products.length > 0) {
-            const found = products.find(item => String(item.id) === id);
-            setProduct(found || null);
-
-            const filtered = products.filter(item => String(item.id) !== id);
-            setRecommended(filtered);
-        }
-
-        setQuantity(1);
-        setSize("Regular");
-        setTemperature("Ice");
-    }, [id, products]);
-
-    if (!product) {
-        return <p className="p-6">Product not found</p>;
+  const handleCheckout = () => {
+    if (cart.length === 0) {
+      alert("Your cart is empty. Please add some products first!");
+      return;
     }
 
-    const handleAddToCart = (isBuyNow = false) => {
-        const newItem = {
-            id: product.id,
-            name: product.nameProduct,
-            image: product.imageProduct ? product.imageProduct[0] : "",
-            price: Number(product.priceDiscount),
-            qty: quantity,
-            size: size,
-            temperature: temperature
-        };
-        addToCart(newItem);
+    const activeUser = JSON.parse(localStorage.getItem("currentUser"));
 
-        if (isBuyNow) {
-            navigate("/checkout-product");
-        } else {
-            alert("Added to cart!");
-        }
-    };
+    if (!activeUser || !activeUser.email) {
+      alert("Please login to continue checkout.");
+      return;
+    }
 
-    const startIndex = (currentPage - 1) * ITEM_PER_PAGE;
-    const currentItems = recommended.slice(startIndex, startIndex + ITEM_PER_PAGE);
-    const totalPages = Math.ceil(recommended.length / ITEM_PER_PAGE);
+    if (!email || !fullName || (delivery === "Door Delivery" && !address)) {
+      alert("Please fill in all required fields!");
+      return;
+    }
 
-    return (
-        <div>
-            <Navbar className="bg-black" />
+    const now = new Date();
+    const datePart = now.toISOString().split('T')[0].replace(/-/g, '');
+    const timePart = now.getHours().toString().padStart(2, '0') + now.getMinutes().toString().padStart(2, '0'); 
+    const randomPart = Math.floor(1000 + Math.random() * 9000); 
+    const newOrderId = `ORD-${datePart}${timePart}${randomPart}`;
 
-            <section className="max-w-7xl mx-auto px-4 py-12">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-20">
-                    <div>
-                        <div className="w-auto aspect-square overflow-hidden mb-4 mt-25">
-                            <img
-                                src={product.imageProduct ? product.imageProduct[0] : ""}
-                                alt={product.nameProduct}
-                                className="w-full h-full object-cover"
-                            />
-                        </div>
-                        <div className="grid grid-cols-3 gap-4">
-                            {[1, 2, 3].map((idx) => (
-                                <div key={idx} className="aspect-square overflow-hidden cursor-pointer border hover:border-orange-500">
-                                    <img 
-                                        src={product.imageProduct ? product.imageProduct[idx] : ""} 
-                                        alt="thumbnail" 
-                                        className="w-full h-full object-cover" 
-                                    />
-                                </div>
-                            ))}
-                        </div>
-                    </div>
+    const storageKey = `orders_${activeUser.email}`;
+    const history = JSON.parse(localStorage.getItem(storageKey)) || [];
 
-                    <div className="mt-25">
-                        <span className="inline-block bg-red-500 text-white text-xs px-3 py-1 rounded-full mb-3">
-                            {product.promoType || "FLASH SALE!"}
-                        </span>
-                        <h1 className="text-4xl font-semibold mb-2">{product.nameProduct}</h1>
+    history.push({
+      orderId: newOrderId,
+      items: cart,
+      customer: { email, fullName, address },
+      delivery,
+      deliveryFee,
+      tax: tax,
+      total: subTotal,
+      date: new Date().toLocaleString(),
+    });
 
-                        <div className="flex items-center gap-3 mb-3">
-                            <span className="text-gray-400 line-through text-lg">IDR {product.priceProduct}</span>
-                            <span className="text-orange-500 text-3xl font-bold">IDR {product.priceDiscount}</span>
-                        </div>
+    localStorage.setItem(storageKey, JSON.stringify(history));
+    clearCart();
+    navigate("/history-order");
+  };
 
-                        <div className="flex items-center gap-2 mb-4 text-sm">
-                            <div className="text-orange-400">★★★★★</div>
-                            <span className="text-gray-600">{product.rating} | 200+ Review</span>
-                        </div>
-
-                        <p className="text-gray-600 mb-6 leading-relaxed">{product.description}</p>
-
-                        <div className="mb-6">
-                            <p className="font-medium mb-2">Quantity</p>
-                            <div className="flex items-center gap-4">
-                                <button onClick={() => setQuantity(q => Math.max(1, q - 1))} className="w-10 h-10 rounded-lg border border-orange-500 text-orange-500 font-bold">-</button>
-                                <span className="text-lg font-semibold">{quantity}</span>
-                                <button onClick={() => setQuantity(q => q + 1)} className="w-10 h-10 rounded-lg bg-orange-500 text-white font-bold">+</button>
-                            </div>
-                        </div>
-
-                        <div className="mb-6">
-                            <p className="font-medium mb-2">Choose Size</p>
-                            <div className="flex gap-3">
-                                {["Regular", "Medium", "Large"].map(item => (
-                                    <button
-                                        key={item}
-                                        onClick={() => setSize(item)}
-                                        className={`px-5 py-2 rounded-lg border transition ${size === item ? "border-orange-500 text-orange-500 bg-orange-50" : "text-gray-500 border-gray-200"}`}
-                                    >
-                                        {item}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-
-                        <div className="mb-8">
-                            <p className="font-medium mb-2">Hot / Ice?</p>
-                            <div className="flex gap-3">
-                                {["Ice", "Hot"].map(item => (
-                                    <button
-                                        key={item}
-                                        onClick={() => setTemperature(item)}
-                                        className={`px-8 py-2 rounded-lg border transition ${temperature === item ? "border-orange-500 text-orange-500 bg-orange-50" : "text-gray-500 border-gray-200"}`}
-                                    >
-                                        {item}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-
-                        <div className="flex gap-4">
-                            <button onClick={() => handleAddToCart(true)} className="flex-1 bg-orange-500 hover:bg-orange-600 text-white py-4 rounded-xl font-bold transition">
-                                Buy Now
-                            </button>
-                            <button
-                                onClick={() => handleAddToCart(false)}
-                                className="px-6 py-4 border border-orange-500 text-orange-500 rounded-xl hover:bg-orange-50 transition"
-                            >
-                                <ShoppingCart />
-                            </button>
-                        </div>
-                    </div>
+  return (
+    <>
+      <Navbar className="bg-black" />
+      <main className="max-w-7xl mx-auto px-6 py-10 mt-20 mb-10">
+        <h1 className="text-3xl font-semibold mb-8">Payment Details</h1>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 space-y-10">
+            <section>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold">Your Order</h2>
+                <div className="w-36">
+                  <PrimaryButton onClick={() => navigate("/product")}>+ Add Menu</PrimaryButton>
                 </div>
+              </div>
 
-                <section>
-                    <h2 className="text-3xl font-semibold mb-10">
-                        Recommendation <span className="text-[#8E6447]">For You</span>
-                    </h2>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
-                        {currentItems.map(item => (
-                            <ProductCard
-                                key={item.id}
-                                id={item.id}
-                                name={item.nameProduct}
-                                src={item.imageProduct ? item.imageProduct[0] : ""}
-                                description={item.description}
-                                price={item.priceDiscount}
-                            />
-                        ))}
+              <div className="space-y-4">
+                {cart.length > 0 ? (
+                  cart.map((item, index) => (
+                    <div key={`${item.id}-${index}`} className="flex gap-4 p-4 bg-gray-50 rounded-lg relative">
+                      <img src={item.image} alt={item.name} className="w-24 h-24 object-cover rounded-md" />
+                      <div className="flex-1">
+                        <span className="inline-block text-xs bg-red-500 text-white px-2 py-1 rounded mb-1 font-bold">FLASH SALE</span>
+                        <h3 className="font-semibold">{item.name}</h3>
+                        <p className="text-sm text-gray-500">{item.qty}pcs | {item.size} | {item.temperature}</p>
+                        <p className="font-semibold text-orange-500 mt-1">IDR {item.price.toLocaleString("id-ID")}</p>
+                      </div>
+                      <button type="button" onClick={() => removeFromCart(item.id, item.size, item.temperature)} className="text-gray-400 hover:text-red-500">
+                        <X size={20} />
+                      </button>
                     </div>
-
-                    <div className="flex justify-center items-center gap-3 mt-12">
-                        {Array.from({ length: totalPages }).map((_, index) => (
-                            <button
-                                key={index}
-                                onClick={() => setCurrentPage(index + 1)}
-                                className={`w-10 h-10 rounded-full transition ${currentPage === index + 1 ? "bg-orange-500 text-white" : "bg-gray-200 text-gray-600 hover:bg-gray-300"}`}
-                            >
-                                {index + 1}
-                            </button>
-                        ))}
-                    </div>
-                </section>
+                  ))
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-10 bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
+                    <ShoppingCart className="w-12 h-12 text-gray-300 mb-2" />
+                    <p className="text-gray-500 italic">Your cart is currently empty.</p>
+                  </div>
+                )}
+              </div>
             </section>
 
-            <Footer />
+            <section>
+              <h2 className="text-lg font-semibold mb-4">Payment Info & Delivery</h2>
+              <div className="space-y-4">
+                <Input label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Enter Your Email" icon={Mail} />
+                <Input label="Full Name" type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Enter Your Full Name" icon={User} />
+                <Input label="Address" type="text" value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Enter Your Address" icon={MapPin} />
+                <div>
+                  <p className="mb-2 text-sm font-medium">Delivery Method</p>
+                  <div className="flex flex-wrap gap-3">
+                    {["Dine In", "Door Delivery", "Pick Up"].map(item => (
+                      <button key={item} type="button" onClick={() => setDelivery(item)} className={`px-4 py-2 border rounded-lg transition ${delivery === item ? "border-orange-500 text-orange-500 bg-orange-50 font-medium" : "border-gray-200 text-gray-600"}`}>
+                        {item} {item === "Door Delivery" && "(+10k)"}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <section className="bg-gray-50 p-6 rounded-lg h-fit lg:sticky lg:top-28 border border-gray-100">
+            <h2 className="font-semibold mb-4 text-xl">Order Summary</h2>
+            <div className="space-y-3 text-sm">
+              <div className="flex justify-between"><span className="text-gray-600">Total Price</span><span className="font-medium">IDR {orderTotal.toLocaleString("id-ID")}</span></div>
+              <div className="flex justify-between"><span className="text-gray-600">Delivery</span><span className={deliveryFee > 0 ? "font-medium" : "text-green-600 font-bold"}>{deliveryFee > 0 ? `IDR ${deliveryFee.toLocaleString("id-ID")}` : "FREE"}</span></div>
+              <div className="flex justify-between border-b pb-3"><span className="text-gray-600">Tax (10%)</span><span className="font-medium">IDR {tax.toLocaleString("id-ID")}</span></div>
+              <div className="flex justify-between text-lg font-bold pt-2"><span>Sub Total</span><span className="text-orange-500">IDR {subTotal.toLocaleString("id-ID")}</span></div>
+            </div>
+            <div className="mt-8">
+              <PrimaryButton onClick={handleCheckout}>Confirm Payment</PrimaryButton>
+            </div>
+          </section>
         </div>
-    );
+      </main>
+      <Footer />
+    </>
+  );
 }

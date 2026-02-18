@@ -35,6 +35,10 @@ export default function DetailProductPage() {
       if (found && found.size && found.size.length > 0) {
         setSize(found.size[0]);
       }
+
+      if (found.temp && found.temp.length > 0) {
+        setTemperature(found.temp[0]);
+      }
     }
 
     setQuantity(1);
@@ -127,14 +131,12 @@ export default function DetailProductPage() {
               <div className="flex gap-3">
                 {product.size && product.size.length > 0 ? (
                   product.size.map((item) => {
-                    // Logika Mapping untuk tampilan User
                     const displayLabels = {
                       "R": "Regular",
                       "M": "Medium",
                       "L": "Large"
                     };
 
-                    // Jika ada di mapping gunakan nama lengkap, jika tidak (seperti 250 gr) gunakan aslinya
                     const label = displayLabels[item] || item;
 
                     return (
@@ -142,8 +144,8 @@ export default function DetailProductPage() {
                         key={item}
                         onClick={() => setSize(item)}
                         className={`px-5 py-2 rounded-lg border transition ${size === item
-                            ? "border-orange-500 text-orange-500 bg-orange-50"
-                            : "text-gray-500 border-gray-200"
+                          ? "border-orange-500 text-orange-500 bg-orange-50"
+                          : "text-gray-500 border-gray-200"
                           }`}
                       >
                         {label}
@@ -161,15 +163,22 @@ export default function DetailProductPage() {
             <div className="mb-8">
               <p className="font-medium mb-2">Hot / Ice?</p>
               <div className="flex gap-3">
-                {["Ice", "Hot"].map(item => (
-                  <button
-                    key={item}
-                    onClick={() => setTemperature(item)}
-                    className={`px-8 py-2 rounded-lg border transition ${temperature === item ? "border-orange-500 text-orange-500 bg-orange-50" : "text-gray-500 border-gray-200"}`}
-                  >
-                    {item}
-                  </button>
-                ))}
+                {product.temp && product.temp.length > 0 ? (
+                  product.temp.map((item) => (
+                    <button
+                      key={item}
+                      onClick={() => setTemperature(item)}
+                      className={`px-8 py-2 rounded-lg border transition ${temperature === item
+                          ? "border-orange-500 text-orange-500 bg-orange-50"
+                          : "text-gray-500 border-gray-200"
+                        }`}
+                    >
+                      {item}
+                    </button>
+                  ))
+                ) : (
+                  <p className="text-gray-400 text-sm italic">No temperature options</p>
+                )}
               </div>
             </div>
 

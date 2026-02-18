@@ -61,6 +61,16 @@ export default function EditProductModal({ isOpen, onClose, productData, onSave 
         });
     };
 
+    const handleTempToggle = (tempValue) => {
+        setFormData(prev => {
+            const currentTemps = prev.temp || [];
+            const newTemps = currentTemps.includes(tempValue)
+                ? currentTemps.filter(t => t !== tempValue)
+                : [...currentTemps, tempValue];
+            return { ...prev, temp: newTemps };
+        });
+    };
+
     const handleSubmit = () => {
         onSave(formData);
     };
@@ -197,11 +207,31 @@ export default function EditProductModal({ isOpen, onClose, productData, onSave 
                                         type="button"
                                         onClick={() => handleSizeToggle(sizeItem)}
                                         className={`px-5 py-2 rounded-xl text-sm font-bold transition-all ${formData.size?.includes(sizeItem)
+                                            ? 'bg-[#FF8A00] text-black shadow-sm border-[#FF8A00]'
+                                            : 'border border-gray-200 text-gray-500 hover:bg-gray-50'
+                                            }`}
+                                    >
+                                        {sizeItem === "Regular" ? "R" : sizeItem === "Medium" ? "M" : sizeItem === "Large" ? "L" : sizeItem}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Temp Section */}
+                        <div className="space-y-2">
+                            <label className="block text-sm font-bold text-[#1F2937]">Temperature Options</label>
+                            <div className="flex gap-3">
+                                {['Ice', 'Hot'].map((tempItem) => (
+                                    <button
+                                        key={tempItem}
+                                        type="button"
+                                        onClick={() => handleTempToggle(tempItem)}
+                                        className={`px-6 py-2 rounded-xl text-sm font-bold transition-all ${formData.temp?.includes(tempItem)
                                                 ? 'bg-[#FF8A00] text-black shadow-sm border-[#FF8A00]'
                                                 : 'border border-gray-200 text-gray-500 hover:bg-gray-50'
                                             }`}
                                     >
-                                        {sizeItem === "Regular" ? "R" : sizeItem === "Medium" ? "M" : sizeItem === "Large" ? "L" : sizeItem}
+                                        {tempItem}
                                     </button>
                                 ))}
                             </div>

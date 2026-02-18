@@ -55,4 +55,4 @@ jobs:
           script: |
             docker pull ghcr.io/vincentius31/koda-b6-react:latest
             docker rm -f web-vincent
-            docker run -d -p 20201:80 --name web-vincent ghcr.io/vincentius31/koda-b6-react
+            docker run -d -p 20201:80 --name web-vincent --network pman_web ghcr.io/vincentius31/koda-b6-react

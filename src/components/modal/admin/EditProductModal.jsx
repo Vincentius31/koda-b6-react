@@ -13,15 +13,20 @@ export default function EditProductModal({ isOpen, onClose, productData, onSave 
         method: [],
         imageProduct: [],
         category: "",
-        rating: 0    
+        rating: 0,
+        promoType: ""
     });
 
     const [imageUrlInput, setImageUrlInput] = useState("");
     const fileInputRef = useRef(null);
 
     useEffect(() => {
-        if (productData) {
-            setFormData(productData);
+        if (productData && isOpen) {
+            setFormData({
+                ...productData,
+                promoType: productData.promoType || "",
+                priceDiscount: productData.priceDiscount || 0
+            });
         }
     }, [productData, isOpen]);
 
@@ -52,7 +57,7 @@ export default function EditProductModal({ isOpen, onClose, productData, onSave 
         const { name, value } = e.target;
         setFormData(prev => ({
             ...prev,
-            [name]: name === "priceProduct" || name === "stock" ? parseInt(value) || 0 : value
+            [name]: name === "priceProduct" || name === "priceDiscount" || name === "stock" ? parseInt(value) || 0 : value
         }));
     };
 
@@ -188,16 +193,53 @@ export default function EditProductModal({ isOpen, onClose, productData, onSave 
                             />
                         </div>
 
-                        {/* Price */}
+                        {/* Price & Discount Grid */}
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-1">
+                                <label className="block text-sm font-bold text-[#1F2937]">Normal Price </label>
+                                <input
+                                    type="number"
+                                    name="priceProduct"
+                                    value={formData.priceProduct}
+                                    onChange={handleChange}
+                                    className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm text-gray-700 outline-none focus:ring-1 focus:ring-orange-500"
+                                />
+                            </div>
+                            <div className="space-y-1">
+                                <label className="block text-sm font-bold text-[#1F2937]">Discount Price</label>
+                                <input
+                                    type="number"
+                                    name="priceDiscount"
+                                    value={formData.priceDiscount}
+                                    onChange={handleChange}
+                                    className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm text-gray-700 outline-none focus:ring-1 focus:ring-orange-500"
+                                />
+                            </div>
+                        </div>
+
+                        {/* Promo Type Section */}
                         <div className="space-y-1">
-                            <label className="block text-sm font-bold text-[#1F2937]">Price (IDR)</label>
-                            <input
-                                type="number"
-                                name="priceProduct"
-                                value={formData.priceProduct}
-                                onChange={handleChange}
-                                className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm text-gray-700 focus:outline-none focus:ring-1 focus:ring-orange-500"
-                            />
+                            <label className="block text-sm font-bold text-[#1F2937]">Promo Type</label>
+                            <div className="relative">
+                                <select
+                                    name="promoType"
+                                    value={formData.promoType || ""}
+                                    onChange={handleChange}
+                                    className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm text-gray-700 appearance-none bg-white focus:outline-none focus:ring-1 focus:ring-orange-500"
+                                >
+                                    <option value="">No Promo</option>
+                                    <option value="New Arrival">New Arrival</option>
+                                    <option value="Flash Sale">Flash Sale</option> {/* Sesuai JSON */}
+                                    <option value="Buy 1 get 1">Buy 1 get 1</option> {/* Sesuai JSON */}
+                                    <option value="Cheap">Cheap</option>
+                                    <option value="Birthday Package">Birthday Package</option> {/* Perbaikan Typo */}
+                                </select>
+                                <div className="absolute right-4 top-3.5 pointer-events-none text-gray-400">
+                                    <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                                        <path d="M19 9l-7 7-7-7"></path>
+                                    </svg>
+                                </div>
+                            </div>
                         </div>
 
                         {/* Description */}

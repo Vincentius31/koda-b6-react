@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { X, Trash2, Link, Upload } from 'lucide-react';
+import { X, Trash2, Upload, ChevronDown } from 'lucide-react';
 
 export default function AddProductModal({ isOpen, onClose, onSave }) {
     const initialState = {
@@ -75,7 +75,6 @@ export default function AddProductModal({ isOpen, onClose, onSave }) {
 
         onSave(formData);
 
-        // Reset Form ke awal
         setFormData(initialState);
         alert("Product Added Successfully!");
     };
@@ -162,6 +161,26 @@ export default function AddProductModal({ isOpen, onClose, onSave }) {
                                     <label className="block text-sm font-bold text-[#1F2937]">Discount Price</label>
                                     <input type="number" name="priceDiscount" value={formData.priceDiscount} onChange={handleChange} className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm outline-none focus:ring-1 focus:ring-orange-500" />
                                 </div>
+                            </div>
+                        </div>
+
+                        <div className="space-y-1">
+                            <label className="block text-sm font-bold text-[#1F2937]">Promo Type</label>
+                            <div className="relative">
+                                <select
+                                    name="promoType"
+                                    value={formData.promoType}
+                                    onChange={handleChange}
+                                    className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm text-gray-700 appearance-none focus:outline-none bg-white font-medium focus:ring-1 focus:ring-orange-500"
+                                >
+                                    <option value="">No Promo</option>
+                                    <option value="New Arrival">New Arrival</option>
+                                    <option value="FLASH SALE!">FLASH SALE!</option>
+                                    <option value="Buy 1 Get 1">Buy 1 Get 1</option>
+                                    <option value="Cheap">Cheap</option>
+                                    <option value="Birthday Package">Birthday Pacakage</option>
+                                </select>
+                                <ChevronDown className="absolute right-4 top-3.5 text-gray-400 pointer-events-none" size={20} />
                             </div>
                         </div>
 

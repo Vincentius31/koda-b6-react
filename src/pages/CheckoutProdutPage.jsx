@@ -14,8 +14,8 @@ export default function CheckoutProductPage() {
 
   const userData = JSON.parse(localStorage.getItem("currentUser")) || {};
   const [email, setEmail] = useState(userData.email || "");
-  const [fullName, setFullName] = useState(userData.fullName || "");
-  const [address, setAddress] = useState("");
+  const [fullname, setFullName] = useState(userData.fullname || "");
+  const [address, setAddress] = useState(userData.address || "");
 
   const orderTotal = cart.reduce((acc, item) => acc + (item.price * item.qty), 0);
   const deliveryFee = delivery === "Door Delivery" ? 10000 : 0;
@@ -51,7 +51,7 @@ export default function CheckoutProductPage() {
     const newOrder = {
       orderId: newOrderId,
       items: cart,
-      customer: { email, fullName, address },
+      customer: { email, fullname, address },
       delivery,
       deliveryFee,
       tax: tax,
@@ -111,7 +111,7 @@ export default function CheckoutProductPage() {
               <h2 className="text-lg font-semibold mb-4">Payment Info & Delivery</h2>
               <div className="space-y-4">
                 <Input label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Enter Your Email" icon={Mail} />
-                <Input label="Full Name" type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Enter Your Full Name" icon={User} />
+                <Input label="Full Name" type="text" value={fullname} onChange={(e) => setFullName(e.target.value)} placeholder="Enter Your Full Name" icon={User} />
                 <Input label="Address" type="text" value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Enter Your Address" icon={MapPin} />
                 <div>
                   <p className="mb-2 text-sm font-medium">Delivery Method</p>

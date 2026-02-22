@@ -54,22 +54,17 @@ export default function RegisterPage() {
 
   return (
     <section className="register-container flex min-h-screen flex-col md:flex-row">
-
-      {/* Image Left */}
       <div className="register-image md:w-[45%] h-55 md:h-auto">
         <img src={pictureLeft} alt="Coffee" className="w-full h-full object-cover" />
       </div>
 
-      {/* Right Section */}
       <section className="register-form md:w-[55%] flex items-center justify-center py-8">
         <div className="form-wrapper w-[90%] md:w-[70%]">
-
           <img src={logoBrown} alt="Coffee Shop" className="logo w-30 mb-5" />
           <h2 className="text-brown text-2xl font-semibold mb-1">Register</h2>
           <p className="content text-gray-400 mb-6">Fill out the form correctly</p>
 
           <form className="flex flex-col gap-6" onSubmit={handleSubmit(onSubmit)}>
-
             <Input
               label="Full Name"
               type="text"
@@ -78,7 +73,6 @@ export default function RegisterPage() {
               register={register("fullname")}
               error={errors.fullname?.message}
             />
-
             <Input
               label="Email"
               type="email"
@@ -87,22 +81,19 @@ export default function RegisterPage() {
               register={register("email")}
               error={errors.email?.message}
             />
-
             <Password
               label="Password"
               placeholder="Enter Your Password"
               register={register("password")}
               error={errors.password?.message}
             />
-
             <Password
               label="Confirm Password"
               placeholder="Enter Your Password"
               register={register("confirmPassword")}
               error={errors.confirmPassword?.message}
             />
-
-            <PrimaryButton>Register</PrimaryButton>
+            <PrimaryButton type="submit">Register</PrimaryButton>
           </form>
 
           <p className="login-text text-center text-sm my-4">
@@ -119,16 +110,15 @@ export default function RegisterPage() {
           </div>
 
           <div className="social-login grid grid-cols-2 gap-4">
-            <div className="social flex items-center justify-center gap-2 border rounded-md py-3 hover:bg-gray-100">
-              <img src={logoFacebook} className="w-5" />
+            <div className="social flex items-center justify-center gap-2 border rounded-md py-3 hover:bg-gray-100 cursor-pointer">
+              <img src={logoFacebook} className="w-5" alt="fb" />
               Facebook
             </div>
-            <div className="social flex items-center justify-center gap-2 border rounded-md py-3 hover:bg-gray-100">
-              <img src={logoGoogle} className="w-5" />
+            <div className="social flex items-center justify-center gap-2 border rounded-md py-3 hover:bg-gray-100 cursor-pointer">
+              <img src={logoGoogle} className="w-5" alt="google" />
               Google
             </div>
           </div>
-
         </div>
       </section>
     </section>

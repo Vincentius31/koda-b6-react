@@ -1,28 +1,44 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const defaultAdmin = {
-  fullName: "Administrator",
+  fullname: "Administrator",
   email: "admin@coffee.com",
   password: "admin123",
-  role: "admin"
+  role: "admin",
+  phone: "08123456789",
+  address: "Coffee Shop Office",
+  joinDate: "22 February 2026",
+  image: "https://i.pravatar.cc/150?u=admin"
 };
 
 const getInitialUsers = () => {
   const saved = localStorage.getItem("users");
+  
   if (!saved) {
     const initialList = [defaultAdmin];
     localStorage.setItem("users", JSON.stringify(initialList));
     return initialList;
   }
 
-  const parsed = JSON.parse(saved);
+  let parsed = JSON.parse(saved);
 
-  const adminExists = parsed.some(u => u.email === defaultAdmin.email);
-  if (!adminExists) {
+  parsed = parsed.map(user => {
+    if (user.hasOwnProperty('fullName')) {
+      user.fullname = user.fullName; 
+      delete user.fullName;        
+    }
+    return user;
+  });
+
+  const adminIndex = parsed.findIndex(u => u.email === defaultAdmin.email);
+
+  if (adminIndex === -1) {
     parsed.push(defaultAdmin);
-    localStorage.setItem("users", JSON.stringify(parsed));
+  } else {
+    parsed[adminIndex] = { ...defaultAdmin, ...parsed[adminIndex] };
   }
 
+  localStorage.setItem("users", JSON.stringify(parsed));
   return parsed;
 };
 
@@ -40,14 +56,18 @@ const authSlice = createSlice({
       const emailExist = state.users.find(u => u.email === email);
 
       if (emailExist) {
-        throw new Error("Email is exsisted. Please use other email.");
+        throw new Error("Email is existed. Please use other email.");
       }
 
       const newUser = {
-        fullName: fullname,
+        fullname, 
         email,
         password,
-        role: "user"
+        role: "user",
+        phone: "-",
+        address: "-",
+        joinDate: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
+        image: `https://i.pravatar.cc/150?u=${email}`
       };
 
       state.users.push(newUser);
@@ -63,9 +83,28 @@ const authSlice = createSlice({
         throw new Error("Wrong Email or Password");
       }
 
+      if (user.fullName) {
+        user.fullname = user.fullName;
+        delete user.fullName;
+      }
+
       state.currentUser = user;
       localStorage.setItem("currentUser", JSON.stringify(user));
     },
+
+    updateProfile: (state, action) => {
+      const updatedData = action.payload;
+      
+      state.users = state.users.map(u => 
+        u.email === updatedData.email ? { ...u, ...updatedData } : u
+      );
+      
+      state.currentUser = { ...state.currentUser, ...updatedData };
+      
+      localStorage.setItem("users", JSON.stringify(state.users));
+      localStorage.setItem("currentUser", JSON.stringify(state.currentUser));
+    },
+
     logout: (state) => {
       state.currentUser = null;
       localStorage.removeItem("currentUser");
@@ -73,5 +112,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { registerUser, loginUser, logout } = authSlice.actions;
+export const { registerUser, loginUser, logout, updateProfile } = authSlice.actions;
 export default authSlice.reducer;

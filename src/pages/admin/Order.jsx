@@ -7,13 +7,11 @@ export default function Order() {
     const [isDetailOpen, setIsDetailOpen] = useState(false);
     const [selectedOrder, setSelectedOrder] = useState(null);
 
-    // Logic Filter States
     const [searchQuery, setSearchQuery] = useState("");
     const [statusFilter, setStatusFilter] = useState("All");
 
-    // Logic Pagination States
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 5; // Kamu bisa ubah angka ini sesuai kebutuhan
+    const itemsPerPage = 5;
 
     useEffect(() => {
         const fetchOrders = () => {
@@ -25,7 +23,6 @@ export default function Order() {
         return () => window.removeEventListener('storage', fetchOrders);
     }, []);
 
-    // Reset ke halaman 1 jika filter berubah
     useEffect(() => {
         setCurrentPage(1);
     }, [searchQuery, statusFilter]);

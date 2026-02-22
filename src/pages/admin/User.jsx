@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Plus, Search, Filter, Pencil, Trash2, FileText, ChevronDown } from 'lucide-react';
+import { Plus, Search, Filter, Pencil, Trash2 } from 'lucide-react';
+import EditUserModal from '../../components/modal/admin/EditUserModal';
 
 export default function User() {
     const [users] = useState([
@@ -9,6 +10,14 @@ export default function User() {
         { id: 4, name: 'Kristin Watson', phone: '(252) 555-0126', address: '2972 Westheimer Rd. Santa Ana, Illinois 85486', email: 'cikaracak@gmail.com', image: 'https://i.pravatar.cc/150?u=kristin' },
         { id: 5, name: 'Dianne Russell', phone: '(201) 555-0124', address: '4517 Washington Ave. Manchester, Kentucky 39495', email: 'cikaracak@gmail.com', image: 'https://i.pravatar.cc/150?u=dianne' },
     ]);
+
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [selectedUser, setSelectedUser] = useState(null);
+
+    const handleEditClick = (user) => {
+        setSelectedUser(user);
+        setIsEditModalOpen(true);
+    };
 
     return (
         <div className="space-y-6">
@@ -77,10 +86,7 @@ export default function User() {
                                     <td className="px-4 py-4 text-gray-600 text-center">{user.email}</td>
                                     <td className="px-4 py-4">
                                         <div className="flex items-center justify-center gap-2">
-                                            <button className="p-2 text-gray-400 hover:text-orange-500 hover:bg-orange-50 rounded-lg transition-colors">
-                                                <FileText size={18} />
-                                            </button>
-                                            <button className="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors">
+                                            <button onClick={() => handleEditClick(user)} className="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors">
                                                 <Pencil size={18} />
                                             </button>
                                             <button className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors">
@@ -111,6 +117,15 @@ export default function User() {
                     </div>
                 </div>
             </div>
+
+            <EditUserModal
+                isOpen={isEditModalOpen}
+                onClose={() => setIsEditModalOpen(false)}
+                user={selectedUser}
+                onSave={(updatedUser) => {
+                    console.log("Saving user:", updatedUser);
+                }}
+            />
         </div>
     );
 }

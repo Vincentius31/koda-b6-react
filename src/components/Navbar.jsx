@@ -40,14 +40,13 @@ export default function Navbar({ className = "" }) {
             <ShoppingCart className="w-5 h-5" />
           </Link>
 
-          {/* Logika tampilan tetap sama, hanya sumber datanya yang berubah */}
           {currentUser ? (
             <>
               <Link
                 to="/profile"
                 className="border border-white text-white px-5 py-2 rounded-lg text-sm hover:border-orange-400 hover:text-orange-400 transition"
               >
-                {currentUser.fullName || "Profile"}
+                {currentUser.fullname || "Profile"}
               </Link>
 
               <button

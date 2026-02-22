@@ -6,7 +6,6 @@ import imageHero from "../assets/img/Rectangle 299.png"
 import imagePromoGreen from "../assets/img/person-product.png"
 import imagePromoYellow from "../assets/img/person2-product.png"
 import { useEffect, useState } from "react"
-import useLocalStorage from "../hooks/useLocalStorage" 
 
 const promos = [
     { bg: "bg-[#88B788]", img: imagePromoGreen, title: "HAPPY MOTHER'S DAY!", desc: "Get one of our favorite menu for free!", note: "Klaim Kupon" },
@@ -18,7 +17,8 @@ const promos = [
 export default function ProductPage() {
     const [currentIndex, setCurrentIndex] = useState(0)
 
-    const [products] = useLocalStorage("products", [])
+    const [products, setProducts] = useState([])
+    const [isLoading, setIsLoading] = useState(true)
 
     const [currentPage, setCurrentPage] = useState(1)
     const ITEMS_PER_PAGE = 6
@@ -34,6 +34,23 @@ export default function ProductPage() {
         promos: [],
         price: 50000
     })
+
+    useEffect(() => {
+        const fetchAllProducts = async () => {
+            try {
+                setIsLoading(true);
+                const response = await fetch("https://raw.githubusercontent.com/Vincentius31/koda-b6-react/refs/heads/main/src/data/menu.json");
+                const data = await response.json();
+                setProducts(data);
+            } catch (error) {
+                console.error("Gagal memuat produk:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchAllProducts();
+    }, []);
 
     const nextPromo = () => setCurrentIndex(prev => prev === promos.length - 1 ? 0 : prev + 1)
     const prevPromo = () => setCurrentIndex(prev => prev === 0 ? promos.length - 1 : prev - 1)

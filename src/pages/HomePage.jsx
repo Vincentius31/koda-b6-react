@@ -13,7 +13,24 @@ import imageTesti from "../assets/img/Rectangle 295.png"
 import useLocalStorage from "../hooks/useLocalStorage"
 
 export default function HomePage() {
-    const [products] = useLocalStorage("products", [])
+    const [products, setProducts] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const response = await fetch("https://raw.githubusercontent.com/Vincentius31/koda-b6-react/refs/heads/main/src/data/menu.json"); 
+                const data = await response.json();
+                setProducts(data);
+            } catch (error) {
+                console.error("Gagal mengambil data:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchProducts();
+    }, []);
 
     return (
         <div>

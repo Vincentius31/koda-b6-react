@@ -11,9 +11,8 @@ export default function DetailOrderPage() {
     useEffect(() => {
         const userData = JSON.parse(localStorage.getItem("currentUser"));
         if (userData && userData.email) {
-            const storageKey = `orders_${userData.email}`;
-            const history = JSON.parse(localStorage.getItem(storageKey)) || [];
-            const selectedOrder = history.find(item => item.orderId === id);
+            const allOrders = JSON.parse(localStorage.getItem("all_orders")) || [];
+            const selectedOrder = allOrders.find(item => item.orderId === id);
 
             if (selectedOrder) {
                 setOrderDetail(selectedOrder);
@@ -34,6 +33,15 @@ export default function DetailOrderPage() {
         hour: '2-digit',
         minute: '2-digit'
     });
+
+    const getStatusStyle = (status) => {
+        switch (status?.toLowerCase()) {
+            case 'done': return 'bg-green-100 text-green-600';
+            case 'pending': return 'bg-red-100 text-red-500';
+            case 'waiting': return 'bg-gray-200 text-gray-500';
+            default: return 'bg-orange-100 text-orange-600';
+        }
+    };
 
     return (
         <>
@@ -72,8 +80,8 @@ export default function DetailOrderPage() {
                             </div>
                             <div className="flex justify-between border-b pb-3">
                                 <span className="text-gray-500">Status</span>
-                                <span className="bg-orange-100 text-orange-600 px-3 py-1 rounded-full text-[10px] font-bold uppercase">
-                                    On Progress
+                                <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase ${getStatusStyle(orderDetail.status)}`}>
+                                    {orderDetail.status || "On Progress"}
                                 </span>
                             </div>
 

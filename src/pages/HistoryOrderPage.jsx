@@ -11,9 +11,10 @@ export default function HistoryOrder() {
     useEffect(() => {
         const userData = JSON.parse(localStorage.getItem("currentUser"));
         if (userData && userData.email) {
-            const storageKey = `orders_${userData.email}`;
-            const savedOrders = JSON.parse(localStorage.getItem(storageKey)) || [];
-            setOrders(savedOrders);
+            const allOrders = JSON.parse(localStorage.getItem("all_orders")) || [];
+            const userOrders = allOrders.filter(order => order.customer.email === userData.email);
+            const sortedOrders = userOrders.sort((a, b) => new Date(b.date) - new Date(a.date));
+            setOrders(sortedOrders);
         }
     }, []);
 
@@ -23,6 +24,15 @@ export default function HistoryOrder() {
             month: 'long',
             year: 'numeric'
         });
+    };
+
+    const getStatusStyle = (status) => {
+        switch (status?.toLowerCase()) {
+            case 'done': return 'bg-green-100 text-green-600';
+            case 'pending': return 'bg-red-100 text-red-500';
+            case 'waiting': return 'bg-gray-200 text-gray-500';
+            default: return 'bg-orange-100 text-orange-500'; 
+        }
     };
 
     return (
@@ -83,8 +93,8 @@ export default function HistoryOrder() {
 
                                         <div>
                                             <p className="text-sm text-gray-500">Status</p>
-                                            <span className="inline-block bg-orange-100 text-orange-500 text-[10px] px-3 py-1 rounded-full font-bold uppercase">
-                                                On Progress
+                                            <span className={`inline-block text-[10px] px-3 py-1 rounded-full font-bold uppercase ${getStatusStyle(order.status)}`}>
+                                                {order.status || "On Progress"}
                                             </span>
                                         </div>
                                     </div>

@@ -46,10 +46,9 @@ export default function CheckoutProductPage() {
     const randomPart = Math.floor(1000 + Math.random() * 9000);
     const newOrderId = `ORD-${datePart}${timePart}${randomPart}`;
 
-    const storageKey = `orders_${activeUser.email}`;
-    const history = JSON.parse(localStorage.getItem(storageKey)) || [];
+    const allOrders = JSON.parse(localStorage.getItem("all_orders")) || [];
 
-    history.push({
+    const newOrder = {
       orderId: newOrderId,
       items: cart,
       customer: { email, fullName, address },
@@ -57,10 +56,13 @@ export default function CheckoutProductPage() {
       deliveryFee,
       tax: tax,
       total: subTotal,
-      date: new Date().toLocaleString(),
-    });
+      date: new Date().toISOString(),
+      status: "Pending",
+    };
 
-    localStorage.setItem(storageKey, JSON.stringify(history));
+    allOrders.push(newOrder);
+    localStorage.setItem("all_orders", JSON.stringify(allOrders));
+
     clearCart();
     navigate("/history-order");
   };
@@ -121,8 +123,8 @@ export default function CheckoutProductPage() {
                           type="button"
                           onClick={() => setDelivery(item)}
                           className={`px-4 py-2 border rounded-lg transition ${delivery === item
-                              ? "border-orange-500 text-orange-500 bg-orange-50 font-medium"
-                              : "border-gray-200 text-gray-600"
+                            ? "border-orange-500 text-orange-500 bg-orange-50 font-medium"
+                            : "border-gray-200 text-gray-600"
                             }`}
                         >
                           {item} {item === "Door Delivery" && "(+10k)"}

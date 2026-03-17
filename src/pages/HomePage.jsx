@@ -19,16 +19,14 @@ export default function HomePage() {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const response = await http("/landing/recommended-products");
+                const result = await http("/landing/recommended-products");
+                console.log("Hasil dari http:", result);
 
-                if (response && response.data) {
-                    setProducts(response.data);
-                } else {
-                    setProducts([]);
+                if (result && result.success) {
+                    setProducts(result.data);
                 }
             } catch (error) {
                 console.error("Gagal mengambil data:", error);
-                setProducts([]);
             } finally {
                 setIsLoading(false);
             }

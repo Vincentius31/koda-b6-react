@@ -137,11 +137,7 @@ export default function LoginPage() {
               Google
             </div>
           </div>
-
-          <p className="text-center text-sm mt-6 text-gray-500">
-            Don't have an account? <Link to="/register" className="text-[#FF8906] hover:underline">Register</Link>
-          </p>
-
+          
         </div>
       </section>
     </section>

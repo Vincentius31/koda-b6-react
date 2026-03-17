@@ -16,15 +16,34 @@ export default function HomePage() {
     const [products, setProducts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
-    useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                const result = await http("/landing/recommended-products");
-                console.log("Hasil dari http:", result);
+    const [reviews, setReviews] = useState([]);
+    const [currentIndex, setCurrentIndex] = useState(0);
 
-                if (result && result.success) {
-                    setProducts(result.data);
+    const handleNext = () => {
+        setCurrentIndex((prevIndex) =>
+            prevIndex === reviews.length - 1 ? 0 : prevIndex + 1
+        );
+    };
+
+    const handlePrev = () => {
+        setCurrentIndex((prevIndex) =>
+            prevIndex === 0 ? reviews.length - 1 : prevIndex - 1
+        );
+    };
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const productRes = await http("/landing/recommended-products");
+                if (productRes && productRes.success) {
+                    setProducts(productRes.data);
                 }
+
+                const reviewRes = await http("/landing/reviews");
+                if (reviewRes && reviewRes.success) {
+                    setReviews(reviewRes.data);
+                }
+
             } catch (error) {
                 console.error("Gagal mengambil data:", error);
             } finally {
@@ -32,7 +51,7 @@ export default function HomePage() {
             }
         };
 
-        fetchProducts();
+        fetchData();
     }, []);
 
     return (
@@ -165,46 +184,52 @@ export default function HomePage() {
             <section className="bg-linear-to-r from-gray-900 to-black py-24">
                 <div className="container mx-auto px-6">
                     <div className="relative overflow-hidden">
-                        <div id="testimonialSlider" className="flex transition-transform duration-500 ease-in-out">
-                            <div className="min-w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center text-white">
-                                <div className="flex justify-center">
-                                    <img src={imageTesti} alt="Viezh Robert"
-                                        className="w-105 h-65 object-cover" />
-                                </div>
-                                <div>
-                                    <span className="text-xs tracking-widest text-orange-400 uppercase">
-                                        Testimonial
-                                    </span>
-                                    <h3 className="text-2xl font-semibold mt-2">
-                                        Viezh Robert
-                                    </h3>
-                                    <p className="text-sm text-gray-400 mb-4">
-                                        Manager Coffee Shop
-                                    </p>
-                                    <p className="text-gray-200 text-sm leading-relaxed mb-6 max-w-md">
-                                        “Wow… I am very happy to spend my whole day here.
-                                        The Wi-Fi is good, and the coffee and meals make me feel
-                                        comfortable. Very recommended!”
-                                    </p>
-                                    <div className="flex items-center gap-3 mb-6">
-                                        <div className="text-orange-400 text-lg">
-                                            ★ ★ ★ ★ ★
-                                        </div>
-                                        <span className="text-sm text-gray-300">5.0</span>
+                        {reviews.length === 0 ? (
+                            <p className="text-center text-gray-400">Belum ada ulasan.</p>
+                        ) : (
+                            <div id="testimonialSlider" className="flex transition-transform duration-500 ease-in-out">
+                                <div className="min-w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center text-white">
+                                    <div className="flex justify-center">
+                                        <img
+                                            src={reviews[currentIndex].profile_picture || imageTesti}
+                                            alt={reviews[currentIndex].fullname}
+                                            className="w-105 h-65 object-cover rounded-xl"
+                                        />
                                     </div>
-                                    <div className="flex gap-3">
-                                        <button
-                                            className="w-10 h-10 text-bold rounded-full border border-gray-500 flex items-center justify-center hover:border-orange-500 transition">
-                                            ←
-                                        </button>
-                                        <button
-                                            className="w-10 h-10 rounded-full bg-orange-500 text-black flex items-center justify-center hover:bg-orange-600 transition">
-                                            →
-                                        </button>
+                                    <div>
+                                        <span className="text-xs tracking-widest text-orange-400 uppercase">
+                                            Testimonial
+                                        </span>
+                                        <h3 className="text-2xl font-semibold mt-2">
+                                            {reviews[currentIndex].fullname}
+                                        </h3>
+                                        <p className="text-gray-200 text-sm leading-relaxed mb-6 mt-4 max-w-md">
+                                            “{reviews[currentIndex].messages}”
+                                        </p>
+                                        <div className="flex items-center gap-3 mb-6">
+                                            <div className="text-orange-400 text-lg">
+                                                {"★".repeat(Math.round(reviews[currentIndex].rating)).padEnd(5, "☆")}
+                                            </div>
+                                            <span className="text-sm text-gray-300">
+                                                {reviews[currentIndex].rating.toFixed(1)}
+                                            </span>
+                                        </div>
+                                        <div className="flex gap-3">
+                                            <button
+                                                onClick={handlePrev}
+                                                className="w-10 h-10 font-bold rounded-full border border-gray-500 flex items-center justify-center hover:border-orange-500 transition cursor-pointer">
+                                                ←
+                                            </button>
+                                            <button
+                                                onClick={handleNext}
+                                                className="w-10 h-10 rounded-full bg-orange-500 text-black flex items-center justify-center hover:bg-orange-600 transition cursor-pointer">
+                                                →
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        )}
                     </div>
                 </div>
             </section>

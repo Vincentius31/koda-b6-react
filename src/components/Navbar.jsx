@@ -1,19 +1,20 @@
 import { Search, ShoppingCart } from "lucide-react";
 import logoWhite from "../assets/img/Logo-White.png";
-import { Link, useNavigate } from "react-router-dom";
-
-import { useSelector, useDispatch } from "react-redux";
-import { logout } from "../components/redux/authslice";
+import { Link } from "react-router-dom";
 
 export default function Navbar({ className = "" }) {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
 
-  const currentUser = useSelector((state) => state.auth.currentUser);
+  const token = localStorage.getItem("token");
+
+  const userEmail = localStorage.getItem("user_email");
 
   const handleLogout = () => {
-    dispatch(logout());
-    navigate("/");
+    localStorage.removeItem("token");
+    localStorage.removeItem("user_email");
+
+    alert("Berhasil logout!");
+
+    window.location.href = "/";
   };
 
   return (
@@ -40,18 +41,18 @@ export default function Navbar({ className = "" }) {
             <ShoppingCart className="w-5 h-5" />
           </Link>
 
-          {currentUser ? (
+          {token ? (
             <>
               <Link
                 to="/profile"
                 className="border border-white text-white px-5 py-2 rounded-lg text-sm hover:border-orange-400 hover:text-orange-400 transition"
               >
-                {currentUser.fullname || "Profile"}
+                {userEmail || "Profile"}
               </Link>
 
               <button
                 onClick={handleLogout}
-                className="bg-orange-500 text-white px-6 py-2 rounded-lg text-sm hover:bg-orange-600 transition"
+                className="bg-orange-500 text-white px-6 py-2 rounded-lg text-sm hover:bg-orange-600 transition cursor-pointer"
               >
                 Logout
               </button>

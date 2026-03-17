@@ -9,16 +9,8 @@ jobs:
     permissions:
       packages: write
     steps:
-      - name: Setup nodejs v24.13.0
-        uses: actions/setup-node@v6
-        with:
-          node-version: '24.13.0'
-      - name: Check nodejs version
-        run: node -v
       - name: Gathering source code
         uses: actions/checkout@v6
-      - name: Build app
-        run: npm install && npm run build
       - name: "[DOCKER] Setup metadata"
         id: meta
         uses: docker/metadata-action@v5
@@ -34,11 +26,10 @@ jobs:
 
       - name: "[DOCKER] Set up QEMU"
         uses: docker/setup-qemu-action@v3
-
+        
       - name: "[DOCKER] Set up Docker Buildx"
         uses: docker/setup-buildx-action@v3
 
-        
       - name: "[DOCKER] Build and push"
         uses: docker/build-push-action@v6
         with:
@@ -54,6 +45,6 @@ jobs:
           key: ${{ secrets.KEY }}
           port: ${{ secrets.PORT }}
           script: |
-            docker pull ghcr.io/vincentius31/koda-b6-react:latest
-            docker rm -f web-vincent
-            docker run -d -p 20201:80 --name web-vincent --network pman_web ghcr.io/vincentius31/koda-b6-react
+            cd server-vincent
+            docker compose pull frontend
+            docker compose up frontend -d

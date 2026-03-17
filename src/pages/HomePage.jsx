@@ -10,20 +10,19 @@ import imageBarista from "../assets/img/Rectangle 291.png"
 import imageGlobal from "../assets/img/Huge Global.png"
 import { CircleCheck, MessageCircleMore } from "lucide-react"
 import imageTesti from "../assets/img/Rectangle 295.png"
-import useLocalStorage from "../hooks/useLocalStorage"
+import http from "../lib/http"
 
 export default function HomePage() {
     const [products, setProducts] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const [setIsLoading] = useState(true);
 
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const response = await fetch("https://raw.githubusercontent.com/Vincentius31/koda-b6-react/refs/heads/main/src/data/menu.json"); 
-                const data = await response.json();
-                setProducts(data);
+                const response = await http("/landing/recommended-products")
+                setProducts(response.results || response)
             } catch (error) {
-                console.error("Gagal mengambil data:", error);
+                console.error("Gagal mengambil data dari backend:", error);
             } finally {
                 setIsLoading(false);
             }
@@ -133,10 +132,10 @@ export default function HomePage() {
                                 <ProductCard
                                     key={item.id}
                                     id={item.id}
-                                    name={item.nameProduct}
-                                    src={item.imageProduct ? item.imageProduct[0] : ""}
+                                    name={item.name}
+                                    src={item.image}
                                     description={item.description}
-                                    price={item.priceDiscount}
+                                    price={item.price}
                                 />
 
                             ))

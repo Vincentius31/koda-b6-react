@@ -194,7 +194,7 @@ export default function HomePage() {
                                         <img
                                             src={reviews[currentIndex].profile_picture || imageTesti}
                                             alt={reviews[currentIndex].fullname}
-                                            className="w-86 h-60 object-cover"
+                                            className="w-full max-w-120 h-80 object-cover rounded-sm shadow-lg"
                                         />
                                     </div>
 
@@ -203,20 +203,19 @@ export default function HomePage() {
                                             Testimonial
                                         </span>
 
-                                        <div className="flex items-center gap-4 mb-4">
-                                            <div className="w-1 h-12 bg-[#FF8906]"></div>
-                                            <div>
-                                                <h3 className="text-3xl font-semibold">
+                                        <div className="flex gap-4 mb-4">
+                                            <div className="w-1 bg-[#FF8906]"></div>
+                                            <div className="py-1">
+                                                <h3 className="text-3xl lg:text-4xl font-semibold">
                                                     {reviews[currentIndex].fullname}
                                                 </h3>
-                                                {/* Catatan: Karena di DB tidak ada kolom role/pekerjaan, kita set statis atau bisa kamu sesuaikan nanti */}
-                                                <p className="text-[#FF8906] text-sm mt-1">
+                                                <p className="text-[#FF8906] text-sm mt-2">
                                                     Customer
                                                 </p>
                                             </div>
                                         </div>
 
-                                        <p className="text-gray-300 text-sm leading-relaxed mb-6 mt-2 max-w-md">
+                                        <p className="text-gray-300 text-sm md:text-base leading-relaxed mb-6 mt-2 max-w-md">
                                             “{reviews[currentIndex].messages}”
                                         </p>
 
@@ -225,34 +224,34 @@ export default function HomePage() {
                                                 {[...Array(5)].map((_, i) => (
                                                     <Star
                                                         key={i}
-                                                        className={`w-4 h-4 ${i < Math.round(reviews[currentIndex].rating) ? "text-[#FF8906] fill-[#FF8906]" : "text-gray-600 fill-transparent"}`}
+                                                        className={`w-5 h-5 ${i < Math.round(reviews[currentIndex].rating) ? "text-[#FF8906] fill-[#FF8906]" : "text-gray-600 fill-transparent"}`}
                                                     />
                                                 ))}
                                             </div>
-                                            <span className="text-sm text-gray-300 ml-2">
+                                            <span className="text-sm text-gray-300 ml-2 font-semibold">
                                                 {reviews[currentIndex].rating.toFixed(1)}
                                             </span>
                                         </div>
 
-                                        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+                                        <div className="flex flex-col gap-6">
                                             <div className="flex gap-4">
                                                 <button
                                                     onClick={handlePrev}
-                                                    className="w-10 h-10 rounded-full bg-white text-black flex items-center justify-center hover:bg-gray-200 transition cursor-pointer">
-                                                    <ArrowLeft className="w-5 h-5" />
+                                                    className="w-12 h-12 rounded-full bg-white text-black flex items-center justify-center hover:bg-gray-200 transition cursor-pointer shadow-md">
+                                                    <ArrowLeft className="w-6 h-6" />
                                                 </button>
                                                 <button
                                                     onClick={handleNext}
-                                                    className="w-10 h-10 rounded-full bg-[#FF8906] text-black flex items-center justify-center hover:bg-orange-600 transition cursor-pointer">
-                                                    <ArrowRight className="w-5 h-5" />
+                                                    className="w-12 h-12 rounded-full bg-[#FF8906] text-black flex items-center justify-center hover:bg-orange-600 transition cursor-pointer shadow-md">
+                                                    <ArrowRight className="w-6 h-6" />
                                                 </button>
                                             </div>
 
-                                            <div className="flex gap-2 mt-4 sm:mt-0">
+                                            <div className="flex gap-2">
                                                 {reviews.map((_, index) => (
                                                     <div
                                                         key={index}
-                                                        className={`h-2 rounded-full transition-all duration-300 ${index === currentIndex ? "w-6 bg-[#FF8906]" : "w-2 bg-gray-600"
+                                                        className={`h-2 rounded-full transition-all duration-300 ${index === currentIndex ? "w-8 bg-[#FF8906]" : "w-2 bg-gray-600"
                                                             }`}
                                                     />
                                                 ))}

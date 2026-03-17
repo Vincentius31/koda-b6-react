@@ -16,13 +16,13 @@ import { useState } from "react";
 import http from "../lib/http";
 
 const schema = yup.object({
-  fullname: yup.string().required("Full name wajib diisi"),
-  email: yup.string().email("Email tidak valid").required("Email wajib diisi"),
-  password: yup.string().min(5, "Minimal 5 karakter").required("Password wajib diisi"),
+  fullname: yup.string().required("Fullname is required!"),
+  email: yup.string().email("Email tidak valid").required("Email is required!"),
+  password: yup.string().min(5, "Minimum 5 characters").required("Password is required!"),
   confirmPassword: yup
     .string()
-    .oneOf([yup.ref('password')], "Password tidak sama")
-    .required("Confirm password wajib diisi"),
+    .oneOf([yup.ref('password')], "Passwords are not the same!")
+    .required("Confirm password is required"),
 });
 
 export default function RegisterPage() {
@@ -53,14 +53,14 @@ export default function RegisterPage() {
       });
 
       if (result && result.success) {
-        alert("Register berhasil! Silakan login.");
+        alert("Registration successful! Please log in.");
         navigate("/login");
       } else {
-        setApiError(result.message || "Gagal melakukan registrasi.");
+        setApiError(result.message || "Failed to register.");
       }
     } catch (error) {
       console.error("Error register:", error);
-      setApiError("Terjadi kesalahan pada server. Coba lagi nanti.");
+      setApiError("An error occurred on the server. Please try again later.");
     } finally {
       setIsLoading(false);
     }

@@ -38,14 +38,14 @@ export default function ForgotPassPage() {
             });
 
             if (result && result.success) {
-                setSuccessMsg("Kode OTP telah dikirim! (Silakan cek terminal server Go)");
-                setStep(2); // Otomatis ubah form ke input OTP
+                setSuccessMsg("The OTP Code has been sent to your email!");
+                setStep(2); 
             } else {
-                setApiError(result.message || "Email tidak ditemukan.");
+                setApiError(result.message || "Email Not Found!");
             }
         } catch (error) {
             console.error("Error OTP Request:", error);
-            setApiError("Terjadi kesalahan pada server.");
+            setApiError("An error occurred on the server.");
         } finally {
             setIsLoading(false);
         }
@@ -68,14 +68,14 @@ export default function ForgotPassPage() {
             });
 
             if (result && result.success) {
-                alert("Password berhasil diubah! Silakan login dengan password baru.");
+                alert("Password changed successfully! Please log in with the new password.");
                 navigate("/login"); 
             } else {
-                setApiError(result.message || "OTP salah atau kadaluarsa.");
+                setApiError(result.message || "OTP is incorrect or expired.");
             }
         } catch (error) {
             console.error("Error Reset Password:", error);
-            setApiError("Terjadi kesalahan saat mereset password.");
+            setApiError("An error occurred while resetting the password.");
         } finally {
             setIsLoading(false);
         }

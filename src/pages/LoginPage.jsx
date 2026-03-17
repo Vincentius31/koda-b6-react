@@ -19,8 +19,8 @@ import { useState } from "react";
 import http from "../lib/http"; 
 
 const schema = yup.object({
-  email: yup.string().email("Email tidak valid").required("Email wajib diisi"),
-  password: yup.string().required("Password wajib diisi")
+  email: yup.string().email("Invalid email!").required("Email is required!"),
+  password: yup.string().required("Password is required!")
 });
 
 export default function LoginPage() {
@@ -61,11 +61,11 @@ export default function LoginPage() {
           navigate("/");
         }
       } else {
-        setApiError(result.message || "Email atau password salah.");
+        setApiError(result.message || "Incorrect email or password.");
       }
     } catch (error) {
       console.error("Login error:", error);
-      setApiError("Terjadi kesalahan pada server. Pastikan server berjalan.");
+      setApiError("An error occurred on the server.");
     } finally {
       setIsLoading(false);
     }

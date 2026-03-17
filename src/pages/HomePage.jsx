@@ -8,7 +8,7 @@ import { useEffect, useState } from "react"
 import imageRight from "../assets/img/Rectangle 287.png"
 import imageBarista from "../assets/img/Rectangle 291.png"
 import imageGlobal from "../assets/img/Huge Global.png"
-import { CircleCheck, MessageCircleMore } from "lucide-react"
+import { CircleCheck, MessageCircleMore, Star, ArrowLeft, ArrowRight } from "lucide-react"
 import imageTesti from "../assets/img/Rectangle 295.png"
 import http from "../lib/http"
 
@@ -181,51 +181,84 @@ export default function HomePage() {
             </section>
 
             {/* Testimonial Section */}
-            <section className="bg-linear-to-r from-gray-900 to-black py-24">
+            <section className="bg-[#0B0D17] py-24">
                 <div className="container mx-auto px-6">
                     <div className="relative overflow-hidden">
                         {reviews.length === 0 ? (
                             <p className="text-center text-gray-400">Belum ada ulasan.</p>
                         ) : (
                             <div id="testimonialSlider" className="flex transition-transform duration-500 ease-in-out">
-                                <div className="min-w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center text-white">
-                                    <div className="flex justify-center">
+                                <div className="min-w-full flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-20 max-w-6xl mx-auto text-white">
+
+                                    <div className="w-full lg:w-1/2 flex justify-center lg:justify-end">
                                         <img
                                             src={reviews[currentIndex].profile_picture || imageTesti}
                                             alt={reviews[currentIndex].fullname}
-                                            className="w-105 h-65 object-cover rounded-xl"
+                                            className="w-86 h-60 object-cover"
                                         />
                                     </div>
-                                    <div>
-                                        <span className="text-xs tracking-widest text-orange-400 uppercase">
+
+                                    <div className="w-full lg:w-1/2 flex flex-col items-start">
+                                        <span className="text-xs tracking-widest text-[#FF8906] uppercase mb-4">
                                             Testimonial
                                         </span>
-                                        <h3 className="text-2xl font-semibold mt-2">
-                                            {reviews[currentIndex].fullname}
-                                        </h3>
-                                        <p className="text-gray-200 text-sm leading-relaxed mb-6 mt-4 max-w-md">
+
+                                        <div className="flex items-center gap-4 mb-4">
+                                            <div className="w-1 h-12 bg-[#FF8906]"></div>
+                                            <div>
+                                                <h3 className="text-3xl font-semibold">
+                                                    {reviews[currentIndex].fullname}
+                                                </h3>
+                                                {/* Catatan: Karena di DB tidak ada kolom role/pekerjaan, kita set statis atau bisa kamu sesuaikan nanti */}
+                                                <p className="text-[#FF8906] text-sm mt-1">
+                                                    Customer
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <p className="text-gray-300 text-sm leading-relaxed mb-6 mt-2 max-w-md">
                                             “{reviews[currentIndex].messages}”
                                         </p>
-                                        <div className="flex items-center gap-3 mb-6">
-                                            <div className="text-orange-400 text-lg">
-                                                {"★".repeat(Math.round(reviews[currentIndex].rating)).padEnd(5, "☆")}
+
+                                        <div className="flex items-center gap-2 mb-8">
+                                            <div className="flex gap-1">
+                                                {[...Array(5)].map((_, i) => (
+                                                    <Star
+                                                        key={i}
+                                                        className={`w-4 h-4 ${i < Math.round(reviews[currentIndex].rating) ? "text-[#FF8906] fill-[#FF8906]" : "text-gray-600 fill-transparent"}`}
+                                                    />
+                                                ))}
                                             </div>
-                                            <span className="text-sm text-gray-300">
+                                            <span className="text-sm text-gray-300 ml-2">
                                                 {reviews[currentIndex].rating.toFixed(1)}
                                             </span>
                                         </div>
-                                        <div className="flex gap-3">
-                                            <button
-                                                onClick={handlePrev}
-                                                className="w-10 h-10 font-bold rounded-full border border-gray-500 flex items-center justify-center hover:border-orange-500 transition cursor-pointer">
-                                                ←
-                                            </button>
-                                            <button
-                                                onClick={handleNext}
-                                                className="w-10 h-10 rounded-full bg-orange-500 text-black flex items-center justify-center hover:bg-orange-600 transition cursor-pointer">
-                                                →
-                                            </button>
+
+                                        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+                                            <div className="flex gap-4">
+                                                <button
+                                                    onClick={handlePrev}
+                                                    className="w-10 h-10 rounded-full bg-white text-black flex items-center justify-center hover:bg-gray-200 transition cursor-pointer">
+                                                    <ArrowLeft className="w-5 h-5" />
+                                                </button>
+                                                <button
+                                                    onClick={handleNext}
+                                                    className="w-10 h-10 rounded-full bg-[#FF8906] text-black flex items-center justify-center hover:bg-orange-600 transition cursor-pointer">
+                                                    <ArrowRight className="w-5 h-5" />
+                                                </button>
+                                            </div>
+
+                                            <div className="flex gap-2 mt-4 sm:mt-0">
+                                                {reviews.map((_, index) => (
+                                                    <div
+                                                        key={index}
+                                                        className={`h-2 rounded-full transition-all duration-300 ${index === currentIndex ? "w-6 bg-[#FF8906]" : "w-2 bg-gray-600"
+                                                            }`}
+                                                    />
+                                                ))}
+                                            </div>
                                         </div>
+
                                     </div>
                                 </div>
                             </div>

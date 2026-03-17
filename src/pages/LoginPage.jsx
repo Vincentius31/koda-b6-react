@@ -15,8 +15,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { useDispatch } from "react-redux";
-import { loginUser } from "../components/redux/authslice";
+import { useState } from "react";
+import http from "../lib/http"; 
 
 const schema = yup.object({
   email: yup.string().email("Email tidak valid").required("Email wajib diisi"),
@@ -25,7 +25,8 @@ const schema = yup.object({
 
 export default function LoginPage() {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const [apiError, setApiError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const {
     register,
@@ -35,22 +36,38 @@ export default function LoginPage() {
     resolver: yupResolver(schema)
   });
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
+    setIsLoading(true);
+    setApiError("");
+
     try {
-      dispatch(loginUser({
-        email: data.email,
-        password: data.password
-      }));
+      const result = await http("/auth/login", {
+        method: "POST",
+        body: {
+          email: data.email,
+          password: data.password
+        }
+      });
 
-      alert("Login berhasil");
+      if (result && result.success) {
+        localStorage.setItem("token", result.data.token);
+        localStorage.setItem("user_email", data.email);
 
-      if (data.email === "admin@coffee.com") {
-        navigate("/admin/dashboard");
+        alert("Login berhasil!");
+
+        if (data.email === "admin@coffee.com") {
+          navigate("/admin/dashboard");
+        } else {
+          navigate("/");
+        }
       } else {
-        navigate("/");
+        setApiError(result.message || "Email atau password salah.");
       }
     } catch (error) {
-      alert(error.message);
+      console.error("Login error:", error);
+      setApiError("Terjadi kesalahan pada server. Pastikan server berjalan.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -69,6 +86,13 @@ export default function LoginPage() {
           <img src={logoBrown} alt="Coffee Shop" className="logo w-30 mb-5" />
           <h2 className="text-brown text-2xl font-semibold mb-1">Login</h2>
           <p className="content text-gray-400 mb-6">Fill out the form correctly</p>
+
+          {/* Alert Error dari API */}
+          {apiError && (
+             <div className="bg-red-50 text-red-500 p-3 rounded-md mb-4 border border-red-200 text-sm">
+               {apiError}
+             </div>
+          )}
 
           <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
 
@@ -92,7 +116,9 @@ export default function LoginPage() {
               Forgot Password?
             </Link>
 
-            <PrimaryButton>Login</PrimaryButton>
+            <PrimaryButton type="submit" disabled={isLoading}>
+              {isLoading ? "Memproses..." : "Login"}
+            </PrimaryButton>
           </form>
 
           <div className="divider flex items-center my-6">
@@ -102,15 +128,19 @@ export default function LoginPage() {
           </div>
 
           <div className="social-login grid grid-cols-2 gap-4">
-            <div className="social flex items-center justify-center gap-2 border rounded-md py-3 hover:bg-gray-100">
+            <div className="social flex items-center justify-center gap-2 border rounded-md py-3 hover:bg-gray-100 cursor-pointer">
               <img src={logoFacebook} className="w-5" />
               Facebook
             </div>
-            <div className="social flex items-center justify-center gap-2 border rounded-md py-3 hover:bg-gray-100">
+            <div className="social flex items-center justify-center gap-2 border rounded-md py-3 hover:bg-gray-100 cursor-pointer">
               <img src={logoGoogle} className="w-5" />
               Google
             </div>
           </div>
+
+          <p className="text-center text-sm mt-6 text-gray-500">
+            Don't have an account? <Link to="/register" className="text-[#FF8906] hover:underline">Register</Link>
+          </p>
 
         </div>
       </section>

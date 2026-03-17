@@ -122,23 +122,29 @@ export default function HomePage() {
 
             {/* Favourite Section */}
             <section className="bg-gray-50 py-20">
-                <div id="menu-favourite" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
-                    {isLoading ? (
-                        <p className="text-center col-span-full">Sedang meracik menu favorit...</p>
-                    ) : products.length === 0 ? (
-                        <p className="text-center col-span-full">Data produk kosong</p>
-                    ) : (
-                        products.map((item) => (
-                            <ProductCard
-                                key={item.id_product}
-                                id={item.id_product}
-                                name={item.name}
-                                src={item.image_path}
-                                description={item.desc}
-                                price={item.price}
-                            />
-                        ))
-                    )}
+                <div className="container mx-auto px-6">
+                    <h2 className="text-center text-3xl font-bold mb-4">Here is People’s <span className="text-[#8E6447]">Favorite</span></h2>
+                    <p className="text-center text-gray-500 text-sm mb-12">
+                        Let’s choose and have a bit of people’s favorite. It might be yours too!
+                    </p>
+                    <div id="menu-favourite" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+                        {isLoading ? (
+                            <p className="text-center col-span-full">Sedang meracik menu favorit...</p>
+                        ) : products.length === 0 ? (
+                            <p className="text-center col-span-full">Data produk kosong</p>
+                        ) : (
+                            products.map((item) => (
+                                <ProductCard
+                                    key={item.id_product}
+                                    id={item.id_product}
+                                    name={item.name}
+                                    src={item.image_path}
+                                    description={item.desc}
+                                    price={item.price}
+                                />
+                            ))
+                        )}
+                    </div>
                 </div>
             </section>
 

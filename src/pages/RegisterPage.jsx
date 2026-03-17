@@ -12,13 +12,13 @@ import { Link, useNavigate } from "react-router-dom";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
-import { registerUser } from "../components/redux/authslice";
+import { useState } from "react"; 
+import http from "../lib/http";
 
 const schema = yup.object({
   fullname: yup.string().required("Full name wajib diisi"),
   email: yup.string().email("Email tidak valid").required("Email wajib diisi"),
-  password: yup.string().min(4, "Minimal 4 karakter").required("Password wajib diisi"),
+  password: yup.string().min(5, "Minimal 5 karakter").required("Password wajib diisi"),
   confirmPassword: yup
     .string()
     .oneOf([yup.ref('password')], "Password tidak sama")
@@ -27,7 +27,8 @@ const schema = yup.object({
 
 export default function RegisterPage() {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const [apiError, setApiError] = useState(""); 
+  const [isLoading, setIsLoading] = useState(false); 
 
   const {
     register,
@@ -37,18 +38,31 @@ export default function RegisterPage() {
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = (data) => {
-    try {
-      dispatch(registerUser({
-        fullname: data.fullname,
-        email: data.email,
-        password: data.password
-      }));
+  const onSubmit = async (data) => {
+    setIsLoading(true);
+    setApiError("");
 
-      alert("Register berhasil");
-      navigate("/login");
+    try {
+      const result = await http("/auth/register", {
+        method: "POST",
+        body: {
+          fullname: data.fullname,
+          email: data.email,
+          password: data.password
+        }
+      });
+
+      if (result && result.success) {
+        alert("Register berhasil! Silakan login.");
+        navigate("/login");
+      } else {
+        setApiError(result.message || "Gagal melakukan registrasi.");
+      }
     } catch (error) {
-      alert(error.message);
+      console.error("Error register:", error);
+      setApiError("Terjadi kesalahan pada server. Coba lagi nanti.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -63,6 +77,12 @@ export default function RegisterPage() {
           <img src={logoBrown} alt="Coffee Shop" className="logo w-30 mb-5" />
           <h2 className="text-brown text-2xl font-semibold mb-1">Register</h2>
           <p className="content text-gray-400 mb-6">Fill out the form correctly</p>
+
+          {apiError && (
+             <div className="bg-red-50 text-red-500 p-3 rounded-md mb-4 border border-red-200 text-sm">
+               {apiError}
+             </div>
+          )}
 
           <form className="flex flex-col gap-6" onSubmit={handleSubmit(onSubmit)}>
             <Input
@@ -93,7 +113,10 @@ export default function RegisterPage() {
               register={register("confirmPassword")}
               error={errors.confirmPassword?.message}
             />
-            <PrimaryButton type="submit">Register</PrimaryButton>
+            
+            <PrimaryButton type="submit" disabled={isLoading}>
+              {isLoading ? "Memproses..." : "Register"}
+            </PrimaryButton>
           </form>
 
           <p className="login-text text-center text-sm my-4">

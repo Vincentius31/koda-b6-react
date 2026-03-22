@@ -22,6 +22,7 @@ export default function DetailProductPage() {
   const [size, setSize] = useState("Regular");
   const [temperature, setTemperature] = useState("Ice");
 
+
   useEffect(() => {
     const fetchProductData = async () => {
       try {

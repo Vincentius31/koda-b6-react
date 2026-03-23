@@ -1,4 +1,4 @@
-import { Menu, Search, ShoppingCart } from "lucide-react";
+import { Menu, Search, ShoppingCart, XCircle } from "lucide-react";
 import logoWhite from "../assets/img/Logo-White.png";
 import logoBrown from "../assets/img/Logo-Brown.png"
 import { Link } from "react-router-dom";

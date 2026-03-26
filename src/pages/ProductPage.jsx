@@ -163,7 +163,6 @@ export default function ProductPage() {
                             <div className="flex justify-center items-center h-64 text-black">Loading catalog...</div>
                         ) : (
                             <>
-                                {/* gap-y-24 sangat penting agar layout melayang -mt-25 tidak bertabrakan */}
                                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-10 gap-y-24">
                                     {products.map((item) => {
                                         const imageSrc = item.image_path && item.image_path.startsWith("http")
@@ -180,6 +179,7 @@ export default function ProductPage() {
                                                 rating={item.rating}
                                                 price={item.discount_price}
                                                 originalPrice={item.price}
+                                                discountRate={item.discount_rate}
                                             />
                                         );
                                     })}

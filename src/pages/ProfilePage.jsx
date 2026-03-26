@@ -123,7 +123,6 @@ export default function ProfilePage() {
                 }
             }
 
-            // PROSES 2: Update Data Teks
             const payload = {
                 fullname: profile.fullname,
                 phone: profile.phone,

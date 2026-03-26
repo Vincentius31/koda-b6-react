@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react"
 import Navbar from "../components/Navbar"
 import ProductCard from "../components/ProductCard"
 import Filter from "../components/Filter"
@@ -5,9 +6,6 @@ import Footer from "../components/Footer"
 import imageHero from "../assets/img/Rectangle 299.png"
 import imagePromoGreen from "../assets/img/person-product.png"
 import imagePromoYellow from "../assets/img/person2-product.png"
-import { useEffect, useState } from "react"
-
-// Import utilitas HTTP dan BASE_URL
 import http, { BASE_URL } from "../lib/http"
 
 const promos = [
@@ -19,19 +17,15 @@ const promos = [
 
 export default function ProductPage() {
     const [currentIndex, setCurrentIndex] = useState(0)
-
-    // --- State Data dari Backend ---
     const [products, setProducts] = useState([])
     const [meta, setMeta] = useState({ totalPages: 1, currentPage: 1 })
     const [isLoading, setIsLoading] = useState(true)
-
-    // --- State Filter (Input Sementara) ---
     const [currentPage, setCurrentPage] = useState(1)
     const [searchValue, setSearchValue] = useState("")
-    const [selectedCat, setSelectedCat] = useState("") // Backend Go kamu menerima 1 string category
+    const [selectedCat, setSelectedCat] = useState("") 
+    const [selectedPromos, setSelectedPromos] = useState([]) // Penting: Agar Filter tidak crash
     const [priceRange, setPriceRange] = useState(200000)
 
-    // --- State "Applied" (Data yang benar-benar dikirim ke API) ---
     const [appliedFilters, setAppliedFilters] = useState({
         search: "",
         category: "",
@@ -39,13 +33,11 @@ export default function ProductPage() {
         maxPrice: "200000"
     })
 
-    // 1. Fetch Catalog: Berjalan setiap kali currentPage atau appliedFilters berubah
     useEffect(() => {
         const fetchCatalog = async () => {
             try {
                 setIsLoading(true);
-
-                // Bangun query params sesuai handler Go: search, category, min_price, max_price, page
+                
                 const params = new URLSearchParams({
                     page: currentPage.toString(),
                     search: appliedFilters.search,
@@ -55,9 +47,8 @@ export default function ProductPage() {
                 });
 
                 const result = await http(`/products?${params.toString()}`);
-
+                
                 if (result && result.success) {
-                    // Mapping data dari models.ProductCatalogResponse
                     setProducts(result.data.Items || []);
                     setMeta({
                         totalPages: result.data.Meta.TotalPages,
@@ -65,7 +56,7 @@ export default function ProductPage() {
                     });
                 }
             } catch (error) {
-                console.error("Gagal memuat katalog:", error);
+                console.error("Gagal memuat produk:", error);
             } finally {
                 setIsLoading(false);
             }
@@ -74,7 +65,7 @@ export default function ProductPage() {
         fetchCatalog();
     }, [currentPage, appliedFilters]);
 
-    // 2. Handler Tombol Apply Filter
+    // 2. Handlers
     const handleApplyFilter = () => {
         setAppliedFilters({
             search: searchValue,
@@ -82,27 +73,26 @@ export default function ProductPage() {
             minPrice: "0",
             maxPrice: priceRange.toString()
         });
-        setCurrentPage(1);
+        setCurrentPage(1); 
     }
 
-    // 3. Handler Reset Filter
     const handleReset = () => {
         setSearchValue("");
         setSelectedCat("");
+        setSelectedPromos([]);
         setPriceRange(200000);
         setAppliedFilters({ search: "", category: "", minPrice: "0", maxPrice: "200000" });
         setCurrentPage(1);
     }
 
-    // Slider Promo Logic
     const nextPromo = () => setCurrentIndex(prev => prev === promos.length - 1 ? 0 : prev + 1)
     const prevPromo = () => setCurrentIndex(prev => prev === 0 ? promos.length - 1 : prev - 1)
 
     return (
         <div className="bg-white min-h-screen">
             <Navbar className="bg-black" />
-
-            {/* Hero Section */}
+            
+            {/* Hero */}
             <section className="relative h-75 bg-black">
                 <img src={imageHero} alt="Hero" className="w-full h-full object-cover opacity-60" />
                 <div className="absolute inset-0 flex items-center px-8 mx-10 py-10 pb-3">
@@ -112,7 +102,7 @@ export default function ProductPage() {
                 </div>
             </section>
 
-            {/* Promo Section */}
+            {/* Promo Slider */}
             <section className="mt-10 px-15">
                 <div className="flex justify-between items-center mb-6">
                     <h2 className="text-3xl font-semibold text-black">Today <span className="text-[#8E6447]">Promo</span></h2>
@@ -140,35 +130,34 @@ export default function ProductPage() {
             {/* Catalog Section */}
             <section className="pb-20">
                 <h2 className="text-2xl font-semibold mb-10 pl-30 pt-10 text-black">Our <span className="text-orange-500">Product</span></h2>
-
+                
                 <div className="flex flex-col lg:flex-row gap-10 px-15 lg:px-30">
-
+                    
                     {/* Sidebar Filter */}
                     <aside className="w-full lg:w-1/4">
                         <Filter
                             searchValue={searchValue}
                             onSearchChange={setSearchValue}
                             onSearch={handleApplyFilter}
-                            // Backend hanya terima 1 string, tapi Filter komponen mungkin butuh Array
                             selectedCats={selectedCat ? [selectedCat] : []}
-                            onCatChange={(cat) => setSelectedCat(cat)}
+                            onCatChange={(cat) => setSelectedCat(cat)} 
+                            selectedPromo={selectedPromos}
+                            onPromoChange={(promo) => setSelectedPromos(p => p.includes(promo) ? p.filter(pr => pr !== promo) : [...p, promo])}
                             priceRange={priceRange}
                             onPriceChange={setPriceRange}
                             onReset={handleReset}
                         />
                     </aside>
 
-                    {/* Main Grid */}
+                    {/* Product Grid */}
                     <div className="w-full lg:w-3/4">
                         {isLoading ? (
-                            <div className="flex justify-center items-center h-64 text-black italic">
-                                Loading catalog...
-                            </div>
+                            <div className="flex justify-center items-center h-64 text-black">Loading catalog...</div>
                         ) : (
                             <>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-10">
+                                {/* gap-y-24 sangat penting agar layout melayang -mt-25 tidak bertabrakan */}
+                                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-10 gap-y-24">
                                     {products.map((item) => {
-                                        // Handle URL Gambar (Pexels vs Local Storage)
                                         const imageSrc = item.image_path && item.image_path.startsWith("http")
                                             ? item.image_path
                                             : `${BASE_URL}/uploads/products/${item.image_path || 'default.jpg'}`;
@@ -181,35 +170,32 @@ export default function ProductPage() {
                                                 src={imageSrc}
                                                 description={item.desc}
                                                 rating={item.rating}
-                                                price={item.discount_price}   // Harga Final
-                                                originalPrice={item.price}    // Harga Coret
+                                                price={item.discount_price}   
+                                                originalPrice={item.price}    
                                             />
                                         );
                                     })}
                                 </div>
 
-                                {/* No Data State */}
                                 {products.length === 0 && (
-                                    <div className="text-center py-20 text-gray-500">
-                                        No products found matching your criteria.
-                                    </div>
+                                    <div className="text-center py-20 text-gray-500">No products found.</div>
                                 )}
 
-                                {/* Pagination Controls */}
+                                {/* Pagination */}
                                 {meta.totalPages > 1 && (
-                                    <div className="flex justify-center mt-16 gap-3">
+                                    <div className="flex justify-center mt-20 gap-3">
                                         {[...Array(meta.totalPages)].map((_, i) => (
-                                            <button
-                                                key={i}
-                                                onClick={() => setCurrentPage(i + 1)}
-                                                className={`w-10 h-10 rounded-full font-bold transition-all ${currentPage === i + 1 ? "bg-orange-500 text-white shadow-lg scale-110" : "bg-gray-200 text-gray-600 hover:bg-gray-300"}`}
+                                            <button 
+                                                key={i} 
+                                                onClick={() => setCurrentPage(i + 1)} 
+                                                className={`w-10 h-10 rounded-full font-bold transition-all ${currentPage === i + 1 ? "bg-orange-500 text-white shadow-lg" : "bg-gray-200 text-gray-600 hover:bg-gray-300"}`}
                                             >
                                                 {i + 1}
                                             </button>
                                         ))}
-                                        <button
+                                        <button 
                                             onClick={() => setCurrentPage(p => p < meta.totalPages ? p + 1 : 1)}
-                                            className="w-10 h-10 rounded-full bg-orange-500 text-white flex items-center justify-center hover:bg-orange-600 shadow-md"
+                                            className="w-10 h-10 rounded-full bg-orange-500 text-white flex items-center justify-center shadow-md"
                                         >
                                             →
                                         </button>
@@ -220,7 +206,7 @@ export default function ProductPage() {
                     </div>
                 </div>
             </section>
-
+            
             <Footer />
         </div>
     )

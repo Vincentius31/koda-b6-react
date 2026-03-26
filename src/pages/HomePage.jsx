@@ -194,7 +194,13 @@ export default function HomePage() {
 
                                     <div className="w-full lg:w-1/2 flex justify-center lg:justify-end">
                                         <img
-                                            src={reviews[currentIndex].profile_picture || imageTesti}
+                                            src={
+                                                reviews[currentIndex].profile_picture
+                                                    ? (reviews[currentIndex].profile_picture.startsWith("http")
+                                                        ? reviews[currentIndex].profile_picture
+                                                        : `${BASE_URL}/uploads/users/${reviews[currentIndex].profile_picture}`)
+                                                    : imageTesti
+                                            }
                                             alt={reviews[currentIndex].fullname}
                                             className="w-full max-w-sm lg:max-w-md h-64 md:h-80 object-cover rounded-sm shadow-lg"
                                         />

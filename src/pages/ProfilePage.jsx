@@ -129,7 +129,6 @@ export default function ProfilePage() {
                 address: profile.address,
             };
 
-            // Kirim password HANYA jika user mengetik sesuatu di kolom password
             if (profile.password.trim() !== "") {
                 payload.password = profile.password;
             }

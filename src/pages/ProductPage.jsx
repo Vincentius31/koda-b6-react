@@ -23,8 +23,8 @@ export default function ProductPage() {
     const [currentPage, setCurrentPage] = useState(1)
     const [searchValue, setSearchValue] = useState("")
     const [selectedCat, setSelectedCat] = useState("")
-    const [selectedPromos, setSelectedPromos] = useState([]) // Penting: Agar Filter tidak crash
-    const [priceRange, setPriceRange] = useState(200000)
+    const [selectedPromos, setSelectedPromos] = useState([])
+    const [priceRange, setPriceRange] = useState(0)
 
     const [appliedFilters, setAppliedFilters] = useState({
         search: "",

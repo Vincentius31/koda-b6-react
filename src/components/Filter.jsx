@@ -4,7 +4,7 @@ export default function Filter({searchValue, onSearchChange, onSearch, selectedC
             {/* Header */}
             <div className="flex justify-between items-center mb-4">
                 <h3 className="font-semibold text-lg">Filter</h3>
-                <button onClick={onReset} className="text-sm text-gray-400 hover:text-white">
+                <button onClick={onReset} className="text-sm text-gray-400 hover:text-white cursor-pointer">
                     Reset Filter
                 </button>
             </div>
@@ -60,7 +60,7 @@ export default function Filter({searchValue, onSearchChange, onSearch, selectedC
 
             {/* Range Price */}
             <div className="mb-8">
-                <p className="font-semibold mb-3">Range Price (IDR {priceRange.toLocaleString()})</p>
+                <p className="font-semibold mb-3">Range Price</p>
                 <div className="relative mb-4">
                     <input
                         type="range"
@@ -68,7 +68,7 @@ export default function Filter({searchValue, onSearchChange, onSearch, selectedC
                         max="50000"
                         value={priceRange}
                         onChange={(e) => onPriceChange(parseInt(e.target.value))}
-                        className="w-full accent-[#FF8906]"
+                        className="w-full accent-[#FF8906] cursor-pointer"
                     />
                 </div>
 
@@ -78,7 +78,7 @@ export default function Filter({searchValue, onSearchChange, onSearch, selectedC
                 </div>
             </div>
 
-            <button onClick={onSearch} className="w-full bg-orange-500 hover:bg-orange-600 transition py-2 rounded font-bold">
+            <button onClick={onSearch} className="w-full bg-orange-500 hover:bg-orange-600 transition py-2 rounded font-bold cursor-pointer">
                 Apply Filter
             </button>
         </aside>

@@ -30,7 +30,7 @@ export default function ProductPage() {
         search: "",
         category: "",
         minPrice: "0",
-        maxPrice: "200000"
+        maxPrice: "50000"
     })
 
     useEffect(() => {

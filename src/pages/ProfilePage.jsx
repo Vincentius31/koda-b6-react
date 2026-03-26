@@ -6,7 +6,9 @@ import Input from '../components/Input'
 import Password from '../components/Password'
 import Footer from '../components/Footer'
 import { useNavigate } from 'react-router-dom'
-import http from '../lib/http' // Pastikan import http ini benar
+
+// INI YANG BERUBAH: Kita import http dan BASE_URL
+import http, { BASE_URL } from '../lib/http'
 
 export default function ProfilePage() {
     const navigate = useNavigate();
@@ -18,28 +20,22 @@ export default function ProfilePage() {
         phone: "",
         address: "",
         joinDate: "Loading...",
-        image: "", // Ini untuk menampilkan URL gambar
+        image: "",
         password: ""
     });
 
-    // State baru untuk menampung file fisik gambar (binary) sebelum diupload
     const [selectedImageFile, setSelectedImageFile] = useState(null);
-
-    // State untuk feedback UI
     const [isLoading, setIsLoading] = useState(false);
     const [message, setMessage] = useState("");
 
-    // Fungsi format tanggal (contoh: dari "2026-03-18T..." jadi "18 March 2026")
     const formatJoinDate = (dateString) => {
         if (!dateString) return "Unknown";
         const options = { day: 'numeric', month: 'long', year: 'numeric' };
         return new Date(dateString).toLocaleDateString('en-GB', options);
     };
 
-    // 1. Fetch Data Profile saat halaman dimuat
     useEffect(() => {
         const token = localStorage.getItem("token");
-        // Jika token tidak ada di localStorage, tendang user ke Login
         if (!token) {
             navigate("/login");
             return;
@@ -47,20 +43,16 @@ export default function ProfilePage() {
 
         const fetchProfile = async () => {
             try {
-                // INI YANG DIPERBAIKI (Cara panggil API GET /profile)
                 const result = await http("/profile", { token });
                 if (result && result.success) {
                     const data = result.data;
 
-                    // Logic menentukan URL gambar (Pexels vs File Lokal)
                     let imageUrl = "";
                     if (data.profile_picture) {
-                        // Jika URL gambar adalah link eksternal (contoh: Pexels)
                         if (data.profile_picture.startsWith("http")) {
                             imageUrl = data.profile_picture;
                         } else {
-                            // Jika URL gambar adalah nama file lokal, arahkan ke server Go
-                            imageUrl = `http://localhost:8888/uploads/users/${data.profile_picture}`;
+                            imageUrl = `${BASE_URL}/uploads/users/${data.profile_picture}`;
                         }
                     }
 
@@ -76,7 +68,6 @@ export default function ProfilePage() {
                 }
             } catch (error) {
                 console.error("Error mengambil profil:", error);
-                // Jika error 401 (Unauthorized), maka http.js akan otomatis auto-logout
             }
         };
 
@@ -84,11 +75,10 @@ export default function ProfilePage() {
     }, [navigate]);
 
     const handleUploadClick = (e) => {
-        e.preventDefault(); // Mencegah form tersubmit tak sengaja
+        e.preventDefault();
         fileInputRef.current.click();
     };
 
-    // 2. Menampilkan preview instan saat user memilih gambar baru
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         if (file) {
@@ -97,7 +87,6 @@ export default function ProfilePage() {
         }
     };
 
-    // 3. Mengirim data ke Backend
     const handleUpdateProfile = async (e) => {
         e.preventDefault();
         setIsLoading(true);
@@ -105,13 +94,13 @@ export default function ProfilePage() {
         const token = localStorage.getItem("token");
 
         try {
-            // PROSES A: Upload Gambar (Hanya jika user memilih gambar baru)
+            // PROSES A: Upload Gambar
             if (selectedImageFile) {
                 const formData = new FormData();
                 formData.append("profile_image", selectedImageFile);
 
-                // Gunakan fetch native karena FormData butuh header multipart otomatis dari browser
-                const uploadRes = await fetch("http://localhost:8888/profile/upload", {
+                // INI YANG BERUBAH: Menggunakan BASE_URL dinamis untuk upload gambar
+                const uploadRes = await fetch(`${BASE_URL}/profile/upload`, {
                     method: "POST",
                     headers: {
                         "Authorization": `Bearer ${token}`
@@ -125,14 +114,13 @@ export default function ProfilePage() {
                 }
             }
 
-            // PROSES B: Update Data Teks (Nama, Alamat, dll)
+            // PROSES B: Update Data Teks
             const payload = {
                 fullname: profile.fullname,
                 phone: profile.phone,
                 address: profile.address,
             };
 
-            // Kirim password HANYA jika user mengetik sesuatu di kolom password
             if (profile.password.trim() !== "") {
                 payload.password = profile.password;
             }
@@ -146,7 +134,7 @@ export default function ProfilePage() {
             if (result && result.success) {
                 setMessage("Profile updated successfully!");
                 setProfile(prev => ({ ...prev, password: "" }));
-                setSelectedImageFile(null); // Reset setelah sukses upload
+                setSelectedImageFile(null);
                 alert("Profile updated successfully!");
             } else {
                 setMessage(result.message || "Gagal mengupdate profil.");
@@ -167,7 +155,6 @@ export default function ProfilePage() {
                 <div className="max-w-6xl mx-auto px-4">
                     <h1 className="text-2xl font-semibold mb-8">Profile</h1>
 
-                    {/* Notifikasi Pesan */}
                     {message && (
                         <div className={`p-4 mb-6 rounded ${message.includes("success") ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
                             {message}
@@ -201,7 +188,6 @@ export default function ProfilePage() {
                                 accept="image/png, image/jpeg, image/jpg"
                                 className="hidden"
                             />
-
                             <PrimaryButton onClick={handleUploadClick}>
                                 Upload New Photo
                             </PrimaryButton>

@@ -22,7 +22,7 @@ export default function ProductPage() {
     const [isLoading, setIsLoading] = useState(true)
     const [currentPage, setCurrentPage] = useState(1)
     const [searchValue, setSearchValue] = useState("")
-    const [selectedCat, setSelectedCat] = useState("") 
+    const [selectedCat, setSelectedCat] = useState("")
     const [selectedPromos, setSelectedPromos] = useState([]) // Penting: Agar Filter tidak crash
     const [priceRange, setPriceRange] = useState(200000)
 
@@ -37,7 +37,7 @@ export default function ProductPage() {
         const fetchCatalog = async () => {
             try {
                 setIsLoading(true);
-                
+
                 const params = new URLSearchParams({
                     page: currentPage.toString(),
                     search: appliedFilters.search,
@@ -47,13 +47,21 @@ export default function ProductPage() {
                 });
 
                 const result = await http(`/products?${params.toString()}`);
-                
+
+                console.log("Data dari Backend:", result.data);
+
                 if (result && result.success) {
-                    setProducts(result.data.Items || []);
-                    setMeta({
-                        totalPages: result.data.Meta.TotalPages,
-                        currentPage: result.data.Meta.CurrentPage
-                    });
+                    const items = result.data?.items || result.data?.Items || [];
+                    const metaData = result.data?.meta || result.data?.Meta;
+
+                    setProducts(items);
+
+                    if (metaData) {
+                        setMeta({
+                            totalPages: metaData.total_pages || metaData.totalPages || metaData.TotalPages || 1,
+                            currentPage: metaData.current_page || metaData.currentPage || metaData.CurrentPage || 1
+                        });
+                    }
                 }
             } catch (error) {
                 console.error("Gagal memuat produk:", error);
@@ -73,7 +81,7 @@ export default function ProductPage() {
             minPrice: "0",
             maxPrice: priceRange.toString()
         });
-        setCurrentPage(1); 
+        setCurrentPage(1);
     }
 
     const handleReset = () => {
@@ -91,7 +99,7 @@ export default function ProductPage() {
     return (
         <div className="bg-white min-h-screen">
             <Navbar className="bg-black" />
-            
+
             {/* Hero */}
             <section className="relative h-75 bg-black">
                 <img src={imageHero} alt="Hero" className="w-full h-full object-cover opacity-60" />
@@ -130,9 +138,9 @@ export default function ProductPage() {
             {/* Catalog Section */}
             <section className="pb-20">
                 <h2 className="text-2xl font-semibold mb-10 pl-30 pt-10 text-black">Our <span className="text-orange-500">Product</span></h2>
-                
+
                 <div className="flex flex-col lg:flex-row gap-10 px-15 lg:px-30">
-                    
+
                     {/* Sidebar Filter */}
                     <aside className="w-full lg:w-1/4">
                         <Filter
@@ -140,7 +148,7 @@ export default function ProductPage() {
                             onSearchChange={setSearchValue}
                             onSearch={handleApplyFilter}
                             selectedCats={selectedCat ? [selectedCat] : []}
-                            onCatChange={(cat) => setSelectedCat(cat)} 
+                            onCatChange={(cat) => setSelectedCat(cat)}
                             selectedPromo={selectedPromos}
                             onPromoChange={(promo) => setSelectedPromos(p => p.includes(promo) ? p.filter(pr => pr !== promo) : [...p, promo])}
                             priceRange={priceRange}
@@ -170,8 +178,8 @@ export default function ProductPage() {
                                                 src={imageSrc}
                                                 description={item.desc}
                                                 rating={item.rating}
-                                                price={item.discount_price}   
-                                                originalPrice={item.price}    
+                                                price={item.discount_price}
+                                                originalPrice={item.price}
                                             />
                                         );
                                     })}
@@ -185,15 +193,15 @@ export default function ProductPage() {
                                 {meta.totalPages > 1 && (
                                     <div className="flex justify-center mt-20 gap-3">
                                         {[...Array(meta.totalPages)].map((_, i) => (
-                                            <button 
-                                                key={i} 
-                                                onClick={() => setCurrentPage(i + 1)} 
+                                            <button
+                                                key={i}
+                                                onClick={() => setCurrentPage(i + 1)}
                                                 className={`w-10 h-10 rounded-full font-bold transition-all ${currentPage === i + 1 ? "bg-orange-500 text-white shadow-lg" : "bg-gray-200 text-gray-600 hover:bg-gray-300"}`}
                                             >
                                                 {i + 1}
                                             </button>
                                         ))}
-                                        <button 
+                                        <button
                                             onClick={() => setCurrentPage(p => p < meta.totalPages ? p + 1 : 1)}
                                             className="w-10 h-10 rounded-full bg-orange-500 text-white flex items-center justify-center shadow-md"
                                         >
@@ -206,7 +214,7 @@ export default function ProductPage() {
                     </div>
                 </div>
             </section>
-            
+
             <Footer />
         </div>
     )

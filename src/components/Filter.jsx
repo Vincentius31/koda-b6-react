@@ -28,7 +28,7 @@ export default function Filter({searchValue, onSearchChange, onSearch, selectedC
             <div className="mb-6 accent-[#FF8906]">
                 <p className="font-semibold text-base mb-2">Category</p>
                 <div className="space-y-2 text-sm">
-                    {["Coffee", "Non Coffee", "Food", "Add-On"].map((cat) => (
+                    {["Coffee", "Non Coffee", "Foods", "Pastry"].map((cat) => (
                         <label key={cat} className="flex gap-2 items-center cursor-pointer">
                             <input
                                 type="checkbox"

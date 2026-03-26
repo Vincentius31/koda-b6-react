@@ -7,6 +7,9 @@ import imagePromoGreen from "../assets/img/person-product.png"
 import imagePromoYellow from "../assets/img/person2-product.png"
 import { useEffect, useState } from "react"
 
+// Import utilitas HTTP dan BASE_URL
+import http, { BASE_URL } from "../lib/http"
+
 const promos = [
     { bg: "bg-[#88B788]", img: imagePromoGreen, title: "HAPPY MOTHER'S DAY!", desc: "Get one of our favorite menu for free!", note: "Klaim Kupon" },
     { bg: "bg-[#88B788]", img: imagePromoGreen, title: "HAPPY MOTHER'S DAY!", desc: "Get one of our favorite menu for free!", note: "Klaim Kupon" },
@@ -17,154 +20,207 @@ const promos = [
 export default function ProductPage() {
     const [currentIndex, setCurrentIndex] = useState(0)
 
+    // --- State Data dari Backend ---
     const [products, setProducts] = useState([])
+    const [meta, setMeta] = useState({ totalPages: 1, currentPage: 1 })
     const [isLoading, setIsLoading] = useState(true)
 
+    // --- State Filter (Input Sementara) ---
     const [currentPage, setCurrentPage] = useState(1)
-    const ITEMS_PER_PAGE = 6
-
     const [searchValue, setSearchValue] = useState("")
-    const [selectedCats, setSelectedCats] = useState([])
-    const [selectedPromos, setSelectedPromos] = useState([])
-    const [priceRange, setPriceRange] = useState(50000)
+    const [selectedCat, setSelectedCat] = useState("") // Backend Go kamu menerima 1 string category
+    const [priceRange, setPriceRange] = useState(200000)
 
+    // --- State "Applied" (Data yang benar-benar dikirim ke API) ---
     const [appliedFilters, setAppliedFilters] = useState({
         search: "",
-        cats: [],
-        promos: [],
-        price: 50000
+        category: "",
+        minPrice: "0",
+        maxPrice: "200000"
     })
 
+    // 1. Fetch Catalog: Berjalan setiap kali currentPage atau appliedFilters berubah
     useEffect(() => {
-        const fetchAllProducts = async () => {
+        const fetchCatalog = async () => {
             try {
                 setIsLoading(true);
-                const response = await fetch("https://raw.githubusercontent.com/Vincentius31/koda-b6-react/refs/heads/main/src/data/menu.json");
-                const data = await response.json();
-                setProducts(data);
+
+                // Bangun query params sesuai handler Go: search, category, min_price, max_price, page
+                const params = new URLSearchParams({
+                    page: currentPage.toString(),
+                    search: appliedFilters.search,
+                    category: appliedFilters.category,
+                    min_price: appliedFilters.minPrice,
+                    max_price: appliedFilters.maxPrice
+                });
+
+                const result = await http(`/products?${params.toString()}`);
+
+                if (result && result.success) {
+                    // Mapping data dari models.ProductCatalogResponse
+                    setProducts(result.data.Items || []);
+                    setMeta({
+                        totalPages: result.data.Meta.TotalPages,
+                        currentPage: result.data.Meta.CurrentPage
+                    });
+                }
             } catch (error) {
-                console.error("Gagal memuat produk:", error);
+                console.error("Gagal memuat katalog:", error);
             } finally {
                 setIsLoading(false);
             }
         };
 
-        fetchAllProducts();
-    }, []);
+        fetchCatalog();
+    }, [currentPage, appliedFilters]);
 
-    const nextPromo = () => setCurrentIndex(prev => prev === promos.length - 1 ? 0 : prev + 1)
-    const prevPromo = () => setCurrentIndex(prev => prev === 0 ? promos.length - 1 : prev - 1)
-
-
+    // 2. Handler Tombol Apply Filter
     const handleApplyFilter = () => {
         setAppliedFilters({
             search: searchValue,
-            cats: selectedCats,
-            promos: selectedPromos,
-            price: priceRange
-        })
-        setCurrentPage(1)
+            category: selectedCat,
+            minPrice: "0",
+            maxPrice: priceRange.toString()
+        });
+        setCurrentPage(1);
     }
 
+    // 3. Handler Reset Filter
     const handleReset = () => {
-        setSearchValue("")
-        setSelectedCats([])
-        setSelectedPromos([])
-        setPriceRange(50000)
-        setAppliedFilters({ search: "", cats: [], promos: [], price: 50000 })
-        setCurrentPage(1)
+        setSearchValue("");
+        setSelectedCat("");
+        setPriceRange(200000);
+        setAppliedFilters({ search: "", category: "", minPrice: "0", maxPrice: "200000" });
+        setCurrentPage(1);
     }
 
-    const filteredProducts = products.filter(item => {
-        const matchSearch = item.nameProduct?.toLowerCase().includes(appliedFilters.search.toLowerCase())
-        const matchCat = appliedFilters.cats.length === 0 || appliedFilters.cats.includes(item.category)
-        const matchPromo = appliedFilters.promos.length === 0 || appliedFilters.promos.includes(item.promoType)
-        const matchPrice = item.priceDiscount <= appliedFilters.price
-        return matchSearch && matchCat && matchPromo && matchPrice
-    })
-
-    const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE)
-    const currentProducts = filteredProducts.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
+    // Slider Promo Logic
+    const nextPromo = () => setCurrentIndex(prev => prev === promos.length - 1 ? 0 : prev + 1)
+    const prevPromo = () => setCurrentIndex(prev => prev === 0 ? promos.length - 1 : prev - 1)
 
     return (
-        <div>
+        <div className="bg-white min-h-screen">
             <Navbar className="bg-black" />
+
+            {/* Hero Section */}
             <section className="relative h-75 bg-black">
                 <img src={imageHero} alt="Hero" className="w-full h-full object-cover opacity-60" />
                 <div className="absolute inset-0 flex items-center px-8 mx-10 py-10 pb-3">
-                    <h1 className="text-white text-3xl md:text-4xl max-w-xl">We Provide Good Coffee and Healthy Meals</h1>
+                    <h1 className="text-white text-3xl md:text-4xl max-w-xl font-bold">
+                        We Provide Good Coffee and Healthy Meals
+                    </h1>
                 </div>
             </section>
 
-            <section className="mt-10">
-                <div className="flex justify-between items-center px-15">
-                    <h2 className="text-3xl font-semibold mb-4">Today <span className="text-[#8E6447]">Promo</span></h2>
+            {/* Promo Section */}
+            <section className="mt-10 px-15">
+                <div className="flex justify-between items-center mb-6">
+                    <h2 className="text-3xl font-semibold text-black">Today <span className="text-[#8E6447]">Promo</span></h2>
                     <div className="flex gap-2">
-                        <button onClick={prevPromo} className="w-10 h-10 rounded-full border border-gray-500 flex items-center justify-center hover:border-orange-500 transition">←</button>
-                        <button onClick={nextPromo} className="w-10 h-10 rounded-full bg-orange-500 text-black flex items-center justify-center hover:bg-orange-600 transition">→</button>
+                        <button onClick={prevPromo} className="w-10 h-10 rounded-full border border-gray-400 flex items-center justify-center hover:border-orange-500 transition cursor-pointer">←</button>
+                        <button onClick={nextPromo} className="w-10 h-10 rounded-full bg-orange-500 text-white flex items-center justify-center hover:bg-orange-600 transition cursor-pointer">→</button>
                     </div>
                 </div>
-                <div className="overflow-hidden px-15">
+                <div className="overflow-hidden">
                     <div className="flex gap-4 transition-transform duration-500" style={{ transform: `translateX(-${currentIndex * 280}px)` }}>
                         {promos.map((promo, index) => (
-                            <div key={index} className={`min-w-65 ${promo.bg} rounded-xl p-4 flex gap-3`}>
-                                <img src={promo.img} alt="promo" className="w-20 h-20" />
-                                <div>
+                            <div key={index} className={`min-w-65 ${promo.bg} rounded-xl p-4 flex gap-3 shadow-sm`}>
+                                <img src={promo.img} alt="promo" className="w-20 h-20 object-contain" />
+                                <div className="text-black">
                                     <p className="font-bold text-sm">{promo.title}</p>
                                     <p className="text-xs">{promo.desc}</p>
-                                    <span className="text-xs">{promo.note}</span>
+                                    <span className="text-xs font-bold">{promo.note}</span>
                                 </div>
                             </div>
                         ))}
                     </div>
                 </div>
-                <div className="flex gap-2 mt-6 px-15">
-                    {promos.map((_, index) => (
-                        <span key={index} className={`h-1.5 rounded-full transition-all ${index === currentIndex ? "w-4 bg-orange-500" : "w-1.5 bg-gray-300"}`} />
-                    ))}
+            </section>
+
+            {/* Catalog Section */}
+            <section className="pb-20">
+                <h2 className="text-2xl font-semibold mb-10 pl-30 pt-10 text-black">Our <span className="text-orange-500">Product</span></h2>
+
+                <div className="flex flex-col lg:flex-row gap-10 px-15 lg:px-30">
+
+                    {/* Sidebar Filter */}
+                    <aside className="w-full lg:w-1/4">
+                        <Filter
+                            searchValue={searchValue}
+                            onSearchChange={setSearchValue}
+                            onSearch={handleApplyFilter}
+                            // Backend hanya terima 1 string, tapi Filter komponen mungkin butuh Array
+                            selectedCats={selectedCat ? [selectedCat] : []}
+                            onCatChange={(cat) => setSelectedCat(cat)}
+                            priceRange={priceRange}
+                            onPriceChange={setPriceRange}
+                            onReset={handleReset}
+                        />
+                    </aside>
+
+                    {/* Main Grid */}
+                    <div className="w-full lg:w-3/4">
+                        {isLoading ? (
+                            <div className="flex justify-center items-center h-64 text-black italic">
+                                Loading catalog...
+                            </div>
+                        ) : (
+                            <>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-10">
+                                    {products.map((item) => {
+                                        // Handle URL Gambar (Pexels vs Local Storage)
+                                        const imageSrc = item.image_path && item.image_path.startsWith("http")
+                                            ? item.image_path
+                                            : `${BASE_URL}/uploads/products/${item.image_path || 'default.jpg'}`;
+
+                                        return (
+                                            <ProductCard
+                                                key={item.id_product}
+                                                id={item.id_product}
+                                                name={item.name}
+                                                src={imageSrc}
+                                                description={item.desc}
+                                                rating={item.rating}
+                                                price={item.discount_price}   // Harga Final
+                                                originalPrice={item.price}    // Harga Coret
+                                            />
+                                        );
+                                    })}
+                                </div>
+
+                                {/* No Data State */}
+                                {products.length === 0 && (
+                                    <div className="text-center py-20 text-gray-500">
+                                        No products found matching your criteria.
+                                    </div>
+                                )}
+
+                                {/* Pagination Controls */}
+                                {meta.totalPages > 1 && (
+                                    <div className="flex justify-center mt-16 gap-3">
+                                        {[...Array(meta.totalPages)].map((_, i) => (
+                                            <button
+                                                key={i}
+                                                onClick={() => setCurrentPage(i + 1)}
+                                                className={`w-10 h-10 rounded-full font-bold transition-all ${currentPage === i + 1 ? "bg-orange-500 text-white shadow-lg scale-110" : "bg-gray-200 text-gray-600 hover:bg-gray-300"}`}
+                                            >
+                                                {i + 1}
+                                            </button>
+                                        ))}
+                                        <button
+                                            onClick={() => setCurrentPage(p => p < meta.totalPages ? p + 1 : 1)}
+                                            className="w-10 h-10 rounded-full bg-orange-500 text-white flex items-center justify-center hover:bg-orange-600 shadow-md"
+                                        >
+                                            →
+                                        </button>
+                                    </div>
+                                )}
+                            </>
+                        )}
+                    </div>
                 </div>
             </section>
 
-            <section>
-                <h2 className="text-2xl font-semibold mb-6 pl-30 pt-10">Our <span className="text-orange-500">Product</span></h2>
-                <div className="flex flex-col lg:flex-row gap-50 pl-25">
-                    <Filter
-                        searchValue={searchValue}
-                        onSearchChange={setSearchValue}
-                        onSearch={handleApplyFilter}
-                        selectedCats={selectedCats}
-                        onCatChange={(cat) => setSelectedCats(p => p.includes(cat) ? p.filter(c => c !== cat) : [...p, cat])}
-                        selectedPromo={selectedPromos}
-                        onPromoChange={(promo) => setSelectedPromos(p => p.includes(promo) ? p.filter(pr => pr !== promo) : [...p, promo])}
-                        priceRange={priceRange}
-                        onPriceChange={setPriceRange}
-                        onReset={handleReset}
-                    />
-                    <div className="flex-2 max-w-180 ml-18">
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-10 auto-rows-fr">
-                            {currentProducts.map((item) => (
-                                <ProductCard
-                                    key={item.id}
-                                    id={item.id}
-                                    name={item.nameProduct}
-                                    src={item.imageProduct ? item.imageProduct[0] : ""}
-                                    description={item.description}
-                                    price={item.priceDiscount}
-                                />
-                            ))}
-                            {currentProducts.length === 0 && (
-                                <p className="col-span-full text-center py-20 text-gray-500">Produk tidak ditemukan.</p>
-                            )}
-                        </div>
-                    </div>
-                </div>
-                <div className="flex justify-center mt-10 gap-3 pb-10 pl-30">
-                    {Array.from({ length: totalPages }).map((_, i) => (
-                        <button key={i} onClick={() => setCurrentPage(i + 1)} className={`w-8 h-8 rounded-full ${currentPage === i + 1 ? "bg-orange-500 text-white" : "bg-gray-200"}`}>{i + 1}</button>
-                    ))}
-                    <button onClick={() => setCurrentPage(p => p < totalPages ? p + 1 : 1)} className="w-8 h-8 rounded-full bg-orange-500 text-white">→</button>
-                </div>
-            </section>
             <Footer />
         </div>
     )

@@ -12,6 +12,7 @@ import imageGlobal from "../assets/img/Huge Global.png"
 import { CircleCheck, MessageCircleMore, Star, ArrowLeft, ArrowRight } from "lucide-react"
 import imageTesti from "../assets/img/Rectangle 295.png"
 import http from "../lib/http"
+import { BASE_URL } from "../lib/http"
 
 export default function HomePage() {
     const [products, setProducts] = useState([]);

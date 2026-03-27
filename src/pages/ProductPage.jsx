@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import { useSearchParams } from "react-router-dom" // Hook penting
 import Navbar from "../components/Navbar"
 import ProductCard from "../components/ProductCard"
 import Filter from "../components/Filter"
@@ -10,57 +11,63 @@ import http, { BASE_URL } from "../lib/http"
 
 export default function ProductPage() {
     const [currentIndex, setCurrentIndex] = useState(0)
+    const [searchParams, setSearchParams] = useSearchParams()
 
+    // --- State Data API ---
     const [products, setProducts] = useState([])
     const [promos, setPromos] = useState([])
     const [promosLoaded, setPromosLoaded] = useState(false)
     const [meta, setMeta] = useState({ totalPages: 1, currentPage: 1 })
     const [isLoading, setIsLoading] = useState(true)
 
-    const [currentPage, setCurrentPage] = useState(1)
-    const [searchValue, setSearchValue] = useState("")
-    const [selectedCat, setSelectedCat] = useState("")
+    // --- State Filter (Inisialisasi dari URL) ---
+    const [currentPage, setCurrentPage] = useState(Number(searchParams.get("page")) || 1)
+    const [searchValue, setSearchValue] = useState(searchParams.get("search") || "")
+    const [selectedCat, setSelectedCat] = useState(searchParams.get("category") || "")
     const [selectedPromos, setSelectedPromos] = useState([])
-    const [priceRange, setPriceRange] = useState(50000)
+    const [priceRange, setPriceRange] = useState(Number(searchParams.get("max_price")) || 50000)
 
     const [appliedFilters, setAppliedFilters] = useState({
-        search: "", category: "", minPrice: "0", maxPrice: "50000"
+        search: searchParams.get("search") || "",
+        category: searchParams.get("category") || "",
+        minPrice: "0",
+        maxPrice: searchParams.get("max_price") || "50000"
     })
 
+    // 1. Sync State saat URL berubah (misal navigasi dari Home)
+    useEffect(() => {
+        const cat = searchParams.get("category") || ""
+        const search = searchParams.get("search") || ""
+        const max = searchParams.get("max_price") || "50000"
+
+        setSelectedCat(cat)
+        setSearchValue(search)
+        setPriceRange(Number(max))
+        setAppliedFilters({ search, category: cat, minPrice: "0", maxPrice: max })
+    }, [searchParams])
+
+    // 2. Fetch Promos (Jalan Pertama Kali)
     useEffect(() => {
         const fetchPromos = async () => {
             try {
                 const result = await http("/products/promos");
-
                 if (result && result.success) {
-                    let rawPromos = [];
-                    if (Array.isArray(result.data)) {
-                        rawPromos = result.data;
-                    } else if (result.data?.items || result.data?.Items) {
-                        rawPromos = result.data.items || result.data.Items;
-                    }
-
+                    const rawPromos = result.data || [];
                     const uniquePromos = [];
                     const seenDescriptions = new Set();
 
                     rawPromos.forEach(promo => {
                         const desc = promo.description || promo.Description;
-                        const isFlash = promo.is_flash_sale ?? promo.IsFlashSale ?? false;
-                        const rate = promo.discount_rate ?? promo.DiscountRate ?? 0;
-                        const id = promo.id_discount ?? promo.IDDiscount ?? Math.random();
-
                         if (desc && !seenDescriptions.has(desc)) {
                             seenDescriptions.add(desc);
-
                             uniquePromos.push({
-                                id_discount: id,
+                                id_discount: promo.id_discount || promo.IDDiscount,
                                 description: desc,
-                                is_flash_sale: isFlash,
-                                discount_rate: rate
+                                is_flash_sale: promo.is_flash_sale ?? promo.IsFlashSale,
+                                discount_rate: promo.discount_rate ?? promo.DiscountRate
                             });
                         }
                     });
-
                     setPromos(uniquePromos);
                 }
             } catch (error) {
@@ -72,6 +79,7 @@ export default function ProductPage() {
         fetchPromos();
     }, []);
 
+    // 3. Fetch Catalog (Menunggu Promos Selesai)
     useEffect(() => {
         if (!promosLoaded) return;
 
@@ -108,12 +116,29 @@ export default function ProductPage() {
     }, [currentPage, appliedFilters, promosLoaded]);
 
     const handleApplyFilter = () => {
-        setAppliedFilters({ search: searchValue, category: selectedCat, minPrice: "0", maxPrice: priceRange.toString() });
+        // Update URL Browser
+        setSearchParams({
+            category: selectedCat,
+            search: searchValue,
+            max_price: priceRange.toString(),
+            page: "1"
+        });
+
+        setAppliedFilters({
+            search: searchValue,
+            category: selectedCat,
+            minPrice: "0",
+            maxPrice: priceRange.toString()
+        });
         setCurrentPage(1);
     }
 
     const handleReset = () => {
-        setSearchValue(""); setSelectedCat(""); setSelectedPromos([]); setPriceRange(50000);
+        setSearchParams({}); // Bersihkan URL
+        setSearchValue("");
+        setSelectedCat("");
+        setSelectedPromos([]);
+        setPriceRange(50000);
         setAppliedFilters({ search: "", category: "", minPrice: "0", maxPrice: "50000" });
         setCurrentPage(1);
     }
@@ -149,19 +174,16 @@ export default function ProductPage() {
                             const isYellow = index % 2 !== 0;
                             const bgClass = isYellow ? "bg-[#F5C361]" : "bg-[#88B788]";
                             const imgSource = isYellow ? imagePromoYellow : imagePromoGreen;
-
                             return (
-                                <div key={promo.id_discount || index} className={`min-w-[320px] h-[130px] ${bgClass} rounded-2xl p-4 flex items-center gap-4 shadow-sm shrink-0`}>
+                                <div key={promo.id_discount || index} className={`min-w-[320px] h-32.5 ${bgClass} rounded-2xl p-4 flex items-center gap-4 shadow-sm shrink-0`}>
                                     <img src={imgSource} alt="promo" className="w-20 h-20 object-contain drop-shadow-md" />
-
                                     <div className="text-black flex flex-col justify-center h-full w-full py-1">
-                                        <p className="font-extrabold text-sm md:text-base uppercase tracking-tight">
+                                        <p className="font-extrabold text-sm uppercase tracking-tight">
                                             {promo.is_flash_sale ? "FLASH SALE!" : "SPECIAL PROMO"}
                                         </p>
                                         <p className="text-xs mt-1 mb-2 line-clamp-2 leading-relaxed font-medium">
                                             {promo.description}
                                         </p>
-
                                         <span className="text-[10px] font-bold bg-white/40 w-fit px-3 py-1.5 rounded-full mt-auto shadow-sm">
                                             Discount {promo.discount_rate * 100}%
                                         </span>
@@ -177,7 +199,6 @@ export default function ProductPage() {
 
             <section className="pb-20">
                 <h2 className="text-2xl font-semibold mb-10 pl-30 pt-10 text-black">Our <span className="text-orange-500">Product</span></h2>
-
                 <div className="flex flex-col lg:flex-row gap-10 px-15 lg:px-30">
                     <aside className="w-full lg:w-1/4">
                         <Filter
@@ -230,18 +251,15 @@ export default function ProductPage() {
                                         {[...Array(meta.totalPages)].map((_, i) => (
                                             <button
                                                 key={i}
-                                                onClick={() => setCurrentPage(i + 1)}
+                                                onClick={() => {
+                                                    setCurrentPage(i + 1);
+                                                    setSearchParams(prev => { prev.set("page", i + 1); return prev; });
+                                                }}
                                                 className={`w-10 h-10 rounded-full font-bold transition-all cursor-pointer ${currentPage === i + 1 ? "bg-orange-500 text-white shadow-lg" : "bg-gray-200 text-gray-600 hover:bg-gray-300"}`}
                                             >
                                                 {i + 1}
                                             </button>
                                         ))}
-                                        <button
-                                            onClick={() => setCurrentPage(p => p < meta.totalPages ? p + 1 : 1)}
-                                            className="w-10 h-10 rounded-full bg-orange-500 text-white flex items-center justify-center shadow-md cursor-pointer"
-                                        >
-                                            →
-                                        </button>
                                     </div>
                                 )}
                             </>
@@ -249,7 +267,6 @@ export default function ProductPage() {
                     </div>
                 </div>
             </section>
-
             <Footer />
         </div>
     )

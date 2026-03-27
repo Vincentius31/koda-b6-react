@@ -1,15 +1,11 @@
 export default function Filter({searchValue, onSearchChange, onSearch, selectedCats, onCatChange, selectedPromo, onPromoChange, priceRange, onPriceChange, onReset}) {
     return (
         <aside className="bg-black text-white rounded-xl p-6 w-full lg:w-65 h-fit">
-            {/* Header */}
             <div className="flex justify-between items-center mb-4">
                 <h3 className="font-semibold text-lg">Filter</h3>
-                <button onClick={onReset} className="text-sm text-gray-400 hover:text-white cursor-pointer">
-                    Reset Filter
-                </button>
+                <button onClick={onReset} className="text-sm text-gray-400 hover:text-white cursor-pointer">Reset Filter</button>
             </div>
 
-            {/* Search */}
             <div className="mb-6">
                 <label className="text-sm block mb-2">Search</label>
                 <div className="flex items-center bg-white rounded-lg overflow-hidden">
@@ -24,7 +20,6 @@ export default function Filter({searchValue, onSearchChange, onSearch, selectedC
                 </div>
             </div>
 
-            {/* Category */}
             <div className="mb-6 accent-[#FF8906]">
                 <p className="font-semibold text-base mb-2">Category</p>
                 <div className="space-y-2 text-sm">
@@ -41,7 +36,6 @@ export default function Filter({searchValue, onSearchChange, onSearch, selectedC
                 </div>
             </div>
 
-            {/* Sort By */}
             <div className="mb-6 accent-[#FF8906]">
                 <p className="font-semibold text-base mb-2">Sort By</p>
                 <div className="space-y-2 text-sm">
@@ -58,7 +52,6 @@ export default function Filter({searchValue, onSearchChange, onSearch, selectedC
                 </div>
             </div>
 
-            {/* Range Price */}
             <div className="mb-8">
                 <p className="font-semibold mb-3">Range Price</p>
                 <div className="relative mb-4">
@@ -71,7 +64,6 @@ export default function Filter({searchValue, onSearchChange, onSearch, selectedC
                         className="w-full accent-[#FF8906] cursor-pointer"
                     />
                 </div>
-
                 <div className="flex justify-between text-xs text-gray-300">
                     <span>IDR 0</span>
                     <span>IDR 50.000</span>

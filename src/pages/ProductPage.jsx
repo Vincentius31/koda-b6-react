@@ -11,14 +11,12 @@ import http, { BASE_URL } from "../lib/http"
 export default function ProductPage() {
     const [currentIndex, setCurrentIndex] = useState(0)
 
-    // --- State Data API ---
     const [products, setProducts] = useState([])
-    const [promos, setPromos] = useState([]) 
+    const [promos, setPromos] = useState([])
     const [promosLoaded, setPromosLoaded] = useState(false)
     const [meta, setMeta] = useState({ totalPages: 1, currentPage: 1 })
     const [isLoading, setIsLoading] = useState(true)
 
-    // --- State Filter ---
     const [currentPage, setCurrentPage] = useState(1)
     const [searchValue, setSearchValue] = useState("")
     const [selectedCat, setSelectedCat] = useState("")
@@ -33,7 +31,7 @@ export default function ProductPage() {
         const fetchPromos = async () => {
             try {
                 const result = await http("/products/promos");
-                
+
                 if (result && result.success) {
                     let rawPromos = [];
                     if (Array.isArray(result.data)) {
@@ -41,10 +39,10 @@ export default function ProductPage() {
                     } else if (result.data?.items || result.data?.Items) {
                         rawPromos = result.data.items || result.data.Items;
                     }
-                    
+
                     const uniquePromos = [];
                     const seenDescriptions = new Set();
-                    
+
                     rawPromos.forEach(promo => {
                         const desc = promo.description || promo.Description;
                         const isFlash = promo.is_flash_sale ?? promo.IsFlashSale ?? false;
@@ -53,7 +51,7 @@ export default function ProductPage() {
 
                         if (desc && !seenDescriptions.has(desc)) {
                             seenDescriptions.add(desc);
-                            
+
                             uniquePromos.push({
                                 id_discount: id,
                                 description: desc,
@@ -74,9 +72,8 @@ export default function ProductPage() {
         fetchPromos();
     }, []);
 
-    // 2. Fetch Catalog (Menunggu Promos Selesai Baru Jalan)
     useEffect(() => {
-        if (!promosLoaded) return; // Tahan dulu jangan jalan kalau promo belum beres
+        if (!promosLoaded) return;
 
         const fetchCatalog = async () => {
             try {
@@ -145,24 +142,27 @@ export default function ProductPage() {
                         <button onClick={nextPromo} className="w-10 h-10 rounded-full bg-orange-500 text-white flex items-center justify-center hover:bg-orange-600 transition cursor-pointer">→</button>
                     </div>
                 </div>
-                <div className="overflow-hidden">
-                    <div className="flex gap-4 transition-transform duration-500" style={{ transform: `translateX(-${currentIndex * 280}px)` }}>
+
+                <div className="overflow-hidden py-2">
+                    <div className="flex gap-5 transition-transform duration-500 ease-in-out" style={{ transform: `translateX(-${currentIndex * 340}px)` }}>
                         {promos.length > 0 ? promos.map((promo, index) => {
                             const isYellow = index % 2 !== 0;
                             const bgClass = isYellow ? "bg-[#F5C361]" : "bg-[#88B788]";
                             const imgSource = isYellow ? imagePromoYellow : imagePromoGreen;
 
                             return (
-                                <div key={promo.id_discount || index} className={`min-w-65 ${bgClass} rounded-xl p-4 flex gap-3 shadow-sm`}>
-                                    <img src={imgSource} alt="promo" className="w-20 h-20 object-contain" />
-                                    <div className="text-black flex flex-col justify-center">
-                                        <p className="font-bold text-sm">
+                                <div key={promo.id_discount || index} className={`min-w-[320px] h-[130px] ${bgClass} rounded-2xl p-4 flex items-center gap-4 shadow-sm shrink-0`}>
+                                    <img src={imgSource} alt="promo" className="w-20 h-20 object-contain drop-shadow-md" />
+
+                                    <div className="text-black flex flex-col justify-center h-full w-full py-1">
+                                        <p className="font-extrabold text-sm md:text-base uppercase tracking-tight">
                                             {promo.is_flash_sale ? "FLASH SALE!" : "SPECIAL PROMO"}
                                         </p>
-                                        <p className="text-[11px] mt-1 mb-2 line-clamp-2 leading-tight">
+                                        <p className="text-xs mt-1 mb-2 line-clamp-2 leading-relaxed font-medium">
                                             {promo.description}
                                         </p>
-                                        <span className="text-[10px] font-bold bg-white/40 w-fit px-2 py-1 rounded">
+
+                                        <span className="text-[10px] font-bold bg-white/40 w-fit px-3 py-1.5 rounded-full mt-auto shadow-sm">
                                             Discount {promo.discount_rate * 100}%
                                         </span>
                                     </div>

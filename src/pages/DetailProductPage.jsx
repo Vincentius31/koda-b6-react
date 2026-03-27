@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
-import { useParams, useLocation, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { ShoppingCart } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import ProductCard from "../components/ProductCard";
 import { useCart } from "../context/CartContext";
-import http, { BASE_URL } from "../lib/http"; 
+import http, { BASE_URL } from "../lib/http";
 
 export default function DetailProductPage() {
   const { id } = useParams();
@@ -19,24 +19,24 @@ export default function DetailProductPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const ITEM_PER_PAGE = 3;
   const [quantity, setQuantity] = useState(1);
-  const [size, setSize] = useState("Regular");
-  const [temperature, setTemperature] = useState("Ice");
-
+  const [size, setSize] = useState("");
+  const [temperature, setTemperature] = useState("");
+  const [activeImage, setActiveImage] = useState("");
 
   useEffect(() => {
     const fetchProductData = async () => {
       try {
         setIsLoading(true);
-        // Tembak API Go kamu
         const result = await http(`/detail-product/${id}`);
-        
+
         if (result && result.success) {
           const data = result.data.product;
           setProduct(data);
           setRecommended(result.data.recommended || []);
-          
-          if (data.sizes?.length > 0) setSize(data.sizes[0]);
-          if (data.variants?.length > 0) setTemperature(data.variants[0]);
+
+          if (data.images?.length > 0) setActiveImage(data.images[0]);
+          if (data.sizes?.length > 0) setSize(data.sizes[0].size_name);
+          if (data.variants?.length > 0) setTemperature(data.variants[0].variant_name);
         }
       } catch (error) {
         console.error("Error fetching product details:", error);
@@ -46,7 +46,15 @@ export default function DetailProductPage() {
     };
     fetchProductData();
     setQuantity(1);
+    setCurrentPage(1);
   }, [id]);
+
+  const selectedSizeObj = product?.sizes?.find(s => s.size_name === size) || { additional_price: 0 };
+  const selectedVariantObj = product?.variants?.find(v => v.variant_name === temperature) || { additional_price: 0 };
+
+  const additionalCost = selectedSizeObj.additional_price + selectedVariantObj.additional_price;
+  const finalDiscountPrice = (product?.discount_price || 0) + additionalCost;
+  const finalOriginalPrice = (product?.price || 0) + additionalCost;
 
   const handleAddToCart = (isBuyNow = false) => {
     if (!product) return;
@@ -55,12 +63,12 @@ export default function DetailProductPage() {
       id: product.id_product,
       name: product.name,
       image: product.images?.length > 0 ? product.images[0] : "",
-      price: product.discount_price,
+      price: finalDiscountPrice, // Gunakan harga yang sudah ditambah varian
       qty: quantity,
       size: size,
       temperature: temperature
     };
-    
+
     addToCart(newItem);
     if (isBuyNow) navigate("/checkout-product");
     else alert("Added to cart!");
@@ -111,31 +119,40 @@ export default function DetailProductPage() {
           <div>
             <div className="aspect-square overflow-hidden mb-4 rounded-xl shadow-sm border bg-gray-50">
               <img
-                src={getImageUrl(product.images ? product.images[0] : "")}
+                src={getImageUrl(activeImage || (product.images ? product.images[0] : ""))}
                 alt={product.name}
                 className="w-full h-full object-cover"
               />
             </div>
 
             <div className="grid grid-cols-4 gap-4 accent-[#FF8906]">
-                {product.images?.map((img, idx) => (
-                    <div key={idx} className="aspect-square overflow-hidden cursor-pointer border-2 rounded-xl hover:border-orange-500 transition">
-                        <img src={getImageUrl(img)} alt="thumb" className="w-full h-full object-cover" />
-                    </div>
-                ))}
+              {product.images?.map((img, idx) => (
+                <div
+                  key={idx}
+                  onClick={() => setActiveImage(img)}
+                  className="aspect-square overflow-hidden cursor-pointer border-2 rounded-xl hover:border-orange-500 transition"
+                >
+                  <img src={getImageUrl(img)} alt="thumb" className="w-full h-full object-cover" />
+                </div>
+              ))}
             </div>
           </div>
 
           <div className="flex flex-col">
-            <span className="inline-block bg-red-500 text-white text-xs px-3 py-1 rounded-full mb-3 uppercase tracking-wider font-semibold w-fit">
-              {product.discount_rate > 0 ? "FLASH SALE!" : "FRESH MENU"}
-            </span>
+            <div className="h-7 mb-3">
+              {product.discount_rate > 0 && (
+                <span className="inline-block bg-red-500 text-white text-xs px-3 py-1 rounded-full uppercase tracking-wider font-semibold w-fit">
+                  FLASH SALE!
+                </span>
+              )}
+            </div>
+
             <h1 className="text-4xl font-semibold mb-2">{product.name}</h1>
 
             <div className="flex items-center gap-4 mb-3">
-              <span className="text-orange-500 text-3xl font-bold">IDR {product.discount_price.toLocaleString('id-ID')}</span>
+              <span className="text-orange-500 text-3xl font-bold">IDR {finalDiscountPrice.toLocaleString('id-ID')}</span>
               {product.discount_rate > 0 && (
-                <span className="text-gray-400 line-through text-lg font-medium">IDR {product.price.toLocaleString('id-ID')}</span>
+                <span className="text-gray-400 line-through text-lg font-medium">IDR {finalOriginalPrice.toLocaleString('id-ID')}</span>
               )}
             </div>
 
@@ -149,7 +166,6 @@ export default function DetailProductPage() {
             <div className="mb-6 accent-[#FF8906]">
               <p className="font-medium mb-2">Quantity</p>
               <div className="flex items-center gap-4">
-                {/* REVISI: Tukar gaya CSS tombol Minus dan Plus agar persis Figma */}
                 <button onClick={() => setQuantity(q => Math.max(1, q - 1))} className="w-10 h-10 rounded-lg bg-orange-500 text-white font-bold hover:bg-orange-600 active:scale-95 transition">-</button>
                 <span className="text-lg font-black">{quantity}</span>
                 <button onClick={() => setQuantity(q => q + 1)} className="w-10 h-10 rounded-lg border border-orange-500 text-orange-500 font-bold hover:bg-orange-50 active:scale-95 transition">+</button>
@@ -157,47 +173,50 @@ export default function DetailProductPage() {
             </div>
 
             {product.sizes?.length > 0 && (
-                <div className="mb-6 accent-[#FF8906]">
-                    <p className="font-medium mb-2">Choose Size</p>
-                    <div className="flex gap-3">
-                        {product.sizes.map((item) => {
-                            const displayLabels = { "R": "Regular", "M": "Medium", "L": "Large" };
-                            const label = displayLabels[item] || item;
-                            return (
-                                <button
-                                    key={item}
-                                    onClick={() => setSize(item)}
-                                    className={`px-5 py-2 rounded-lg border transition-all font-bold text-sm ${size === item
-                                        ? "border-orange-500 text-orange-500 bg-orange-50"
-                                        : "text-gray-500 border-gray-200 hover:border-orange-300"
-                                        }`}
-                                >
-                                    {label}
-                                </button>
-                            );
-                        })}
-                    </div>
+              <div className="mb-6 accent-[#FF8906]">
+                <p className="font-medium mb-2">Choose Size</p>
+                <div className="flex gap-3 flex-wrap">
+                  {product.sizes.map((item) => {
+                    const displayLabels = { "R": "Regular", "M": "Medium", "L": "Large" };
+                    const label = displayLabels[item.size_name] || item.size_name;
+                    return (
+                      <button
+                        key={item.size_name}
+                        onClick={() => setSize(item.size_name)}
+                        className={`px-5 py-2 rounded-lg border transition-all font-bold text-sm flex gap-2 items-center justify-center ${size === item.size_name
+                          ? "border-orange-500 text-orange-500 bg-orange-50"
+                          : "text-gray-500 border-gray-200 hover:border-orange-300"
+                          }`}
+                      >
+                        {label}
+                        {item.additional_price > 0 && <span className="text-xs font-normal opacity-70">(+{item.additional_price.toLocaleString('id-ID')})</span>}
+                      </button>
+                    );
+                  })}
                 </div>
+              </div>
             )}
 
             {product.variants?.length > 0 && (
-                <div className="mb-8 accent-[#FF8906]">
-                    <p className="font-medium mb-2">Preference</p>
-                    <div className="flex gap-3 accent-[#FF8906]">
-                        {product.variants.map((item) => (
-                            <button
-                                key={item}
-                                onClick={() => setTemperature(item)}
-                                className={`px-8 py-2 rounded-lg border transition-all font-bold text-sm ${temperature === item
-                                    ? "border-orange-500 text-orange-500 bg-orange-50"
-                                    : "text-gray-500 border-gray-200 hover:border-orange-300"
-                                    }`}
-                            >
-                                {item}
-                            </button>
-                        ))}
-                    </div>
+              <div className="mb-8 accent-[#FF8906]">
+                <p className="font-medium mb-2">Preference</p>
+                <div className="flex gap-3 flex-wrap accent-[#FF8906]">
+                  {product.variants.map((item) => (
+                    <button
+                      key={item.variant_name}
+                      onClick={() => setTemperature(item.variant_name)}
+                      className={`px-8 py-2 rounded-lg border transition-all font-bold text-sm flex gap-2 items-center justify-center ${temperature === item.variant_name
+                        ? "border-orange-500 text-orange-500 bg-orange-50"
+                        : "text-gray-500 border-gray-200 hover:border-orange-300"
+                        }`}
+                    >
+                      {item.variant_name}
+                      {/* Tambahan visual jika ada extra price */}
+                      {item.additional_price > 0 && <span className="text-xs font-normal opacity-70">(+{item.additional_price.toLocaleString('id-ID')})</span>}
+                    </button>
+                  ))}
                 </div>
+              </div>
             )}
 
             {/* Action Buttons */}
@@ -220,8 +239,8 @@ export default function DetailProductPage() {
           <h2 className="text-3xl font-semibold mb-10">
             Recommendation <span className="text-[#8E6447]">For You</span>
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
-            {recommended.slice(0, 3).map(item => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 min-h-87.5">
+            {currentItems.map(item => (
               <ProductCard
                 key={item.id_product}
                 id={item.id_product}

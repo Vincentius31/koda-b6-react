@@ -31,7 +31,7 @@ export default function ProductPage() {
     useEffect(() => {
         const fetchPromos = async () => {
             try {
-                const result = await http("/promos");
+                const result = await http("/products/promos");
                 if (result && result.success) {
                     const rawPromos = result.data || [];
                     

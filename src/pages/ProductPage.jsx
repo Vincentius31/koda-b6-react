@@ -31,9 +31,21 @@ export default function ProductPage() {
     useEffect(() => {
         const fetchPromos = async () => {
             try {
-                const result = await http("/products/promos");
+                const result = await http("/promos");
                 if (result && result.success) {
-                    setPromos(result.data || []);
+                    const rawPromos = result.data || [];
+                    
+                    const uniquePromos = [];
+                    const seenDescriptions = new Set();
+                    
+                    rawPromos.forEach(promo => {
+                        if (!seenDescriptions.has(promo.description)) {
+                            seenDescriptions.add(promo.description);
+                            uniquePromos.push(promo);
+                        }
+                    });
+
+                    setPromos(uniquePromos);
                 }
             } catch (error) {
                 console.error("Gagal memuat promo:", error);

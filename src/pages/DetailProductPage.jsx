@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ShoppingCart, ArrowLeft } from "lucide-react"; // Tambah ArrowLeft untuk back
+import { ShoppingCart, ArrowLeft } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import ProductCard from "../components/ProductCard";
 import { useCart } from "../context/CartContext";
-import http, { BASE_URL } from "../lib/http"; // Pastikan import helper http
+import http, { BASE_URL } from "../lib/http";
 
 export default function DetailProductPage() {
   const { id } = useParams();
@@ -24,7 +24,7 @@ export default function DetailProductPage() {
     const fetchProductData = async () => {
       try {
         setIsLoading(true);
-        const result = await http(`detail-product/${id}`);
+        const result = await http(`/detail-product/${id}`);
 
         if (result && result.success) {
           const data = result.data.product;
@@ -40,9 +40,6 @@ export default function DetailProductPage() {
         setIsLoading(false);
       }
     };
-    fetchProductData();
-    setQuantity(1);
-    window.scrollTo(0, 0);
   }, [id]);
 
   const handleAddToCart = (isBuyNow = false) => {

@@ -32,16 +32,33 @@ export default function ProductPage() {
         const fetchPromos = async () => {
             try {
                 const result = await http("/products/promos");
+                
                 if (result && result.success) {
-                    const rawPromos = result.data || [];
+                    let rawPromos = [];
+                    if (Array.isArray(result.data)) {
+                        rawPromos = result.data;
+                    } else if (result.data?.items || result.data?.Items) {
+                        rawPromos = result.data.items || result.data.Items;
+                    }
                     
                     const uniquePromos = [];
                     const seenDescriptions = new Set();
                     
                     rawPromos.forEach(promo => {
-                        if (!seenDescriptions.has(promo.description)) {
-                            seenDescriptions.add(promo.description);
-                            uniquePromos.push(promo);
+                        const desc = promo.description || promo.Description;
+                        const isFlash = promo.is_flash_sale ?? promo.IsFlashSale ?? false;
+                        const rate = promo.discount_rate ?? promo.DiscountRate ?? 0;
+                        const id = promo.id_discount ?? promo.IDDiscount ?? Math.random();
+
+                        if (desc && !seenDescriptions.has(desc)) {
+                            seenDescriptions.add(desc);
+                            
+                            uniquePromos.push({
+                                id_discount: id,
+                                description: desc,
+                                is_flash_sale: isFlash,
+                                discount_rate: rate
+                            });
                         }
                     });
 

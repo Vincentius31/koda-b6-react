@@ -7,9 +7,9 @@ export default function ProductCard({
     name,
     src,
     description,
-    price,         
-    originalPrice, 
-    rating,        
+    price,
+    originalPrice,
+    rating,
     discountRate
 }) {
     const { addToCart } = useCart();
@@ -30,34 +30,36 @@ export default function ProductCard({
 
     return (
         <div className="relative bg-transparent h-full flex flex-col">
-            {/* 1. Image Container (Lebih proporsional) */}
-            <div className="w-full h-64 overflow-hidden relative rounded-sm">
-                <img src={src} alt={name} className="w-full h-full object-cover transition-transform hover:scale-105 duration-500" />
-                
-                {/* Badge Flash Sale (Muncul jika ada diskon) */}
+            <div className="w-full aspect-square overflow-hidden relative rounded-sm">
+                <img
+                    src={src}
+                    alt={name}
+                    className="w-full h-full object-cover transition-transform hover:scale-105 duration-500"
+                />
+
+                {/* Badge Flash Sale */}
                 {discountRate > 0 && (
                     <div className="absolute top-4 left-4 bg-[#E51B22] text-white text-[10px] font-bold px-3 py-1.5 rounded-full uppercase tracking-wider shadow-sm">
                         FLASH SALE!
                     </div>
                 )}
             </div>
-
-            {/* 2. White Content Box (Melayang proporsional dengan -mt-16) */}
-            <div className="relative -mt-16 mx-4 bg-white shadow-md p-5 flex flex-col grow border border-gray-50">
+            
+            <div className="relative -mt-8 mx-4 bg-white shadow-md p-5 flex flex-col grow border border-gray-50">
                 <h3 className="font-bold text-lg mb-1 text-gray-900 line-clamp-1">{name}</h3>
-                
+
                 <p className="text-[13px] text-gray-500 mb-4 line-clamp-2 leading-relaxed grow">
                     {description}
                 </p>
 
-                {/* Rating (5 Bintang sejajar sesuai mockup) */}
+                {/* Rating */}
                 {rating > 0 && (
                     <div className="flex items-center gap-2 mb-3">
                         <div className="flex gap-0.5">
                             {[...Array(5)].map((_, i) => (
-                                <Star 
-                                    key={i} 
-                                    className={`w-3.5 h-3.5 ${i < Math.round(rating) ? "fill-[#FF8906] text-[#FF8906]" : "fill-gray-200 text-gray-200"}`} 
+                                <Star
+                                    key={i}
+                                    className={`w-3.5 h-3.5 ${i < Math.round(rating) ? "fill-[#FF8906] text-[#FF8906]" : "fill-gray-200 text-gray-200"}`}
                                 />
                             ))}
                         </div>
@@ -65,7 +67,7 @@ export default function ProductCard({
                     </div>
                 )}
 
-                {/* Harga (Sejajar menyamping sesuai mockup) */}
+                {/* Harga */}
                 <div className="flex items-center gap-3 mb-5 mt-auto">
                     {originalPrice && Number(originalPrice) > Number(price) && (
                         <p className="text-[11px] text-[#E51B22] line-through font-semibold">
@@ -77,7 +79,7 @@ export default function ProductCard({
                     </p>
                 </div>
 
-                {/* Action Buttons (Proporsional sesuai mockup) */}
+                {/* Action Buttons */}
                 <div className="flex items-center gap-2">
                     <Link to={`/details-product/${id}`} className="grow">
                         <button className="w-full bg-[#FF8906] hover:bg-orange-600 text-white font-semibold py-2.5 rounded-md transition text-sm cursor-pointer shadow-sm">

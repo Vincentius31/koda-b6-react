@@ -160,11 +160,13 @@ export default function ProductPage() {
                     {/* Product Grid */}
                     <div className="w-full lg:w-3/4">
                         {isLoading ? (
-                            <div className="flex justify-center items-center h-64 text-black">Loading catalog...</div>
+                            <div className="flex justify-center items-center h-64 text-black font-medium">Loading catalog...</div>
                         ) : (
                             <>
+                                {/* REVISI: Grid tetap 2 kolom (lg:grid-cols-2) dan gap horizontal sedikit diperlebar (gap-x-12) */}
                                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-24">
                                     {products.map((item) => {
+                                        // ... (Logika image tetap sama)
                                         const imageSrc = item.image_path && item.image_path.startsWith("http")
                                             ? item.image_path
                                             : `${BASE_URL}/uploads/products/${item.image_path || 'default.jpg'}`;
@@ -185,8 +187,9 @@ export default function ProductPage() {
                                     })}
                                 </div>
 
+                                {/* ... (Bagian Pagination dan No Products tetap sama) */}
                                 {products.length === 0 && (
-                                    <div className="text-center py-20 text-gray-500">No products found.</div>
+                                    <div className="text-center py-20 text-gray-500 font-medium">No products found.</div>
                                 )}
 
                                 {/* Pagination */}
@@ -196,14 +199,14 @@ export default function ProductPage() {
                                             <button
                                                 key={i}
                                                 onClick={() => setCurrentPage(i + 1)}
-                                                className={`w-10 h-10 rounded-full font-bold transition-all ${currentPage === i + 1 ? "bg-orange-500 text-white shadow-lg" : "bg-gray-200 text-gray-600 hover:bg-gray-300"}`}
+                                                className={`w-10 h-10 rounded-full font-bold transition-all cursor-pointer ${currentPage === i + 1 ? "bg-orange-500 text-white shadow-lg" : "bg-gray-200 text-gray-600 hover:bg-gray-300"}`}
                                             >
                                                 {i + 1}
                                             </button>
                                         ))}
                                         <button
                                             onClick={() => setCurrentPage(p => p < meta.totalPages ? p + 1 : 1)}
-                                            className="w-10 h-10 rounded-full bg-orange-500 text-white flex items-center justify-center shadow-md"
+                                            className="w-10 h-10 rounded-full bg-orange-500 text-white flex items-center justify-center shadow-md cursor-pointer"
                                         >
                                             →
                                         </button>

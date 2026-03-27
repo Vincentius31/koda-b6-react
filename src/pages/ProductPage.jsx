@@ -163,7 +163,7 @@ export default function ProductPage() {
                             <div className="flex justify-center items-center h-64 text-black">Loading catalog...</div>
                         ) : (
                             <>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-10 gap-y-24">
+                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-24">
                                     {products.map((item) => {
                                         const imageSrc = item.image_path && item.image_path.startsWith("http")
                                             ? item.image_path

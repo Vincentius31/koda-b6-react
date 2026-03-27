@@ -13,7 +13,8 @@ export default function ProductPage() {
 
     // --- State Data API ---
     const [products, setProducts] = useState([])
-    const [promos, setPromos] = useState([]) // State baru untuk Promo dari DB
+    const [promos, setPromos] = useState([]) 
+    const [promosLoaded, setPromosLoaded] = useState(false)
     const [meta, setMeta] = useState({ totalPages: 1, currentPage: 1 })
     const [isLoading, setIsLoading] = useState(true)
 
@@ -66,12 +67,17 @@ export default function ProductPage() {
                 }
             } catch (error) {
                 console.error("Gagal memuat promo:", error);
+            } finally {
+                setPromosLoaded(true);
             }
         };
         fetchPromos();
     }, []);
 
+    // 2. Fetch Catalog (Menunggu Promos Selesai Baru Jalan)
     useEffect(() => {
+        if (!promosLoaded) return; // Tahan dulu jangan jalan kalau promo belum beres
+
         const fetchCatalog = async () => {
             try {
                 setIsLoading(true);
@@ -102,9 +108,8 @@ export default function ProductPage() {
             }
         };
         fetchCatalog();
-    }, [currentPage, appliedFilters]);
+    }, [currentPage, appliedFilters, promosLoaded]);
 
-    // Handlers
     const handleApplyFilter = () => {
         setAppliedFilters({ search: searchValue, category: selectedCat, minPrice: "0", maxPrice: priceRange.toString() });
         setCurrentPage(1);
@@ -116,7 +121,6 @@ export default function ProductPage() {
         setCurrentPage(1);
     }
 
-    // Slider Logic Dinamis
     const nextPromo = () => setCurrentIndex(prev => prev >= promos.length - 3 ? 0 : prev + 1)
     const prevPromo = () => setCurrentIndex(prev => prev === 0 ? Math.max(0, promos.length - 3) : prev - 1)
 
@@ -133,7 +137,6 @@ export default function ProductPage() {
                 </div>
             </section>
 
-            {/* Promo Slider Terhubung ke API */}
             <section className="mt-10 px-15">
                 <div className="flex justify-between items-center mb-6">
                     <h2 className="text-3xl font-semibold text-black">Today <span className="text-[#8E6447]">Promo</span></h2>
@@ -145,7 +148,6 @@ export default function ProductPage() {
                 <div className="overflow-hidden">
                     <div className="flex gap-4 transition-transform duration-500" style={{ transform: `translateX(-${currentIndex * 280}px)` }}>
                         {promos.length > 0 ? promos.map((promo, index) => {
-                            // Logika agar warna Hijau dan Kuning selang-seling
                             const isYellow = index % 2 !== 0;
                             const bgClass = isYellow ? "bg-[#F5C361]" : "bg-[#88B788]";
                             const imgSource = isYellow ? imagePromoYellow : imagePromoGreen;

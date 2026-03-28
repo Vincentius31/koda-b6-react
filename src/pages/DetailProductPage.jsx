@@ -247,6 +247,7 @@ export default function DetailProductPage() {
             {currentItems.length === 0 && <p className="text-gray-500 italic">No recommendations found.</p>}
           </div>
 
+
           {totalPages > 1 && (
             <div className="flex justify-center items-center gap-3 mt-12 accent-[#FF8906]">
               {Array.from({ length: totalPages }).map((_, index) => (

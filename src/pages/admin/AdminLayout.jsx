@@ -2,7 +2,7 @@ import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Coffee, ShoppingCart, Users, LogOut, Search, ShoppingBag } from 'lucide-react';
 import logoBrown from "../../assets/img/Logo-Brown.png"
 import { useSelector, useDispatch } from 'react-redux';
-import { logout } from '../../components/redux/authslice';
+
 
 export default function AdminLayout() {
     const location = useLocation();

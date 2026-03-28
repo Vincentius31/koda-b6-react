@@ -1,7 +1,7 @@
 import { ShoppingCart, Star } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { setCartData } from "../redux/slices/cartSlice";
+import { setCartData } from "../components/redux/cartSlice";
 import http from "../lib/http";
 
 export default function ProductCard({

@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { setCartData, clearCartData } from "../redux/slices/cartSlice";
+import { setCartData, clearCartData } from "../components/redux/cartSlice";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Input from "../components/Input";

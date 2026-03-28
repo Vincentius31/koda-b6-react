@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ShoppingCart } from "lucide-react";
 import { useDispatch } from "react-redux";
-import { setCartData } from "../redux/slices/cartSlice";
+import { setCartData } from "../components/redux/cartSlice";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import ProductCard from "../components/ProductCard";

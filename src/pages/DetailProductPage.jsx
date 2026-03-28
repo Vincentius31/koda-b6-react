@@ -1,16 +1,17 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ShoppingCart } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { setCartData } from "../redux/slices/cartSlice";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import ProductCard from "../components/ProductCard";
-import { useCart } from "../context/CartContext";
 import http, { BASE_URL } from "../lib/http";
 
 export default function DetailProductPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { addToCart } = useCart();
+  const dispatch = useDispatch();
 
   const [product, setProduct] = useState(null);
   const [recommended, setRecommended] = useState([]);
@@ -19,8 +20,9 @@ export default function DetailProductPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const ITEM_PER_PAGE = 3;
   const [quantity, setQuantity] = useState(1);
-  const [size, setSize] = useState("");
-  const [temperature, setTemperature] = useState("");
+  
+  const [selectedSize, setSelectedSize] = useState(null);
+  const [selectedVariant, setSelectedVariant] = useState(null);
   const [activeImage, setActiveImage] = useState("");
 
   useEffect(() => {
@@ -35,8 +37,8 @@ export default function DetailProductPage() {
           setRecommended(result.data.recommended || []);
 
           if (data.images?.length > 0) setActiveImage(data.images[0]);
-          if (data.sizes?.length > 0) setSize(data.sizes[0].size_name);
-          if (data.variants?.length > 0) setTemperature(data.variants[0].variant_name);
+          if (data.sizes?.length > 0) setSelectedSize(data.sizes[0]);
+          if (data.variants?.length > 0) setSelectedVariant(data.variants[0]);
         }
       } catch (error) {
         console.error("Error fetching product details:", error);
@@ -49,29 +51,46 @@ export default function DetailProductPage() {
     setCurrentPage(1);
   }, [id]);
 
-  const selectedSizeObj = product?.sizes?.find(s => s.size_name === size) || { additional_price: 0 };
-  const selectedVariantObj = product?.variants?.find(v => v.variant_name === temperature) || { additional_price: 0 };
-
-  const additionalCost = selectedSizeObj.additional_price + selectedVariantObj.additional_price;
+  const additionalCost = (selectedSize?.additional_price || 0) + (selectedVariant?.additional_price || 0);
   const finalDiscountPrice = (product?.discount_price || 0) + additionalCost;
   const finalOriginalPrice = (product?.price || 0) + additionalCost;
 
-  const handleAddToCart = (isBuyNow = false) => {
+  const handleAddToCart = async (isBuyNow = false) => {
     if (!product) return;
 
-    const newItem = {
-      id: product.id_product,
-      name: product.name,
-      image: product.images?.length > 0 ? product.images[0] : "",
-      price: finalDiscountPrice, // Gunakan harga yang sudah ditambah varian
-      qty: quantity,
-      size: size,
-      temperature: temperature
-    };
+    const token = localStorage.getItem("token");
+    if (!token) {
+        alert("Please login first to add items to cart!");
+        navigate("/login");
+        return;
+    }
 
-    addToCart(newItem);
-    if (isBuyNow) navigate("/checkout-product");
-    else alert("Added to cart!");
+    try {
+        const payload = {
+            product_id: product.id_product,
+            quantity: quantity,
+            variant_id: selectedVariant?.id_variant || null,
+            size_id: selectedSize?.id_size || null
+        };
+
+        const postRes = await http("/cart", { method: "POST", body: payload });
+        
+        if (postRes && postRes.success) {
+            const cartRes = await http("/cart");
+            if (cartRes && cartRes.success) {
+                dispatch(setCartData(cartRes.data || [])); 
+            }
+            if (isBuyNow) {
+                navigate("/checkout-product");
+            } else {
+                alert(`${product.name} added to cart!`);
+            }
+        } else {
+            alert(postRes.message || "Failed to add to cart");
+        }
+    } catch (error) {
+        console.error("Cart Error:", error);
+    }
   };
 
   const startIndex = (currentPage - 1) * ITEM_PER_PAGE;
@@ -94,20 +113,7 @@ export default function DetailProductPage() {
     );
   }
 
-  if (!product) {
-    return (
-      <div className="min-h-screen bg-white">
-        <Navbar className="bg-black" />
-        <div className="flex flex-col items-center justify-center py-40">
-          <h2 className="text-2xl font-bold text-gray-800">Product not found</h2>
-          <button onClick={() => navigate("/products")} className="mt-4 bg-orange-500 text-white px-6 py-2 rounded-lg font-bold">
-            Back to Products
-          </button>
-        </div>
-        <Footer />
-      </div>
-    );
-  }
+  if (!product) return <div className="text-center py-40 font-bold">Product not found.</div>;
 
   return (
     <div className="bg-white text-black min-h-screen">
@@ -118,20 +124,12 @@ export default function DetailProductPage() {
 
           <div>
             <div className="aspect-square overflow-hidden mb-4 rounded-xl shadow-sm border bg-gray-50">
-              <img
-                src={getImageUrl(activeImage || (product.images ? product.images[0] : ""))}
-                alt={product.name}
-                className="w-full h-full object-cover"
-              />
+              <img src={getImageUrl(activeImage || (product.images ? product.images[0] : ""))} alt={product.name} className="w-full h-full object-cover" />
             </div>
 
             <div className="grid grid-cols-4 gap-4 accent-[#FF8906]">
               {product.images?.map((img, idx) => (
-                <div
-                  key={idx}
-                  onClick={() => setActiveImage(img)}
-                  className="aspect-square overflow-hidden cursor-pointer border-2 rounded-xl hover:border-orange-500 transition"
-                >
+                <div key={idx} onClick={() => setActiveImage(img)} className="aspect-square overflow-hidden cursor-pointer border-2 rounded-xl hover:border-orange-500 transition">
                   <img src={getImageUrl(img)} alt="thumb" className="w-full h-full object-cover" />
                 </div>
               ))}
@@ -181,11 +179,11 @@ export default function DetailProductPage() {
                     const label = displayLabels[item.size_name] || item.size_name;
                     return (
                       <button
-                        key={item.size_name}
-                        onClick={() => setSize(item.size_name)}
-                        className={`px-5 py-2 rounded-lg border transition-all font-bold text-sm flex gap-2 items-center justify-center ${size === item.size_name
-                          ? "border-orange-500 text-orange-500 bg-orange-50"
-                          : "text-gray-500 border-gray-200 hover:border-orange-300"
+                        key={item.id_size}
+                        onClick={() => setSelectedSize(item)}
+                        className={`px-5 py-2 rounded-lg border transition-all font-bold text-sm flex gap-2 items-center justify-center ${selectedSize?.id_size === item.id_size
+                            ? "border-orange-500 text-orange-500 bg-orange-50"
+                            : "text-gray-500 border-gray-200 hover:border-orange-300"
                           }`}
                       >
                         {label}
@@ -203,15 +201,14 @@ export default function DetailProductPage() {
                 <div className="flex gap-3 flex-wrap accent-[#FF8906]">
                   {product.variants.map((item) => (
                     <button
-                      key={item.variant_name}
-                      onClick={() => setTemperature(item.variant_name)}
-                      className={`px-8 py-2 rounded-lg border transition-all font-bold text-sm flex gap-2 items-center justify-center ${temperature === item.variant_name
-                        ? "border-orange-500 text-orange-500 bg-orange-50"
-                        : "text-gray-500 border-gray-200 hover:border-orange-300"
+                      key={item.id_variant}
+                      onClick={() => setSelectedVariant(item)}
+                      className={`px-8 py-2 rounded-lg border transition-all font-bold text-sm flex gap-2 items-center justify-center ${selectedVariant?.id_variant === item.id_variant
+                          ? "border-orange-500 text-orange-500 bg-orange-50"
+                          : "text-gray-500 border-gray-200 hover:border-orange-300"
                         }`}
                     >
                       {item.variant_name}
-                      {/* Tambahan visual jika ada extra price */}
                       {item.additional_price > 0 && <span className="text-xs font-normal opacity-70">(+{item.additional_price.toLocaleString('id-ID')})</span>}
                     </button>
                   ))}
@@ -219,16 +216,11 @@ export default function DetailProductPage() {
               </div>
             )}
 
-            {/* Action Buttons */}
             <div className="flex gap-4 mt-auto">
               <button onClick={() => handleAddToCart(true)} className="flex-1 bg-orange-500 hover:bg-orange-600 text-white py-4 rounded-xl font-bold transition active:scale-95 uppercase">
                 Buy Now
               </button>
-
-              <button
-                onClick={() => handleAddToCart(false)}
-                className="px-6 py-4 border border-orange-500 text-orange-500 rounded-xl hover:bg-orange-50 transition active:scale-90 flex items-center justify-center"
-              >
+              <button onClick={() => handleAddToCart(false)} className="px-6 py-4 border border-orange-500 text-orange-500 rounded-xl hover:bg-orange-50 transition active:scale-90 flex items-center justify-center">
                 <ShoppingCart size={24} />
               </button>
             </div>

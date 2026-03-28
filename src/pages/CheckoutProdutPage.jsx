@@ -1,16 +1,21 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { useCart } from "../context/CartContext";
+import { useSelector, useDispatch } from "react-redux";
+import { setCartData, clearCartData } from "../redux/slices/cartSlice";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Input from "../components/Input";
 import { Mail, MapPin, User, X, ShoppingCart } from "lucide-react";
 import { PrimaryButton } from "../components/PrimaryButton";
-
+import http, { BASE_URL } from "../lib/http";
 
 export default function CheckoutProductPage() {
   const navigate = useNavigate();
-  const { cart, clearCart, removeFromCart } = useCart();
+  const dispatch = useDispatch();
+
+  // MENGAMBIL STATE DARI REDUX
+  const cart = useSelector((state) => state.cart.items);
+  const [isLoadingCart, setIsLoadingCart] = useState(false);
   const [delivery, setDelivery] = useState("Dine In");
 
   const userData = JSON.parse(localStorage.getItem("currentUser")) || {};
@@ -18,7 +23,38 @@ export default function CheckoutProductPage() {
   const [fullname, setFullName] = useState(userData.fullname || "");
   const [address, setAddress] = useState(userData.address || "");
 
-  const orderTotal = cart.reduce((acc, item) => acc + (item.price * item.qty), 0);
+  // Load cart saat masuk halaman checkout
+  useEffect(() => {
+    const fetchCart = async () => {
+      setIsLoadingCart(true);
+      try {
+        const res = await http("/cart");
+        if (res && res.success) {
+          dispatch(setCartData(res.data || []));
+        }
+      } catch (error) {
+        console.error("Fetch cart error", error);
+      } finally {
+        setIsLoadingCart(false);
+      }
+    }
+    fetchCart();
+  }, [dispatch]);
+
+  // Hapus item dan update Redux
+  const handleRemoveItem = async (cartId) => {
+    try {
+      const res = await http(`/cart/${cartId}`, { method: "DELETE" });
+      if (res && res.success) {
+        const updatedCart = await http("/cart");
+        dispatch(setCartData(updatedCart.data || []));
+      }
+    } catch (err) {
+      console.error("Error deleting", err);
+    }
+  }
+
+  const orderTotal = cart.reduce((acc, item) => acc + item.subtotal, 0);
   const deliveryFee = delivery === "Door Delivery" ? 10000 : 0;
   const tax = orderTotal * 0.1;
   const subTotal = orderTotal + tax + deliveryFee;
@@ -29,25 +65,17 @@ export default function CheckoutProductPage() {
       return;
     }
 
-    const activeUser = JSON.parse(localStorage.getItem("currentUser"));
-
-    if (!activeUser || !activeUser.email) {
-      alert("Please login to continue checkout.");
-      return;
-    }
-
-    if (!email || !fullName || (delivery === "Door Delivery" && !address)) {
+    if (!email || !fullname || (delivery === "Door Delivery" && !address)) {
       alert("Please fill in all required fields!");
       return;
     }
 
+    // FORMAT INVOICE: ORD-YYYYMMDD-XXXX
     const now = new Date();
     const datePart = now.toISOString().split('T')[0].replace(/-/g, '');
-    const timePart = now.getHours().toString().padStart(2, '0') + now.getMinutes().toString().padStart(2, '0');
-    const randomPart = Math.floor(1000 + Math.random() * 9000);
-    const newOrderId = `ORD-${datePart}${timePart}${randomPart}`;
-
     const allOrders = JSON.parse(localStorage.getItem("all_orders")) || [];
+    const indexOrder = String(allOrders.length + 1).padStart(4, '0');
+    const newOrderId = `ORD-${datePart}-${indexOrder}`;
 
     const newOrder = {
       orderId: newOrderId,
@@ -64,8 +92,13 @@ export default function CheckoutProductPage() {
     allOrders.push(newOrder);
     localStorage.setItem("all_orders", JSON.stringify(allOrders));
 
-    clearCart();
+    dispatch(clearCartData()); // CLEAR REDUX
     navigate("/history-order");
+  };
+
+  const getImageUrl = (path) => {
+    if (!path) return "https://via.placeholder.com/150";
+    return path.startsWith("http") ? path : `${BASE_URL}/uploads/products/${path}`;
   };
 
   return (
@@ -84,17 +117,22 @@ export default function CheckoutProductPage() {
               </div>
 
               <div className="space-y-4">
-                {cart.length > 0 ? (
-                  cart.map((item, index) => (
-                    <div key={`${item.id}-${index}`} className="flex gap-4 p-4 bg-gray-50 rounded-lg relative">
-                      <img src={item.image} alt={item.name} className="w-24 h-24 object-cover rounded-md" />
+                {isLoadingCart ? (
+                  <p className="text-center text-gray-500 py-10">Loading your cart...</p>
+                ) : cart.length > 0 ? (
+                  cart.map((item) => (
+                    <div key={item.id_cart} className="flex gap-4 p-4 bg-gray-50 rounded-lg relative">
+                      <img src={getImageUrl(item.product_image)} alt={item.product_name} className="w-24 h-24 object-cover rounded-md" />
                       <div className="flex-1">
-                        <span className="inline-block text-xs bg-red-500 text-white px-2 py-1 rounded mb-1 font-bold">FLASH SALE</span>
-                        <h3 className="font-semibold">{item.name}</h3>
-                        <p className="text-sm text-gray-500">{item.qty}pcs | {item.size} | {item.temperature}</p>
-                        <p className="font-semibold text-orange-500 mt-1">IDR {item.price.toLocaleString("id-ID")}</p>
+                        <h3 className="font-semibold">{item.product_name}</h3>
+                        <p className="text-sm text-gray-500">
+                          {item.quantity}pcs
+                          {item.size_name ? ` | ${item.size_name}` : ""}
+                          {item.variant_name ? ` | ${item.variant_name}` : ""}
+                        </p>
+                        <p className="font-semibold text-orange-500 mt-1">IDR {item.subtotal.toLocaleString("id-ID")}</p>
                       </div>
-                      <button type="button" onClick={() => removeFromCart(item.id, item.size, item.temperature)} className="text-gray-400 hover:text-red-500">
+                      <button type="button" onClick={() => handleRemoveItem(item.id_cart)} className="text-gray-400 hover:text-red-500 cursor-pointer">
                         <X size={20} />
                       </button>
                     </div>

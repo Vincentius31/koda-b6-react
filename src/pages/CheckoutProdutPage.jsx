@@ -7,6 +7,7 @@ import Input from "../components/Input";
 import { Mail, MapPin, User, X, ShoppingCart } from "lucide-react";
 import { PrimaryButton } from "../components/PrimaryButton";
 
+
 export default function CheckoutProductPage() {
   const navigate = useNavigate();
   const { cart, clearCart, removeFromCart } = useCart();

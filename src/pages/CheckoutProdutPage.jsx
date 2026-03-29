@@ -13,7 +13,6 @@ export default function CheckoutProductPage() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  // MENGAMBIL STATE DARI REDUX
   const cart = useSelector((state) => state.cart.items);
   const [isLoadingCart, setIsLoadingCart] = useState(false);
   const [delivery, setDelivery] = useState("Dine In");
@@ -23,7 +22,6 @@ export default function CheckoutProductPage() {
   const [fullname, setFullName] = useState(userData.fullname || "");
   const [address, setAddress] = useState(userData.address || "");
 
-  // Load cart saat masuk halaman checkout
   useEffect(() => {
     const fetchCart = async () => {
       setIsLoadingCart(true);
@@ -41,7 +39,6 @@ export default function CheckoutProductPage() {
     fetchCart();
   }, [dispatch]);
 
-  // Hapus item dan update Redux
   const handleRemoveItem = async (cartId) => {
     try {
       const res = await http(`/cart/${cartId}`, { method: "DELETE" });
@@ -70,7 +67,6 @@ export default function CheckoutProductPage() {
       return;
     }
 
-    // FORMAT INVOICE: ORD-YYYYMMDD-XXXX
     const now = new Date();
     const datePart = now.toISOString().split('T')[0].replace(/-/g, '');
     const allOrders = JSON.parse(localStorage.getItem("all_orders")) || [];
@@ -92,7 +88,7 @@ export default function CheckoutProductPage() {
     allOrders.push(newOrder);
     localStorage.setItem("all_orders", JSON.stringify(allOrders));
 
-    dispatch(clearCartData()); // CLEAR REDUX
+    dispatch(clearCartData());
     navigate("/history-order");
   };
 

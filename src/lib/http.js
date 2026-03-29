@@ -1,47 +1,25 @@
 export const BASE_URL = "https://vincent-backend.camps.fahrul.id";
 
-export default async function http(endpoint, { method = "GET", body } = {}) {
+async function http(url, opts={}){ 
     const headers = {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-    };
+        'Content-Type': 'application/json'
+    }
 
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem('token')
 
     if (token) {
-        headers["Authorization"] = `Bearer ${token}`;
+        headers.Authorization = "Bearer " + token;
+    } else if (opts.token) {
+        headers.Authorization = "Bearer " + opts.token;
     }
 
-    const config = {
-        method,
-        headers,
-    };
+    const response = await fetch(BASE_URL + url, {
+        method: opts.method || "GET",
+        headers: headers,
+        body: opts.body ? JSON.stringify(opts.body) : undefined
+    });
 
-    if (body) {
-        config.body = JSON.stringify(body);
-    }
-
-    try {
-        const response = await fetch(`${BASE_URL}${endpoint}`, config);
-
-        if (response.status === 401) {
-            console.warn("Token expired atau tidak valid. Melakukan auto-logout...");
-            
-            localStorage.removeItem("token");
-            localStorage.removeItem("user_email");
-            
-            alert("Sesi Anda telah berakhir. Silakan login kembali.");
-            
-            window.location.href = "/login";
-
-            return null; 
-        }
-
-        const data = await response.json();
-        return data;
-
-    } catch (error) {
-        console.error("HTTP Fetch Error:", error);
-        throw error;
-    }
+    return await response.json()
 }
+
+export default http;

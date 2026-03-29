@@ -13,14 +13,13 @@ export default function CheckoutProductPage() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const cart = useSelector((state) => state.cart.items);
+  const cart = useSelector((state) => state.cart.items) || [];
   const [isLoadingCart, setIsLoadingCart] = useState(false);
   const [delivery, setDelivery] = useState("Dine In");
 
-  const userData = JSON.parse(localStorage.getItem("currentUser")) || {};
-  const [email, setEmail] = useState(userData.email || "");
-  const [fullname, setFullName] = useState(userData.fullname || "");
-  const [address, setAddress] = useState(userData.address || "");
+  const [email, setEmail] = useState("");
+  const [fullname, setFullName] = useState("");
+  const [address, setAddress] = useState("");
 
   useEffect(() => {
     const fetchCart = async () => {
@@ -35,8 +34,25 @@ export default function CheckoutProductPage() {
       } finally {
         setIsLoadingCart(false);
       }
-    }
+    };
+
+    // --- PERBAIKAN: Fungsi untuk mengambil data user dari backend ---
+    const fetchProfile = async () => {
+      try {
+        const res = await http("/profile");
+        if (res && res.success && res.data) {
+          // Isi state otomatis dengan data dari backend
+          setEmail(res.data.email || "");
+          setFullName(res.data.fullname || "");
+          setAddress(res.data.address || "");
+        }
+      } catch (error) {
+        console.error("Fetch profile error", error);
+      }
+    };
+
     fetchCart();
+    fetchProfile(); // Panggil saat halaman pertama kali dirender
   }, [dispatch]);
 
   const handleRemoveItem = async (cartId) => {
@@ -44,14 +60,21 @@ export default function CheckoutProductPage() {
       const res = await http(`/cart/${cartId}`, { method: "DELETE" });
       if (res && res.success) {
         const updatedCart = await http("/cart");
-        dispatch(setCartData(updatedCart.data || []));
+        dispatch(setCartData(updatedCart?.data || []));
       }
     } catch (err) {
       console.error("Error deleting", err);
     }
-  }
+  };
 
-  const orderTotal = cart.reduce((acc, item) => acc + item.subtotal, 0);
+  const getItemTotal = (item) => {
+    const basePrice = item.base_price || 0;
+    const variantPrice = item.variant_price || 0;
+    const sizePrice = item.size_price || 0;
+    return (basePrice + variantPrice + sizePrice) * item.quantity;
+  };
+
+  const orderTotal = cart.reduce((acc, item) => acc + getItemTotal(item), 0);
   const deliveryFee = delivery === "Door Delivery" ? 10000 : 0;
   const tax = orderTotal * 0.1;
   const subTotal = orderTotal + tax + deliveryFee;
@@ -126,7 +149,7 @@ export default function CheckoutProductPage() {
                           {item.size_name ? ` | ${item.size_name}` : ""}
                           {item.variant_name ? ` | ${item.variant_name}` : ""}
                         </p>
-                        <p className="font-semibold text-orange-500 mt-1">IDR {item.subtotal.toLocaleString("id-ID")}</p>
+                        <p className="font-semibold text-orange-500 mt-1">IDR {getItemTotal(item).toLocaleString("id-ID")}</p>
                       </div>
                       <button type="button" onClick={() => handleRemoveItem(item.id_cart)} className="text-gray-400 hover:text-red-500 cursor-pointer">
                         <X size={20} />
@@ -145,6 +168,7 @@ export default function CheckoutProductPage() {
             <section>
               <h2 className="text-lg font-semibold mb-4">Payment Info & Delivery</h2>
               <div className="space-y-4">
+                {/* Form input akan otomatis terisi saat fetchProfile selesai */}
                 <Input label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Enter Your Email" icon={Mail} />
                 <Input label="Full Name" type="text" value={fullname} onChange={(e) => setFullName(e.target.value)} placeholder="Enter Your Full Name" icon={User} />
                 <Input label="Address" type="text" value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Enter Your Address" icon={MapPin} />

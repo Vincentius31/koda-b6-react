@@ -1,6 +1,6 @@
 export const BASE_URL = "https://vincent-backend.camps.fahrul.id";
 
-export default async function http(endpoint, { method = "GET", body, token } = {}) {
+export default async function http(endpoint, { method = "GET", body } = {}) {
     const headers = {
         "Content-Type": "application/json",
         "Accept": "application/json",

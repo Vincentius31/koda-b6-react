@@ -95,7 +95,7 @@ export default function ProductCard({
                     <p className="font-bold text-[#FF8906] text-lg tracking-tight">IDR {Number(price).toLocaleString("id-ID")}</p>
                 </div>
                 <div className="flex items-center gap-2">
-                    <Link to={`/detail-product/${id}`} className="grow">
+                    <Link to={`/details-product/${id}`} className="grow">
                         <button className="w-full bg-[#FF8906] hover:bg-orange-600 text-white font-semibold py-2.5 rounded-md transition text-sm cursor-pointer shadow-sm">Buy</button>
                     </Link>
                     <button onClick={handleAddToCart} className="p-2.5 border border-[#FF8906] text-[#FF8906] rounded-md hover:bg-orange-50 transition cursor-pointer shrink-0">

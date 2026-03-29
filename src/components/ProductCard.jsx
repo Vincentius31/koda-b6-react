@@ -12,7 +12,7 @@ export default function ProductCard({
 
     const handleAddToCart = async (e) => {
         e.preventDefault();
-        
+
         const token = localStorage.getItem("token");
         if (!token) {
             alert("Please login first to add items to cart!");
@@ -21,9 +21,35 @@ export default function ProductCard({
         }
 
         try {
-            const payload = { product_id: id, quantity: 1, variant_id: null, size_id: null };
+            const detailRes = await http(`/detail-product/${id}`);
+
+            let defaultVariantId = null;
+            let defaultSizeId = null;
+
+            if (detailRes && detailRes.success && detailRes.data?.product) {
+                const productData = detailRes.data.product;
+
+                if (productData.variants && productData.variants.length > 0) {
+                    defaultVariantId = productData.variants[0].id_variant;
+                }
+
+                if (productData.sizes && productData.sizes.length > 0) {
+                    defaultSizeId = productData.sizes[0].id_size;
+                }
+            } else {
+                alert("Gagal mengambil data produk.");
+                return;
+            }
+
+            const payload = {
+                product_id: id,
+                quantity: 1,
+                variant_id: defaultVariantId,
+                size_id: defaultSizeId
+            };
+
             const postRes = await http("/cart", { method: "POST", body: payload });
-            
+
             if (postRes && postRes.success) {
                 const cartRes = await http("/cart");
                 if (cartRes && cartRes.success) {
@@ -35,6 +61,7 @@ export default function ProductCard({
             }
         } catch (error) {
             console.error("Cart Error:", error);
+            alert("Terjadi kesalahan sistem saat menambah keranjang.");
         }
     };
 
@@ -68,7 +95,7 @@ export default function ProductCard({
                     <p className="font-bold text-[#FF8906] text-lg tracking-tight">IDR {Number(price).toLocaleString("id-ID")}</p>
                 </div>
                 <div className="flex items-center gap-2">
-                    <Link to={`/details-product/${id}`} className="grow">
+                    <Link to={`/detail-product/${id}`} className="grow">
                         <button className="w-full bg-[#FF8906] hover:bg-orange-600 text-white font-semibold py-2.5 rounded-md transition text-sm cursor-pointer shadow-sm">Buy</button>
                     </Link>
                     <button onClick={handleAddToCart} className="p-2.5 border border-[#FF8906] text-[#FF8906] rounded-md hover:bg-orange-50 transition cursor-pointer shrink-0">

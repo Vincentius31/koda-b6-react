@@ -6,6 +6,8 @@ export default async function http(endpoint, { method = "GET", body, token } = {
         "Accept": "application/json",
     };
 
+    const token = localStorage.getItem("token");
+
     if (token) {
         headers["Authorization"] = `Bearer ${token}`;
     }

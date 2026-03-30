@@ -6,17 +6,17 @@ import Input from '../components/Input'
 import Password from '../components/Password'
 import Footer from '../components/Footer'
 import { useNavigate } from 'react-router-dom'
-
-// INI YANG BERUBAH: Kita import http dan BASE_URL
 import http, { BASE_URL } from '../lib/http'
 
 export default function ProfilePage() {
     const navigate = useNavigate();
     const fileInputRef = useRef(null);
 
+    const savedEmail = localStorage.getItem("user_email") || "";
+
     const [profile, setProfile] = useState({
         fullname: "",
-        email: "",
+        email: savedEmail,
         phone: "",
         address: "",
         joinDate: "Loading...",
@@ -94,12 +94,10 @@ export default function ProfilePage() {
         const token = localStorage.getItem("token");
 
         try {
-            // PROSES A: Upload Gambar
             if (selectedImageFile) {
                 const formData = new FormData();
                 formData.append("profile_image", selectedImageFile);
 
-                // INI YANG BERUBAH: Menggunakan BASE_URL dinamis untuk upload gambar
                 const uploadRes = await fetch(`${BASE_URL}/profile/upload`, {
                     method: "POST",
                     headers: {
@@ -114,7 +112,6 @@ export default function ProfilePage() {
                 }
             }
 
-            // PROSES B: Update Data Teks
             const payload = {
                 fullname: profile.fullname,
                 phone: profile.phone,

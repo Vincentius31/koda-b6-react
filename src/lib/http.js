@@ -1,11 +1,11 @@
 export const BASE_URL = "https://vincent-backend.camps.fahrul.id";
 
 async function http(url, opts={}){ 
-    const headers = {
-        'Content-Type': 'application/json'
-    }
-
     const token = localStorage.getItem('token')
+    const headers = {
+        'Content-Type': 'application/json',
+        ...opts.headers
+    }
 
     if (token) {
         headers.Authorization = "Bearer " + token;
@@ -19,7 +19,16 @@ async function http(url, opts={}){
         body: opts.body ? JSON.stringify(opts.body) : undefined
     });
 
-    return await response.json()
+    const text = await response.text();
+    try{
+        return JSON.parse(text)
+    } catch(err){
+        console.error("Server returned non-JSON response:", text);
+        return {
+            success: false,
+            message: "Server Error: Invalid JSON response"
+        };
+    }
 }
 
 export default http;

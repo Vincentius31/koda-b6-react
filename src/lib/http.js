@@ -19,7 +19,7 @@ async function http(url, opts={}){
         body: opts.body ? JSON.stringify(opts.body) : undefined
     });
 
-    if(response.status === 401){
+    if(response.status === 401 && !url.includes('/auth/login')){
         localStorage.clear();
 
         alert("Your session has expired. Please log in again");

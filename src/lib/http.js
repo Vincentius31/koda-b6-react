@@ -20,15 +20,10 @@ async function http(url, opts={}){
     });
 
     if(response.status === 401){
-        localStorage.removeItem('token');
-        localStorage.removeItem('user_email')
+        localStorage.clear();
 
         alert("Your session has expired. Please log in again");
         window.location.href = "/login";
-        return {
-            success: false,
-            message: "Unathorized"
-        };
     }
 
     const text = await response.text();

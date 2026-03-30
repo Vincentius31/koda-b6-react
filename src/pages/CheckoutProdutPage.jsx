@@ -36,12 +36,10 @@ export default function CheckoutProductPage() {
       }
     };
 
-    // --- PERBAIKAN: Fungsi untuk mengambil data user dari backend ---
     const fetchProfile = async () => {
       try {
         const res = await http("/profile");
         if (res && res.success && res.data) {
-          // Isi state otomatis dengan data dari backend
           setEmail(res.data.email || "");
           setFullName(res.data.fullname || "");
           setAddress(res.data.address || "");
@@ -52,7 +50,7 @@ export default function CheckoutProductPage() {
     };
 
     fetchCart();
-    fetchProfile(); // Panggil saat halaman pertama kali dirender
+    fetchProfile();
   }, [dispatch]);
 
   const handleRemoveItem = async (cartId) => {
@@ -196,7 +194,7 @@ export default function CheckoutProductPage() {
             </section>
           </div>
 
-          <section className="bg-gray-50 p-6 rounded-lg h-fit lg:sticky lg:top-28 border border-gray-100">
+          <section className="bg-gray-50 p-6 rounded-lg h-fit lg:top-28 border border-gray-100">
             <h2 className="font-semibold mb-4 text-xl">Order Summary</h2>
             <div className="space-y-3 text-sm">
               <div className="flex justify-between"><span className="text-gray-600">Total Price</span><span className="font-medium">IDR {orderTotal.toLocaleString("id-ID")}</span></div>

@@ -77,7 +77,7 @@ export default function CheckoutProductPage() {
   const tax = orderTotal * 0.1;
   const subTotal = orderTotal + tax + deliveryFee;
 
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
     if (cart.length === 0) {
       alert("Your cart is empty. Please add some products first!");
       return;
@@ -88,29 +88,39 @@ export default function CheckoutProductPage() {
       return;
     }
 
-    const now = new Date();
-    const datePart = now.toISOString().split('T')[0].replace(/-/g, '');
-    const allOrders = JSON.parse(localStorage.getItem("all_orders")) || [];
-    const indexOrder = String(allOrders.length + 1).padStart(4, '0');
-    const newOrderId = `ORD-${datePart}-${indexOrder}`;
+    const checkoutItems = cart.map((item) => ({
+      product_id: item.product_id,
+      quantity: item.quantity,
+      size: item.size_name || "",
+      variant: item.variant_name || "",
+      price: getItemTotal(item),
+    }));
 
-    const newOrder = {
-      orderId: newOrderId,
-      items: cart,
-      customer: { email, fullname, address },
-      delivery,
-      deliveryFee,
-      tax: tax,
+    const checkoutData = {
+      delivery_method: delivery,
+      subtotal: orderTotal + deliveryFee,
       total: subTotal,
-      date: new Date().toISOString(),
-      status: "Pending",
+      payment_method: "Cash",
+      items: checkoutItems,
     };
 
-    allOrders.push(newOrder);
-    localStorage.setItem("all_orders", JSON.stringify(allOrders));
+    try {
+      const res = await http("/checkout", {
+        method: "POST",
+        body: JSON.stringify(checkoutData),
+      });
 
-    dispatch(clearCartData());
-    navigate("/history-order");
+      if (res && res.success) {
+        dispatch(clearCartData());
+        alert("Order placed successfully!");
+        navigate("/history-order");
+      } else {
+        alert(res?.message || "Failed to place order");
+      }
+    } catch (error) {
+      console.error("Checkout error", error);
+      alert("Failed to place order. Please try again.");
+    }
   };
 
   const getImageUrl = (path) => {

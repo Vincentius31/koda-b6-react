@@ -107,7 +107,7 @@ export default function CheckoutProductPage() {
     try {
       const res = await http("/checkout", {
         method: "POST",
-        body: JSON.stringify(checkoutData),
+        body: checkoutData,
       });
 
       if (res && res.success) {

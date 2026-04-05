@@ -4,18 +4,26 @@ import { Calendar, MessageSquareText } from 'lucide-react';
 import Footer from '../components/Footer';
 import { PrimaryButton } from '../components/PrimaryButton';
 import { Link } from "react-router-dom";
+import http, { BASE_URL } from '../lib/http';
 
 export default function HistoryOrder() {
     const [orders, setOrders] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        const userData = JSON.parse(localStorage.getItem("currentUser"));
-        if (userData && userData.email) {
-            const allOrders = JSON.parse(localStorage.getItem("all_orders")) || [];
-            const userOrders = allOrders.filter(order => order.customer.email === userData.email);
-            const sortedOrders = userOrders.sort((a, b) => new Date(b.date) - new Date(a.date));
-            setOrders(sortedOrders);
-        }
+        const fetchOrders = async () => {
+            try {
+                const res = await http("/transactions");
+                if (res && res.success) {
+                    setOrders(res.data || []);
+                }
+            } catch (error) {
+                console.error("Fetch orders error", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchOrders();
     }, []);
 
     const formatDate = (dateString) => {
@@ -33,6 +41,11 @@ export default function HistoryOrder() {
             case 'waiting': return 'bg-gray-200 text-gray-500';
             default: return 'bg-orange-100 text-orange-500'; 
         }
+    };
+
+    const getImageUrl = (path) => {
+        if (!path) return "https://via.placeholder.com/150";
+        return path.startsWith("http") ? path : `${BASE_URL}/uploads/products/${path}`;
     };
 
     return (
@@ -61,11 +74,13 @@ export default function HistoryOrder() {
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
                     <div className="lg:col-span-2 space-y-6">
-                        {orders.length > 0 ? (
-                            orders.map((order, index) => (
-                                <div key={index} className="flex flex-col md:flex-row gap-5 p-5 bg-gray-50 rounded-lg border border-gray-100">
+                        {isLoading ? (
+                            <p className="text-center text-gray-500 py-10">Loading your orders...</p>
+                        ) : orders.length > 0 ? (
+                            orders.map((order) => (
+                                <div key={order.id_transaction} className="flex flex-col md:flex-row gap-5 p-5 bg-gray-50 rounded-lg border border-gray-100">
                                     <img
-                                        src={order.items[0]?.image}
+                                        src={getImageUrl(order.first_item_image)}
                                         className="w-28 h-28 object-cover rounded-md shadow-sm"
                                         alt="product"
                                     />
@@ -73,15 +88,15 @@ export default function HistoryOrder() {
                                     <div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-4 items-center">
                                         <div>
                                             <p className="text-sm text-gray-500">No. Order</p>
-                                            <p className="font-semibold text-sm">{order.orderId}</p>
-                                            <Link to={`/detail-order/${order.orderId}`} className="text-orange-500 text-sm">
+                                            <p className="font-semibold text-sm">{order.transaction_number}</p>
+                                            <Link to={`/detail-order/${order.id_transaction}`} className="text-orange-500 text-sm">
                                                 Views Order Detail
                                             </Link>
                                         </div>
 
                                         <div>
                                             <p className="text-sm text-gray-500">Date</p>
-                                            <p className="font-semibold text-sm">{formatDate(order.date)}</p>
+                                            <p className="font-semibold text-sm">{formatDate(order.created_at)}</p>
                                         </div>
 
                                         <div>
@@ -94,7 +109,7 @@ export default function HistoryOrder() {
                                         <div>
                                             <p className="text-sm text-gray-500">Status</p>
                                             <span className={`inline-block text-[10px] px-3 py-1 rounded-full font-bold uppercase ${getStatusStyle(order.status)}`}>
-                                                {order.status || "On Progress"}
+                                                {order.status || "Pending"}
                                             </span>
                                         </div>
                                     </div>

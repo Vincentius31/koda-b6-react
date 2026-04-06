@@ -1,20 +1,12 @@
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Coffee, ShoppingCart, Users, LogOut, Search, ShoppingBag } from 'lucide-react';
 import logoBrown from "../../assets/img/Logo-Brown.png"
-import { useSelector, useDispatch } from 'react-redux';
-
+import { useAuth } from "../../context/AuthContext";
 
 export default function AdminLayout() {
     const location = useLocation();
     const navigate = useNavigate();
-    const dispatch = useDispatch();
-
-    const currentUser = useSelector((state) => state.auth.currentUser);
-
-    const handleLogout = () => {
-        dispatch(logout());
-        navigate("/login");
-    };
+    const { user, logout } = useAuth();
 
     const menuItems = [
         { name: "Dashboard", path: "/admin/dashboard", icon: <LayoutDashboard size={20} /> },
@@ -22,6 +14,11 @@ export default function AdminLayout() {
         { name: "Order", path: "/admin/order", icon: <ShoppingCart size={20} /> },
         { name: "User", path: "/admin/user", icon: <Users size={20} /> }
     ];
+
+    const handleLogout = () => {
+        logout();
+        navigate("/login");
+    };
 
     return (
         <div className="flex min-h-screen bg-gray-50 font-sans">
@@ -69,7 +66,7 @@ export default function AdminLayout() {
                             className="w-8 h-8 rounded-full border border-gray-200 object-cover"
                         />
                         <span className="text-sm font-medium text-gray-700">
-                            {currentUser?.fullName || "Admin"}
+                            {user?.email || "Admin"}
                         </span>
                         <span className="text-[10px] text-gray-400">▼</span>
                     </div>

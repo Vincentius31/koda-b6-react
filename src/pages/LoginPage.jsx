@@ -16,7 +16,8 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useState } from "react";
-import http from "../lib/http"; 
+import http from "../lib/http";
+import { useAuth } from "../context/AuthContext";
 
 const schema = yup.object({
   email: yup.string().email("Invalid email!").required("Email is required!"),
@@ -25,6 +26,7 @@ const schema = yup.object({
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const { login, isAdmin } = useAuth();
   const [apiError, setApiError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -50,12 +52,12 @@ export default function LoginPage() {
       });
 
       if (result && result.success) {
-        localStorage.setItem("token", result.data.token);
+        login(result.data.token);
         localStorage.setItem("user_email", data.email);
 
         alert("Login berhasil!");
 
-        if (data.email === "admin@coffee.com") {
+        if (isAdmin()) {
           navigate("/admin/dashboard");
         } else {
           navigate("/");

@@ -3,20 +3,15 @@ import logoWhite from "../assets/img/Logo-White.png";
 import logoBrown from "../assets/img/Logo-Brown.png"
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import { useAuth } from "../context/AuthContext";
 
 export default function Navbar({ className = "" }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-
-  const token = localStorage.getItem("token");
-
-  const userEmail = localStorage.getItem("user_email");
+  const { user, logout } = useAuth();
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user_email");
-
+    logout();
     alert("Logout Successfully!");
-
     window.location.href = "/";
   };
 
@@ -44,10 +39,10 @@ export default function Navbar({ className = "" }) {
               <ShoppingCart className="w-5 h-5" />
             </Link>
 
-            {token ? (
+            {user ? (
               <>
                 <Link to="/profile" className="border border-white text-white px-5 py-2 rounded-lg text-sm hover:border-orange-400 hover:text-orange-400 transition">
-                  {userEmail || "Profile"}
+                  {user.email || "Profile"}
                 </Link>
                 <button onClick={handleLogout} className="bg-[#FF8906] text-white px-6 py-2 rounded-lg text-sm hover:bg-orange-600 transition cursor-pointer">
                   Logout
@@ -121,7 +116,7 @@ export default function Navbar({ className = "" }) {
         </div>
 
         <div className="p-6 flex flex-col gap-4 mb-2">
-          {token ? (
+          {user ? (
              <>
                <Link 
                  to="/profile" 

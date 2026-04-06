@@ -52,12 +52,13 @@ export default function LoginPage() {
       });
 
       if (result && result.success) {
-        login(result.data.token);
+        const userInfo = login(result.data.token);
         localStorage.setItem("user_email", data.email);
 
         alert("Login berhasil!");
 
-        if (isAdmin()) {
+        // Check role from returned userInfo (not from state which is async)
+        if (userInfo && userInfo.roles_id === 1) {
           navigate("/admin/dashboard");
         } else {
           navigate("/");
@@ -91,9 +92,9 @@ export default function LoginPage() {
 
           {/* Alert Error dari API */}
           {apiError && (
-             <div className="bg-red-50 text-red-500 p-3 rounded-md mb-4 border border-red-200 text-sm">
-               {apiError}
-             </div>
+            <div className="bg-red-50 text-red-500 p-3 rounded-md mb-4 border border-red-200 text-sm">
+              {apiError}
+            </div>
           )}
 
           <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
@@ -139,7 +140,7 @@ export default function LoginPage() {
               Google
             </div>
           </div>
-          
+
         </div>
       </section>
     </section>

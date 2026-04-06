@@ -31,12 +31,15 @@ export function AuthProvider({ children }) {
     localStorage.setItem("token", token);
     const decoded = decodeToken(token);
     if (decoded) {
-      setUser({
+      const userInfo = {
         user_id: decoded.user_id,
         email: decoded.email,
         roles_id: decoded.roles_id,
-      });
+      };
+      setUser(userInfo);
+      return userInfo;
     }
+    return null;
   };
 
   const logout = () => {

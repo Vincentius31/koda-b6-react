@@ -15,6 +15,7 @@ import Dashboard from './pages/admin/Dashboard'
 import Product from './pages/admin/Product'
 import Order from './pages/admin/Order'
 import User from './pages/admin/User'
+import AdminRoute from './components/AdminRoute'
 
 const router = createBrowserRouter([
     {
@@ -59,7 +60,7 @@ const router = createBrowserRouter([
     },
     {
         path: "/admin",
-        element: <AdminLayout/>,
+        element: <AdminRoute><AdminLayout/></AdminRoute>,
         children:[
             {
                 path: "dashboard",

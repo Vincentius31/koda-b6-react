@@ -52,13 +52,13 @@ export default function LoginPage() {
       });
 
       if (result && result.success) {
-        const userInfo = login(result.data.token);
+        const { token, role_id } = result.data;
+        login(token);
         localStorage.setItem("user_email", data.email);
 
         alert("Login berhasil!");
 
-        // Check role from returned userInfo (not from state which is async)
-        if (userInfo && userInfo.roles_id === 1) {
+        if (Number(role_id) === 1) {
           navigate("/admin/dashboard");
         } else {
           navigate("/");

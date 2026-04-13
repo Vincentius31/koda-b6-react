@@ -16,7 +16,7 @@ export function AuthProvider({ children }) {
         setUser({
           user_id: decoded.user_id,
           email: decoded.email,
-          roles_id: decoded.roles_id,
+          roles_id: decoded.role_id,
         });
       }
     } else {
@@ -34,7 +34,7 @@ export function AuthProvider({ children }) {
       const userInfo = {
         user_id: decoded.user_id,
         email: decoded.email,
-        roles_id: decoded.roles_id,
+        roles_id: decoded.role_id,
       };
       setUser(userInfo);
       return userInfo;

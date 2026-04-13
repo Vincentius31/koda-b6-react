@@ -1,38 +1,41 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react';
 import { Plus, Search, Filter, Pencil, Trash2 } from 'lucide-react';
-import AddProductModal from '../../components/modal/admin/AddProductModal';
-import EditProductModal from '../../components/modal/admin/EditProductModal';
-import useLocalStorage from '../../hooks/useLocalStorage';
+import AddProductModal from '../../components/modal/admin/AddProductModal'; 
+import EditProductModal from '../../components/modal/admin/EditProductModal'; 
+import http from '../../lib/http'; 
 
 export default function Product() {
-    const [products, setProducts] = useLocalStorage("products", []);
-    const [showAddModal, setShowAddModal] = useState(false)
-    const [showEditModal, setShowEditModal] = useState(false)
+    const [products, setProducts] = useState([]);
+    const [showAddModal, setShowAddModal] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);
 
     const [selectedProduct, setSelectedProduct] = useState(null);
-
     const [search, setSearch] = useState("");
     const [filteredProducts, setFilteredProducts] = useState([]);
 
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 5;
 
+    const fetchProducts = async () => {
+        try {
+            const res = await http("/admin/product");
+            if (res.success) {
+                setProducts(res.data || []);
+            }
+        } catch (err) {
+            console.error("Fetch gagal:", err);
+        }
+    };
+
     useEffect(() => {
-        if (products.length > 0) return;
-        const fetchData = async () => {
-            try {
-                const res = await fetch("https://raw.githubusercontent.com/Vincentius31/koda-b6-react/main/src/data/menu.json");
-                const data = await res.json();
-                setProducts(data);
-            } catch (err) { console.error("Fetch gagal:", err); }
-        };
-        fetchData();
+        fetchProducts();
     }, []);
 
     useEffect(() => {
-        const result = products.filter(product =>
-            product.nameProduct.toLowerCase().includes(search.toLowerCase())
-        );
+        const result = products.filter(product => {
+            const pName = product.nameProduct || "";
+            return pName.toLowerCase().includes(search.toLowerCase());
+        });
         setFilteredProducts(result);
         setCurrentPage(1);
     }, [search, products]);
@@ -42,9 +45,20 @@ export default function Product() {
     const currentItems = filteredProducts.slice(indexOfFirstItem, indexOfLastItem);
     const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
 
-    const handleDelete = (id) => {
+    const handleDelete = async (id) => {
         if (!window.confirm("Apakah kamu yakin ingin menghapus product ini?")) return;
-        setProducts(products.filter((p) => p.id !== id));
+
+        try {
+            const res = await http(`/admin/product/${id}`, { method: "DELETE" });
+            if (res.success) {
+                fetchProducts();
+                alert("Product berhasil dihapus!");
+            } else {
+                alert("Gagal menghapus produk: " + res.message);
+            }
+        } catch (err) {
+            console.error("Delete error:", err);
+        }
     };
 
     const handleEditClick = (product) => {
@@ -52,24 +66,50 @@ export default function Product() {
         setShowEditModal(true);
     };
 
-    const handleUpdateProduct = (updatedProduct) => {
-        const updatedList = products.map(p => p.id === updatedProduct.id ? updatedProduct : p);
-        setProducts(updatedList);
-        setShowEditModal(false);
+    const handleUpdateProduct = async (updatedProduct) => {
+        const productId = updatedProduct.id;
+
+        try {
+            const res = await http(`/admin/product/${productId}`, {
+                method: "PATCH",
+                body: updatedProduct
+            });
+
+            if (res.success) {
+                fetchProducts();
+                setShowEditModal(false);
+                alert("Product berhasil diupdate!");
+            } else {
+                alert("Gagal update produk: " + res.message);
+            }
+        } catch (err) {
+            console.error("Update error:", err);
+        }
     };
 
-    const handleAddProduct = (newProduct) => {
-        const newId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
-        const finalProduct = { ...newProduct, id: newId };
+    const handleAddProduct = async (newProduct) => {
+        try {
+            const res = await http("/admin/product", {
+                method: "POST",
+                body: newProduct
+            });
 
-        setProducts([...products, finalProduct]);
-        setShowAddModal(false);
+            if (res.success) {
+                fetchProducts(); 
+                setShowAddModal(false);
+                alert("Product Added Successfully!");
+            } else {
+                alert("Gagal menambah produk: " + res.message);
+            }
+        } catch (err) {
+            console.error("Add error:", err);
+        }
     };
 
     return (
         <div className="space-y-4">
             <h2 className="text-xl font-base text-gray-800">Product List</h2>
-            {/* Header Toolbar (Search & Add) tetap sama */}
+
             <div className="flex flex-col md:flex-row justify-between items-end gap-4">
                 <button onClick={() => setShowAddModal(true)} className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2.5 rounded-lg flex items-center gap-2 transition-colors font-medium text-sm shadow-sm shadow-orange-200">
                     <Plus size={18} /> Add Product
@@ -95,45 +135,56 @@ export default function Product() {
                             <tr className="text-gray-400 font-medium">
                                 <th className="px-6 py-4 w-12 text-center"><input type="checkbox" className="rounded" /></th>
                                 <th className="px-4 py-4">Image</th>
-                                <th className="px-4 py-4">Product Name</th>
-                                <th className="px-4 py-4">Price</th>
-                                <th className="px-4 py-4">Price Discount</th>
-                                <th className="px-4 py-4">Promo Type</th>
-                                <th className="px-4 py-4">Desc</th>
-                                <th className="px-4 py-4">Product Size</th>
-                                <th className="px-4 py-4">Temperature</th>
-                                <th className="px-4 py-4">Method</th>
+                                <th className="px-4 py-4 min-w-37.5">Product Name</th>
+                                <th className="px-4 py-4 min-w-30">Price</th>
+                                <th className="px-4 py-4 min-w-30">Discount Price</th>
+                                <th className="px-4 py-4 min-w-30">Promo Type</th>
+                                <th className="px-4 py-4 min-w-50">Desc</th>
+                                <th className="px-4 py-4 min-w-30">Product Size</th>
+                                <th className="px-4 py-4 min-w-30">Temperature</th>
+                                <th className="px-4 py-4 min-w-37.5">Method</th>
                                 <th className="px-4 py-4">Stock</th>
-                                <th className="px-4 py-4 text-center">Action</th>
+                                <th className="px-4 py-4 text-center sticky right-0 bg-white">Action</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-50">
-                            {currentItems.map((product) => (
-                                <tr key={product.id} className="hover:bg-gray-50/50 transition-colors">
-                                    <td className="px-6 py-4 text-center"><input type="checkbox" className="rounded" /></td>
-                                    <td className="px-4 py-4"><img src={product.imageProduct?.[0]} alt={product.nameProduct} className="w-10 h-10 rounded-lg object-cover bg-gray-100" /></td>
-                                    <td className="px-4 py-4 font-medium text-gray-700">{product.nameProduct}</td>
-                                    <td className="px-4 py-4 text-gray-600">IDR {product.priceProduct.toLocaleString("id-ID")}</td>
-                                    <td className="px-4 py-4 text-gray-600">IDR {product.priceDiscount.toLocaleString("id-ID")}</td>
-                                    <td className="px-4 py-4 font-medium text-gray-700">{product.promoType}</td>
-                                    <td className="px-4 py-4 text-gray-400 text-[11px] leading-relaxed max-w-37.5">{product.description}</td>
-                                    <td className="px-4 py-4 text-gray-600">{product.size.join(", ")}</td>
-                                    <td className="px-4 py-4 text-gray-600">{product.temp.join(", ")}</td>
-                                    <td className="px-4 py-4 text-gray-600">{product.method.join(", ")}</td>
-                                    <td className="px-4 py-4 text-gray-600">{product.stock}</td>
-                                    <td className="px-4 py-4 text-center">
-                                        <div className="flex items-center justify-center gap-2">
-                                            <button onClick={() => handleEditClick(product)} className="p-1.5 text-orange-400 hover:bg-orange-50 rounded-md transition-colors"><Pencil size={16} /></button>
-                                            <button onClick={() => handleDelete(product.id)} className="p-1.5 text-red-400 hover:bg-red-50 rounded-md transition-colors"><Trash2 size={16} /></button>
-                                        </div>
-                                    </td>
+                            {currentItems.length > 0 ? (
+                                currentItems.map((product) => {
+                                    const imageSrc = (product.imageProduct && product.imageProduct.length > 0)
+                                        ? product.imageProduct[0]
+                                        : "https://via.placeholder.com/40";
+
+                                    return (
+                                        <tr key={product.id} className="hover:bg-gray-50/50 transition-colors">
+                                            <td className="px-6 py-4 text-center"><input type="checkbox" className="rounded" /></td>
+                                            <td className="px-4 py-4"><img src={imageSrc} alt={product.nameProduct} className="w-10 h-10 rounded-lg object-cover bg-gray-100" /></td>
+                                            <td className="px-4 py-4 font-medium text-gray-700">{product.nameProduct}</td>
+                                            <td className="px-4 py-4 text-gray-600">IDR {product.priceProduct?.toLocaleString("id-ID")}</td>
+                                            <td className="px-4 py-4 text-gray-600">IDR {product.priceDiscount?.toLocaleString("id-ID")}</td>
+                                            <td className="px-4 py-4 font-medium text-gray-700">{product.promoType || '-'}</td>
+                                            <td className="px-4 py-4 text-gray-400 text-[11px] leading-relaxed max-w-37.5 truncate" title={product.description}>{product.description}</td>
+                                            <td className="px-4 py-4 text-gray-600">{(product.size || []).join(", ")}</td>
+                                            <td className="px-4 py-4 text-gray-600">{(product.temp || []).join(", ")}</td>
+                                            <td className="px-4 py-4 text-gray-600">{(product.method || []).join(", ")}</td>
+                                            <td className="px-4 py-4 text-gray-600">{product.stock}</td>
+                                            <td className="px-4 py-4 text-center sticky right-0 bg-white">
+                                                <div className="flex items-center justify-center gap-2">
+                                                    <button onClick={() => handleEditClick(product)} className="p-1.5 text-orange-400 hover:bg-orange-50 rounded-md transition-colors"><Pencil size={16} /></button>
+                                                    <button onClick={() => handleDelete(product.id)} className="p-1.5 text-red-400 hover:bg-red-50 rounded-md transition-colors"><Trash2 size={16} /></button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    );
+                                })
+                            ) : (
+                                <tr>
+                                    <td colSpan="12" className="py-8 text-gray-400">Tidak ada produk ditemukan.</td>
                                 </tr>
-                            ))}
+                            )}
                         </tbody>
                     </table>
                 </div>
 
-                {/* Pagination Controls tetap sama */}
                 <div className="px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4 text-[12px] text-black border-t border-gray-50">
                     <p>Show {currentItems.length} of {filteredProducts.length} products</p>
                     <div className="flex items-center gap-2">
@@ -151,5 +202,5 @@ export default function Product() {
             <AddProductModal isOpen={showAddModal} onClose={() => setShowAddModal(false)} onSave={handleAddProduct} />
             <EditProductModal isOpen={showEditModal} onClose={() => setShowEditModal(false)} productData={selectedProduct} onSave={handleUpdateProduct} />
         </div>
-    )
+    );
 }

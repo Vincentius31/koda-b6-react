@@ -197,7 +197,7 @@ export default function DetailProductPage() {
 
             {product.variants?.length > 0 && (
               <div className="mb-8 accent-[#FF8906]">
-                <p className="font-medium mb-2">Preference</p>
+                <p className="font-medium mb-2">Variants</p>
                 <div className="flex gap-3 flex-wrap accent-[#FF8906]">
                   {product.variants.map((item) => (
                     <button

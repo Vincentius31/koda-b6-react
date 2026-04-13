@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, Trash2, Link, Upload } from 'lucide-react';
+import { X, Trash2, Link, Upload, ChevronDown } from 'lucide-react';
 
 export default function EditProductModal({ isOpen, onClose, productData, onSave }) {
     const [formData, setFormData] = useState({
@@ -12,8 +12,7 @@ export default function EditProductModal({ isOpen, onClose, productData, onSave 
         temp: [],
         method: [],
         imageProduct: [],
-        category: "",
-        rating: 0,
+        category: "Coffee",
         promoType: ""
     });
 
@@ -23,9 +22,18 @@ export default function EditProductModal({ isOpen, onClose, productData, onSave 
     useEffect(() => {
         if (productData && isOpen) {
             setFormData({
-                ...productData,
-                promoType: productData.promoType || "",
-                priceDiscount: productData.priceDiscount || 0
+                id: productData.id || productData.id_product,
+                nameProduct: productData.nameProduct || "",
+                priceProduct: productData.priceProduct || 0,
+                priceDiscount: productData.priceDiscount || 0,
+                description: productData.description || "",
+                stock: productData.stock || 0,
+                size: productData.size || [],
+                temp: productData.temp || [],
+                method: productData.method || [],
+                imageProduct: productData.imageProduct || [],
+                category: productData.category || "Coffee",
+                promoType: productData.promoType || ""
             });
         }
     }, [productData, isOpen]);
@@ -34,10 +42,7 @@ export default function EditProductModal({ isOpen, onClose, productData, onSave 
 
     const handleAddImageViaLink = () => {
         if (imageUrlInput.trim() !== "") {
-            setFormData(prev => ({
-                ...prev,
-                imageProduct: [...prev.imageProduct, imageUrlInput]
-            }));
+            setFormData(prev => ({ ...prev, imageProduct: [...prev.imageProduct, imageUrlInput] }));
             setImageUrlInput("");
         }
     };
@@ -46,10 +51,7 @@ export default function EditProductModal({ isOpen, onClose, productData, onSave 
         const file = e.target.files[0];
         if (file) {
             const localUrl = URL.createObjectURL(file);
-            setFormData(prev => ({
-                ...prev,
-                imageProduct: [...prev.imageProduct, localUrl]
-            }));
+            setFormData(prev => ({ ...prev, imageProduct: [...prev.imageProduct, localUrl] }));
         }
     };
 
@@ -61,37 +63,21 @@ export default function EditProductModal({ isOpen, onClose, productData, onSave 
         }));
     };
 
-    const handleSizeToggle = (sizeName) => {
+    const handleToggle = (field, value) => {
         setFormData(prev => {
-            const currentSizes = prev.size || [];
-            const newSizes = currentSizes.includes(sizeName)
-                ? currentSizes.filter(s => s !== sizeName)
-                : [...currentSizes, sizeName];
-            return { ...prev, size: newSizes };
-        });
-    };
-
-    const handleTempToggle = (tempValue) => {
-        setFormData(prev => {
-            const currentTemps = prev.temp || [];
-            const newTemps = currentTemps.includes(tempValue)
-                ? currentTemps.filter(t => t !== tempValue)
-                : [...currentTemps, tempValue];
-            return { ...prev, temp: newTemps };
-        });
-    };
-
-    const handleMethodToggle = (methodValue) => {
-        setFormData(prev => {
-            const currentMethods = prev.method || [];
-            const newMethods = currentMethods.includes(methodValue)
-                ? currentMethods.filter(m => m !== methodValue)
-                : [...currentMethods, methodValue];
-            return { ...prev, method: newMethods };
+            const currentArray = prev[field] || [];
+            const newArray = currentArray.includes(value)
+                ? currentArray.filter(item => item !== value)
+                : [...currentArray, value];
+            return { ...prev, [field]: newArray };
         });
     };
 
     const handleSubmit = () => {
+        if (!formData.nameProduct || formData.priceProduct <= 0) {
+            alert("Name and valid price are required.");
+            return;
+        }
         onSave(formData);
     };
 
@@ -108,231 +94,134 @@ export default function EditProductModal({ isOpen, onClose, productData, onSave 
                     <h2 className="text-2xl font-bold text-gray-900 mb-8">Edit Product</h2>
 
                     <div className="space-y-5">
-                        {/* PHOTO SECTION UPDATED */}
+                        {/* PHOTO SECTION */}
                         <div className="space-y-3">
                             <label className="block text-sm font-bold text-[#1F2937]">Photo Product</label>
 
-                            {/* Preview Foto */}
                             <div className="flex flex-wrap gap-4 mb-4">
                                 {formData.imageProduct?.map((img, idx) => (
                                     <div key={idx} className="relative group">
                                         <img src={img} className="w-20 h-20 rounded-xl object-cover bg-gray-100 border border-gray-100" alt="prev" />
-                                        <button
-                                            onClick={() => {
-                                                const newImages = formData.imageProduct.filter((_, i) => i !== idx);
-                                                setFormData({ ...formData, imageProduct: newImages });
-                                            }}
-                                            className="absolute -top-2 -right-2 bg-white shadow-md p-1.5 rounded-full hover:bg-red-50 border border-red-100"
-                                        >
+                                        <button onClick={() => setFormData({ ...formData, imageProduct: formData.imageProduct.filter((_, i) => i !== idx) })} className="absolute -top-2 -right-2 bg-white shadow-md p-1.5 rounded-full hover:bg-red-50 border border-red-100">
                                             <Trash2 size={12} className="text-red-500" />
                                         </button>
                                     </div>
                                 ))}
                             </div>
 
-                            {/* Pilihan Upload: Link & File */}
                             <div className="space-y-3 p-4 bg-gray-50 rounded-xl border border-gray-100">
-                                {/* Option 1: URL Link */}
                                 <div className="space-y-1">
                                     <p className="text-[11px] font-bold text-gray-400 uppercase">Option 1: Image URL</p>
                                     <div className="flex gap-2">
                                         <div className="relative flex-1">
-                                            <input
-                                                type="text"
-                                                placeholder="Paste image link here..."
-                                                value={imageUrlInput}
-                                                onChange={(e) => setImageUrlInput(e.target.value)}
-                                                className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-xs focus:ring-1 focus:ring-orange-500 outline-none"
-                                            />
+                                            <input type="text" placeholder="Paste image link here..." value={imageUrlInput} onChange={(e) => setImageUrlInput(e.target.value)} className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-xs focus:ring-1 focus:ring-orange-500 outline-none" />
                                             <Link size={14} className="absolute left-3 top-2.5 text-gray-400" />
                                         </div>
-                                        <button
-                                            onClick={handleAddImageViaLink}
-                                            className="bg-orange-500 text-white px-3 py-2 rounded-lg text-xs font-bold hover:bg-orange-600 transition-colors"
-                                        >
-                                            Add
-                                        </button>
+                                        <button onClick={handleAddImageViaLink} className="bg-orange-500 text-white px-3 py-2 rounded-lg text-xs font-bold hover:bg-orange-600 transition-colors">Add</button>
                                     </div>
                                 </div>
-
                                 <div className="relative py-1">
                                     <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-gray-200"></span></div>
                                     <div className="relative flex justify-center text-[10px] uppercase"><span className="bg-gray-50 px-2 text-gray-400 font-bold">OR</span></div>
                                 </div>
-
-                                {/* Option 2: File Upload */}
                                 <div className="space-y-1">
                                     <p className="text-[11px] font-bold text-gray-400 uppercase">Option 2: From Device</p>
-                                    <input
-                                        type="file"
-                                        ref={fileInputRef}
-                                        onChange={handleFileChange}
-                                        className="hidden"
-                                        accept="image/*"
-                                    />
-                                    <button
-                                        onClick={() => fileInputRef.current.click()}
-                                        className="w-full flex items-center justify-center gap-2 bg-white border border-gray-200 text-gray-700 py-2 rounded-lg text-xs font-bold hover:bg-gray-100 transition-colors"
-                                    >
-                                        <Upload size={14} />
-                                        Choose File
+                                    <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept="image/*" />
+                                    <button onClick={() => fileInputRef.current.click()} className="w-full flex items-center justify-center gap-2 bg-white border border-gray-200 text-gray-700 py-2 rounded-lg text-xs font-bold hover:bg-gray-100 transition-colors">
+                                        <Upload size={14} /> Choose File
                                     </button>
                                 </div>
                             </div>
                         </div>
 
-                        {/* Product Name */}
+                        {/* BASIC INFO */}
                         <div className="space-y-1">
                             <label className="block text-sm font-bold text-[#1F2937]">Product name</label>
-                            <input
-                                type="text"
-                                name="nameProduct"
-                                value={formData.nameProduct}
-                                onChange={handleChange}
-                                className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm text-gray-700 focus:outline-none focus:ring-1 focus:ring-orange-500"
-                            />
+                            <input type="text" name="nameProduct" value={formData.nameProduct} onChange={handleChange} className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm text-gray-700 focus:outline-none focus:ring-1 focus:ring-orange-500" />
                         </div>
 
-                        {/* Price & Discount Grid */}
+                        <div className="space-y-1">
+                            <label className="block text-sm font-bold text-[#1F2937]">Category</label>
+                            <select name="category" value={formData.category} onChange={handleChange} className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm outline-none bg-white focus:ring-1 focus:ring-orange-500">
+                                <option value="Coffee">Coffee</option>
+                                <option value="Non Coffee">Non Coffee</option>
+                                <option value="Food">Food</option>
+                                <option value="Add-On">Add-On</option>
+                            </select>
+                        </div>
+
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-1">
                                 <label className="block text-sm font-bold text-[#1F2937]">Normal Price </label>
-                                <input
-                                    type="number"
-                                    name="priceProduct"
-                                    value={formData.priceProduct}
-                                    onChange={handleChange}
-                                    className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm text-gray-700 outline-none focus:ring-1 focus:ring-orange-500"
-                                />
+                                <input type="number" name="priceProduct" value={formData.priceProduct} onChange={handleChange} className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm text-gray-700 outline-none focus:ring-1 focus:ring-orange-500" />
                             </div>
                             <div className="space-y-1">
                                 <label className="block text-sm font-bold text-[#1F2937]">Discount Price</label>
-                                <input
-                                    type="number"
-                                    name="priceDiscount"
-                                    value={formData.priceDiscount}
-                                    onChange={handleChange}
-                                    className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm text-gray-700 outline-none focus:ring-1 focus:ring-orange-500"
-                                />
+                                <input type="number" name="priceDiscount" value={formData.priceDiscount} onChange={handleChange} className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm text-gray-700 outline-none focus:ring-1 focus:ring-orange-500" />
                             </div>
                         </div>
 
-                        {/* Promo Type Section */}
                         <div className="space-y-1">
                             <label className="block text-sm font-bold text-[#1F2937]">Promo Type</label>
                             <div className="relative">
-                                <select
-                                    name="promoType"
-                                    value={formData.promoType || ""}
-                                    onChange={handleChange}
-                                    className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm text-gray-700 appearance-none bg-white focus:outline-none focus:ring-1 focus:ring-orange-500"
-                                >
+                                <select name="promoType" value={formData.promoType || ""} onChange={handleChange} className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm text-gray-700 appearance-none bg-white focus:outline-none focus:ring-1 focus:ring-orange-500">
                                     <option value="">No Promo</option>
                                     <option value="New Arrival">New Arrival</option>
-                                    <option value="Flash Sale">Flash Sale</option> {/* Sesuai JSON */}
-                                    <option value="Buy 1 get 1">Buy 1 get 1</option> {/* Sesuai JSON */}
+                                    <option value="Flash Sale">Flash Sale</option>
+                                    <option value="Buy 1 Get 1">Buy 1 Get 1</option>
                                     <option value="Cheap">Cheap</option>
-                                    <option value="Birthday Package">Birthday Package</option> {/* Perbaikan Typo */}
+                                    <option value="Birthday Package">Birthday Package</option>
                                 </select>
-                                <div className="absolute right-4 top-3.5 pointer-events-none text-gray-400">
-                                    <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                                        <path d="M19 9l-7 7-7-7"></path>
-                                    </svg>
-                                </div>
+                                <ChevronDown className="absolute right-4 top-3.5 text-gray-400 pointer-events-none" size={20} />
                             </div>
                         </div>
 
-                        {/* Description */}
                         <div className="space-y-1">
                             <label className="block text-sm font-bold text-[#1F2937]">Description</label>
-                            <textarea
-                                name="description"
-                                rows="5"
-                                value={formData.description}
-                                onChange={handleChange}
-                                className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm text-gray-600 focus:outline-none focus:ring-1 focus:ring-orange-500 resize-none leading-relaxed"
-                            />
+                            <textarea name="description" rows="3" value={formData.description} onChange={handleChange} className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm text-gray-600 focus:outline-none focus:ring-1 focus:ring-orange-500 resize-none leading-relaxed" />
                         </div>
 
-                        {/* Size Section */}
+                        {/* OPTIONS ARRAY */}
                         <div className="space-y-2">
                             <label className="block text-sm font-bold text-[#1F2937]">Product Size</label>
                             <div className="flex flex-wrap gap-3">
-                                {['Regular', 'Medium', 'Large', '250 gr', '500 gr'].map((sizeItem) => (
-                                    <button
-                                        key={sizeItem}
-                                        type="button"
-                                        onClick={() => handleSizeToggle(sizeItem)}
-                                        className={`px-5 py-2 rounded-xl text-sm font-bold transition-all ${formData.size?.includes(sizeItem)
-                                            ? 'bg-[#FF8A00] text-black shadow-sm border-[#FF8A00]'
-                                            : 'border border-gray-200 text-gray-500 hover:bg-gray-50'
-                                            }`}
-                                    >
-                                        {sizeItem === "Regular" ? "R" : sizeItem === "Medium" ? "M" : sizeItem === "Large" ? "L" : sizeItem}
+                                {['Regular', 'Medium', 'Large', '250 gr', '500 gr'].map(s => (
+                                    <button key={s} type="button" onClick={() => handleToggle('size', s)} className={`px-5 py-2 rounded-xl text-sm font-bold transition-all ${formData.size?.includes(s) ? 'bg-[#FF8A00] text-black shadow-sm border-[#FF8A00]' : 'border border-gray-200 text-gray-500 hover:bg-gray-50'}`}>
+                                        {s === "Regular" ? "R" : s === "Medium" ? "M" : s === "Large" ? "L" : s}
                                     </button>
                                 ))}
                             </div>
                         </div>
 
-                        {/* Temp Section */}
                         <div className="space-y-2">
-                            <label className="block text-sm font-bold text-[#1F2937]">Temperature Options</label>
+                            <label className="block text-sm font-bold text-[#1F2937]">Temperature</label>
                             <div className="flex gap-3">
-                                {['Ice', 'Hot'].map((tempItem) => (
-                                    <button
-                                        key={tempItem}
-                                        type="button"
-                                        onClick={() => handleTempToggle(tempItem)}
-                                        className={`px-6 py-2 rounded-xl text-sm font-bold transition-all ${formData.temp?.includes(tempItem)
-                                            ? 'bg-[#FF8A00] text-black shadow-sm border-[#FF8A00]'
-                                            : 'border border-gray-200 text-gray-500 hover:bg-gray-50'
-                                            }`}
-                                    >
-                                        {tempItem}
+                                {['Ice', 'Hot'].map(t => (
+                                    <button key={t} type="button" onClick={() => handleToggle('temp', t)} className={`px-6 py-2 rounded-xl text-sm font-bold transition-all ${formData.temp?.includes(t) ? 'bg-[#FF8A00] text-black shadow-sm border-[#FF8A00]' : 'border border-gray-200 text-gray-500 hover:bg-gray-50'}`}>
+                                        {t}
                                     </button>
                                 ))}
                             </div>
                         </div>
 
-                        {/* Method Section */}
                         <div className="space-y-2">
-                            <label className="block text-sm font-bold text-[#1F2937]">Delivery Method Options</label>
+                            <label className="block text-sm font-bold text-[#1F2937]">Method</label>
                             <div className="flex flex-wrap gap-3">
-                                {['Dine In', 'Door Delivery', 'Pick Up'].map((methodItem) => (
-                                    <button
-                                        key={methodItem}
-                                        type="button"
-                                        onClick={() => handleMethodToggle(methodItem)}
-                                        className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${formData.method?.includes(methodItem)
-                                            ? 'bg-[#FF8A00] text-black shadow-sm border-[#FF8A00]'
-                                            : 'border border-gray-200 text-gray-500 hover:bg-gray-50'
-                                            }`}
-                                    >
-                                        {methodItem}
+                                {['Dine In', 'Door Delivery', 'Pick Up'].map(m => (
+                                    <button key={m} type="button" onClick={() => handleToggle('method', m)} className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${formData.method?.includes(m) ? 'bg-[#FF8A00] text-black shadow-sm border-[#FF8A00]' : 'border border-gray-200 text-gray-500 hover:bg-gray-50'}`}>
+                                        {m}
                                     </button>
                                 ))}
                             </div>
                         </div>
 
-                        {/* Stock Section */}
                         <div className="space-y-1">
                             <label className="block text-sm font-bold text-[#1F2937]">Stock</label>
-                            <div className="relative">
-                                <input
-                                    type="number"
-                                    name="stock"
-                                    value={formData.stock}
-                                    onChange={handleChange}
-                                    className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm text-gray-700 focus:outline-none focus:ring-1 focus:ring-orange-500"
-                                />
-                            </div>
+                            <input type="number" name="stock" value={formData.stock} onChange={handleChange} className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm text-gray-700 focus:outline-none focus:ring-1 focus:ring-orange-500" />
                         </div>
 
-                        <button
-                            onClick={handleSubmit}
-                            className="w-full bg-[#FF8A00] text-black py-4 rounded-xl font-bold text-sm shadow-lg shadow-orange-100 mt-2 hover:bg-orange-600 transition-all"
-                        >
-                            Edit Save
+                        <button onClick={handleSubmit} className="w-full bg-[#FF8A00] text-black py-4 rounded-xl font-bold text-sm shadow-lg shadow-orange-100 mt-2 hover:bg-orange-600 transition-all">
+                            Save Changes
                         </button>
                     </div>
                 </div>

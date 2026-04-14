@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, Trash2, Upload, ChevronDown } from 'lucide-react';
-import http from '../../../lib/http';
+import http, { BASE_URL } from '../../../lib/http';
 
 export default function EditProductModal({ isOpen, onClose, productData, onSave }) {
     const [formData, setFormData] = useState({
@@ -109,7 +109,7 @@ export default function EditProductModal({ isOpen, onClose, productData, onSave 
                             <div className="flex flex-wrap gap-4 mb-4">
                                 {imagePreviews.map((imgSrc, idx) => (
                                     <div key={idx} className="relative group">
-                                        <img src={imgSrc} className="w-20 h-20 rounded-xl object-cover bg-gray-100 border border-gray-100" alt="prev" />
+                                        <img src={imgSrc.startsWith('http') || imgSrc.startsWith('blob') ? imgSrc : BASE_URL + imgSrc} className="w-20 h-20 rounded-xl object-cover bg-gray-100 border border-gray-100" alt="prev" />
                                     </div>
                                 ))}
                             </div>

@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { X, Trash2, Upload, ChevronDown } from 'lucide-react';
-import http from '../../lib/http';
+import http from '../../../lib/http';
 
 export default function AddProductModal({ isOpen, onClose, onSave }) {
     const initialState = {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, Trash2, Upload, ChevronDown } from 'lucide-react';
-import http from '../../lib/http'; // Pastikan path import http ini benar
+import http from '../../../lib/http'; 
 
 export default function EditProductModal({ isOpen, onClose, productData, onSave }) {
     const [formData, setFormData] = useState({

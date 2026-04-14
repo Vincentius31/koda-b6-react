@@ -1,5 +1,5 @@
-import React, { useState, useRef } from 'react';
-import { X, Trash2, Upload, ChevronDown, Link } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { X, Trash2, Upload, ChevronDown } from 'lucide-react';
 
 export default function AddProductModal({ isOpen, onClose, onSave }) {
     const initialState = {
@@ -11,14 +11,23 @@ export default function AddProductModal({ isOpen, onClose, onSave }) {
         size: [],
         temp: [],
         method: [],
-        imageProduct: [],
         category: "Coffee",
         promoType: ""
     };
 
     const [formData, setFormData] = useState(initialState);
-    const [imageUrlInput, setImageUrlInput] = useState("");
+    const [imageFiles, setImageFiles] = useState([]);
+    const [imagePreviews, setImagePreviews] = useState([]);
+
     const fileInputRef = useRef(null);
+
+    useEffect(() => {
+        if (!isOpen) {
+            setFormData(initialState);
+            setImageFiles([]);
+            setImagePreviews([]);
+        }
+    }, [isOpen]);
 
     if (!isOpen) return null;
 
@@ -32,26 +41,20 @@ export default function AddProductModal({ isOpen, onClose, onSave }) {
         }));
     };
 
-    const handleAddImageViaLink = (e) => {
-        e.preventDefault();
-        if (imageUrlInput.trim() !== "") {
-            setFormData(prev => ({
-                ...prev,
-                imageProduct: [...prev.imageProduct, imageUrlInput.trim()]
-            }));
-            setImageUrlInput("");
+    const handleFileChange = (e) => {
+        const files = Array.from(e.target.files);
+        if (files.length > 0) {
+            setImageFiles(prev => [...prev, ...files]);
+
+            const newPreviews = files.map(file => URL.createObjectURL(file));
+            setImagePreviews(prev => [...prev, ...newPreviews]);
         }
+        e.target.value = null;
     };
 
-    const handleFileChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const localUrl = URL.createObjectURL(file);
-            setFormData(prev => ({
-                ...prev,
-                imageProduct: [...prev.imageProduct, localUrl]
-            }));
-        }
+    const handleRemoveImage = (indexToRemove) => {
+        setImageFiles(prev => prev.filter((_, idx) => idx !== indexToRemove));
+        setImagePreviews(prev => prev.filter((_, idx) => idx !== indexToRemove));
     };
 
     const toggleOption = (field, value) => {
@@ -70,8 +73,26 @@ export default function AddProductModal({ isOpen, onClose, onSave }) {
             return;
         }
 
-        onSave(formData);
-        setFormData(initialState); // Reset form setelah dikirim ke parent
+        const submitData = new FormData();
+
+        submitData.append("nameProduct", formData.nameProduct);
+        submitData.append("description", formData.description);
+        submitData.append("category", formData.category);
+        submitData.append("promoType", formData.promoType);
+        submitData.append("priceProduct", formData.priceProduct);
+        submitData.append("priceDiscount", formData.priceDiscount);
+        submitData.append("stock", formData.stock);
+
+        formData.size.forEach(s => submitData.append("size", s));
+        formData.temp.forEach(t => submitData.append("temp", t));
+        formData.method.forEach(m => submitData.append("method", m));
+
+        // Append File Gambar
+        imageFiles.forEach(file => {
+            submitData.append("images", file); 
+        });
+
+        onSave(submitData);
     };
 
     return (
@@ -87,15 +108,14 @@ export default function AddProductModal({ isOpen, onClose, onSave }) {
                     <h2 className="text-2xl font-bold text-gray-900 mb-8">Add New Product</h2>
 
                     <div className="space-y-5">
-                        {/* PHOTO SECTION */}
                         <div className="space-y-3">
                             <label className="block text-sm font-bold text-[#1F2937]">Photo Product</label>
 
                             <div className="flex flex-wrap gap-4 mb-2">
-                                {formData.imageProduct.map((img, idx) => (
+                                {imagePreviews.map((imgSrc, idx) => (
                                     <div key={idx} className="relative group">
-                                        <img src={img} className="w-20 h-20 rounded-xl object-cover border border-gray-100" alt="prev" />
-                                        <button onClick={() => setFormData({ ...formData, imageProduct: formData.imageProduct.filter((_, i) => i !== idx) })} className="absolute -top-2 -right-2 bg-white shadow-md p-1 rounded-full hover:bg-red-50">
+                                        <img src={imgSrc} className="w-20 h-20 rounded-xl object-cover border border-gray-100" alt="prev" />
+                                        <button onClick={() => handleRemoveImage(idx)} className="absolute -top-2 -right-2 bg-white shadow-md p-1 rounded-full hover:bg-red-50">
                                             <Trash2 size={12} className="text-red-500" />
                                         </button>
                                     </div>
@@ -104,25 +124,11 @@ export default function AddProductModal({ isOpen, onClose, onSave }) {
 
                             <div className="space-y-3 p-4 bg-gray-50 rounded-xl border border-gray-100">
                                 <div className="space-y-1">
-                                    <p className="text-[11px] font-bold text-gray-400 uppercase">Option 1: Image URL</p>
-                                    <div className="flex gap-2">
-                                        <div className="relative flex-1">
-                                            <input type="text" placeholder="Paste image link here..." value={imageUrlInput} onChange={(e) => setImageUrlInput(e.target.value)} className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-xs focus:ring-1 focus:ring-orange-500 outline-none" />
-                                            <Link size={14} className="absolute left-3 top-2.5 text-gray-400" />
-                                        </div>
-                                        <button type="button" onClick={handleAddImageViaLink} className="bg-orange-500 text-white px-3 py-2 rounded-lg text-xs font-bold hover:bg-orange-600 transition-colors">Add</button>
-                                    </div>
-                                </div>
-                                <div className="relative flex justify-center text-[10px] uppercase font-bold text-gray-400 py-1">
-                                    <span className="bg-gray-50 px-2 z-10">OR</span>
-                                    <div className="absolute top-1/2 left-0 w-full border-t border-gray-200"></div>
-                                </div>
-                                <div className="space-y-1">
-                                    <p className="text-[11px] font-bold text-gray-400 uppercase">Option 2: From Device</p>
-                                    <button type="button" onClick={() => fileInputRef.current.click()} className="w-full flex items-center justify-center gap-2 bg-white border border-gray-200 py-2 rounded-lg text-xs font-bold hover:bg-gray-100 transition-colors">
-                                        <Upload size={14} /> Choose File
+                                    <p className="text-[11px] font-bold text-gray-400 uppercase">Upload From Device</p>
+                                    <button type="button" onClick={() => fileInputRef.current.click()} className="w-full flex items-center justify-center gap-2 bg-white border border-gray-200 py-3 rounded-lg text-xs font-bold hover:bg-gray-100 transition-colors">
+                                        <Upload size={16} /> Choose Image Files
                                     </button>
-                                    <input type="file" ref={fileInputRef} className="hidden" onChange={handleFileChange} accept="image/*" />
+                                    <input type="file" ref={fileInputRef} className="hidden" onChange={handleFileChange} accept="image/*" multiple />
                                 </div>
                             </div>
                         </div>

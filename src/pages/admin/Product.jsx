@@ -166,7 +166,7 @@ export default function Product() {
                             {currentItems.length > 0 ? (
                                 currentItems.map((product) => {
                                     const imageSrc = (product.imageProduct && product.imageProduct.length > 0)
-                                        ? product.imageProduct[0]
+                                        ? `${product.imageProduct[0]}?v=${product.updatedAt || product.id}`
                                         : "https://via.placeholder.com/40";
 
                                     return (

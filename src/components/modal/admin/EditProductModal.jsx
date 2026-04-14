@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, Trash2, Upload, ChevronDown } from 'lucide-react';
-import http from '../../../lib/http'; 
+import http from '../../../lib/http';
 
 export default function EditProductModal({ isOpen, onClose, productData, onSave }) {
     const [formData, setFormData] = useState({
@@ -17,7 +17,7 @@ export default function EditProductModal({ isOpen, onClose, productData, onSave 
 
     const [imageFiles, setImageFiles] = useState([]);
     const [imagePreviews, setImagePreviews] = useState([]);
-    const [promoList, setPromoList] = useState([]); 
+    const [promoList, setPromoList] = useState([]);
 
     const fileInputRef = useRef(null);
 
@@ -68,7 +68,7 @@ export default function EditProductModal({ isOpen, onClose, productData, onSave 
 
     const handleRemoveImagePreview = (indexToRemove) => {
         setImagePreviews(prev => prev.filter((_, idx) => idx !== indexToRemove));
-        setImageFiles(prev => prev.filter(file => file.name !== file.name));
+        setImageFiles(prev => prev.filter((_, idx) => idx !== indexToRemove));
     };
 
     const handleChange = (e) => {
@@ -109,9 +109,11 @@ export default function EditProductModal({ isOpen, onClose, productData, onSave 
         formData.temp.forEach(t => submitData.append("temp", t));
         formData.method.forEach(m => submitData.append("method", m));
 
-        imageFiles.forEach(file => {
-            submitData.append("images", file);
-        });
+        imagePreviews
+            .filter(src => !src.startsWith("blob:")) 
+            .forEach(src => submitData.append("existingImages", src));
+            
+        imageFiles.forEach(file => submitData.append("images", file));
 
         submitData.id = formData.id;
         onSave(submitData);

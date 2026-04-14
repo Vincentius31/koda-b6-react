@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, Trash2, Upload, ChevronDown } from 'lucide-react';
-import http from '../../../lib/http'; 
+import http from '../../../lib/http';
 
 export default function EditProductModal({ isOpen, onClose, productData, onSave }) {
     const [formData, setFormData] = useState({
@@ -15,9 +15,9 @@ export default function EditProductModal({ isOpen, onClose, productData, onSave 
         promoType: ""
     });
 
-    const [imageFiles, setImageFiles] = useState([]); 
+    const [imageFiles, setImageFiles] = useState([]);
     const [imagePreviews, setImagePreviews] = useState([]);
-    const [promoList, setPromoList] = useState([]); 
+    const [promoList, setPromoList] = useState([]);
 
     const fileInputRef = useRef(null);
 
@@ -26,9 +26,7 @@ export default function EditProductModal({ isOpen, onClose, productData, onSave 
             const fetchPromos = async () => {
                 try {
                     const res = await http("/admin/product/promos");
-                    if (res && res.success) {
-                        setPromoList(res.data || []);
-                    }
+                    if (res && res.success) setPromoList(res.data || []);
                 } catch (error) {
                     console.error("Gagal mengambil data promo:", error);
                 }
@@ -48,8 +46,7 @@ export default function EditProductModal({ isOpen, onClose, productData, onSave 
                     category: productData.category || "Coffee",
                     promoType: productData.promoType || ""
                 });
-                const existingPreviews = (productData.imageProduct || []).map(url => ({ type: 'existing', url }));
-                setImagePreviews(existingPreviews);
+                setImagePreviews(productData.imageProduct || []);
                 setImageFiles([]);
             }
         }
@@ -60,19 +57,10 @@ export default function EditProductModal({ isOpen, onClose, productData, onSave 
     const handleFileChange = (e) => {
         const files = Array.from(e.target.files);
         if (files.length > 0) {
-            const newPreviews = files.map(file => ({ type: 'new', url: URL.createObjectURL(file), file }));
-            setImagePreviews(newPreviews);
             setImageFiles(files);
+            setImagePreviews(files.map(file => URL.createObjectURL(file)));
         }
         e.target.value = null;
-    };
-
-    const handleRemoveImagePreview = (indexToRemove) => {
-        const removed = imagePreviews[indexToRemove];
-        setImagePreviews(prev => prev.filter((_, idx) => idx !== indexToRemove));
-        if (removed.type === 'new') {
-            setImageFiles(prev => prev.filter(f => f !== removed.file));
-        }
     };
 
     const handleChange = (e) => {
@@ -98,33 +86,7 @@ export default function EditProductModal({ isOpen, onClose, productData, onSave 
             alert("Name and valid price are required.");
             return;
         }
-
-        const submitData = new FormData();
-
-        submitData.append("id", formData.id);
-        submitData.append("nameProduct", formData.nameProduct);
-        submitData.append("description", formData.description);
-        submitData.append("category", formData.category);
-        submitData.append("promoType", formData.promoType);
-        submitData.append("priceProduct", formData.priceProduct);
-        submitData.append("stock", formData.stock);
-
-        formData.size.forEach(s => submitData.append("size", s));
-        formData.temp.forEach(t => submitData.append("temp", t));
-        formData.method.forEach(m => submitData.append("method", m));
-
-        // Kirim URL gambar lama yang masih dipertahankan
-        imagePreviews
-            .filter(item => item.type === 'existing')
-            .forEach(item => submitData.append("existingImages", item.url));
-
-        // Kirim file gambar baru
-        imageFiles.forEach(file => {
-            submitData.append("images", file);
-        });
-
-        submitData.id = formData.id;
-        onSave(submitData);
+        onSave(formData, imageFiles);
     };
 
     return (
@@ -145,12 +107,9 @@ export default function EditProductModal({ isOpen, onClose, productData, onSave 
                             <label className="block text-sm font-bold text-[#1F2937]">Photo Product</label>
                             <p className="text-xs text-orange-500 italic mb-2">Note: Mengupload foto baru akan menimpa (replace) foto lama.</p>
                             <div className="flex flex-wrap gap-4 mb-4">
-                                {imagePreviews.map((item, idx) => (
+                                {imagePreviews.map((imgSrc, idx) => (
                                     <div key={idx} className="relative group">
-                                        <img src={item.url} className="w-20 h-20 rounded-xl object-cover bg-gray-100 border border-gray-100" alt="prev" />
-                                        <button onClick={() => handleRemoveImagePreview(idx)} className="absolute -top-2 -right-2 bg-white shadow-md p-1.5 rounded-full hover:bg-red-50 border border-red-100">
-                                            <Trash2 size={12} className="text-red-500" />
-                                        </button>
+                                        <img src={imgSrc} className="w-20 h-20 rounded-xl object-cover bg-gray-100 border border-gray-100" alt="prev" />
                                     </div>
                                 ))}
                             </div>
@@ -181,13 +140,11 @@ export default function EditProductModal({ isOpen, onClose, productData, onSave 
                             </select>
                         </div>
 
-                        {/* DISCOUNT PRICE DIHILANGKAN */}
                         <div className="space-y-1">
-                            <label className="block text-sm font-bold text-[#1F2937]">Normal Price </label>
+                            <label className="block text-sm font-bold text-[#1F2937]">Normal Price</label>
                             <input type="number" name="priceProduct" value={formData.priceProduct} onChange={handleChange} className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm text-gray-700 outline-none focus:ring-1 focus:ring-orange-500" />
                         </div>
 
-                        {/* DINAMIS PROMO TYPE */}
                         <div className="space-y-1">
                             <label className="block text-sm font-bold text-[#1F2937]">Promo Type</label>
                             <div className="relative">
@@ -206,7 +163,6 @@ export default function EditProductModal({ isOpen, onClose, productData, onSave 
                             <textarea name="description" rows="3" value={formData.description} onChange={handleChange} className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm text-gray-600 focus:outline-none focus:ring-1 focus:ring-orange-500 resize-none leading-relaxed" />
                         </div>
 
-                        {/* OPTIONS ARRAY */}
                         <div className="space-y-2">
                             <label className="block text-sm font-bold text-[#1F2937]">Product Size</label>
                             <div className="flex flex-wrap gap-3">

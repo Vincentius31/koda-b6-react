@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, Trash2, Upload, ChevronDown } from 'lucide-react';
-import http from '../../../lib/http';
+import http from '../../../lib/http'; 
 
 export default function EditProductModal({ isOpen, onClose, productData, onSave }) {
     const [formData, setFormData] = useState({
@@ -15,9 +15,9 @@ export default function EditProductModal({ isOpen, onClose, productData, onSave 
         promoType: ""
     });
 
-    const [imageFiles, setImageFiles] = useState([]);
+    const [imageFiles, setImageFiles] = useState([]); 
     const [imagePreviews, setImagePreviews] = useState([]);
-    const [promoList, setPromoList] = useState([]);
+    const [promoList, setPromoList] = useState([]); 
 
     const fileInputRef = useRef(null);
 
@@ -48,7 +48,8 @@ export default function EditProductModal({ isOpen, onClose, productData, onSave 
                     category: productData.category || "Coffee",
                     promoType: productData.promoType || ""
                 });
-                setImagePreviews(productData.imageProduct || []);
+                const existingPreviews = (productData.imageProduct || []).map(url => ({ type: 'existing', url }));
+                setImagePreviews(existingPreviews);
                 setImageFiles([]);
             }
         }
@@ -59,16 +60,19 @@ export default function EditProductModal({ isOpen, onClose, productData, onSave 
     const handleFileChange = (e) => {
         const files = Array.from(e.target.files);
         if (files.length > 0) {
-            setImageFiles(prev => [...prev, ...files]);
-            const newPreviews = files.map(file => URL.createObjectURL(file));
-            setImagePreviews(prev => [...prev, ...newPreviews]);
+            const newPreviews = files.map(file => ({ type: 'new', url: URL.createObjectURL(file), file }));
+            setImagePreviews(newPreviews);
+            setImageFiles(files);
         }
         e.target.value = null;
     };
 
     const handleRemoveImagePreview = (indexToRemove) => {
+        const removed = imagePreviews[indexToRemove];
         setImagePreviews(prev => prev.filter((_, idx) => idx !== indexToRemove));
-        setImageFiles(prev => prev.filter((_, idx) => idx !== indexToRemove));
+        if (removed.type === 'new') {
+            setImageFiles(prev => prev.filter(f => f !== removed.file));
+        }
     };
 
     const handleChange = (e) => {
@@ -109,11 +113,15 @@ export default function EditProductModal({ isOpen, onClose, productData, onSave 
         formData.temp.forEach(t => submitData.append("temp", t));
         formData.method.forEach(m => submitData.append("method", m));
 
+        // Kirim URL gambar lama yang masih dipertahankan
         imagePreviews
-            .filter(src => !src.startsWith("blob:")) 
-            .forEach(src => submitData.append("existingImages", src));
-            
-        imageFiles.forEach(file => submitData.append("images", file));
+            .filter(item => item.type === 'existing')
+            .forEach(item => submitData.append("existingImages", item.url));
+
+        // Kirim file gambar baru
+        imageFiles.forEach(file => {
+            submitData.append("images", file);
+        });
 
         submitData.id = formData.id;
         onSave(submitData);
@@ -137,9 +145,9 @@ export default function EditProductModal({ isOpen, onClose, productData, onSave 
                             <label className="block text-sm font-bold text-[#1F2937]">Photo Product</label>
                             <p className="text-xs text-orange-500 italic mb-2">Note: Mengupload foto baru akan menimpa (replace) foto lama.</p>
                             <div className="flex flex-wrap gap-4 mb-4">
-                                {imagePreviews.map((imgSrc, idx) => (
+                                {imagePreviews.map((item, idx) => (
                                     <div key={idx} className="relative group">
-                                        <img src={imgSrc} className="w-20 h-20 rounded-xl object-cover bg-gray-100 border border-gray-100" alt="prev" />
+                                        <img src={item.url} className="w-20 h-20 rounded-xl object-cover bg-gray-100 border border-gray-100" alt="prev" />
                                         <button onClick={() => handleRemoveImagePreview(idx)} className="absolute -top-2 -right-2 bg-white shadow-md p-1.5 rounded-full hover:bg-red-50 border border-red-100">
                                             <Trash2 size={12} className="text-red-500" />
                                         </button>

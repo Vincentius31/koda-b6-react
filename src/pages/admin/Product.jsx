@@ -66,22 +66,37 @@ export default function Product() {
         setShowEditModal(true);
     };
 
-    const handleUpdateProduct = async (updatedProduct) => {
-        const productId = updatedProduct.get("id");
+    const handleUpdateProduct = async (formData, imageFiles) => {
+        const productId = formData.id;
 
         try {
             const res = await http(`/admin/product/${productId}`, {
                 method: "PATCH",
-                body: updatedProduct
+                body: formData
             });
 
-            if (res.success) {
-                fetchProducts();
-                setShowEditModal(false);
-                alert("Product berhasil diupdate!");
-            } else {
+            if (!res.success) {
                 alert("Gagal update produk: " + res.message);
+                return;
             }
+
+            if (imageFiles && imageFiles.length > 0) {
+                const imgForm = new FormData();
+                imageFiles.forEach(file => imgForm.append("images", file));
+
+                const imgRes = await http(`/admin/product/${productId}/images`, {
+                    method: "PATCH",
+                    body: imgForm
+                });
+
+                if (!imgRes.success) {
+                    alert("Data berhasil diupdate, tapi gagal upload gambar: " + imgRes.message);
+                }
+            }
+
+            fetchProducts();
+            setShowEditModal(false);
+            alert("Product berhasil diupdate!");
         } catch (err) {
             console.error("Update error:", err);
         }

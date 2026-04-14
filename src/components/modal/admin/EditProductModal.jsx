@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, Trash2, Link, Upload, ChevronDown } from 'lucide-react';
+import { X, Trash2, Upload, ChevronDown } from 'lucide-react';
 
 export default function EditProductModal({ isOpen, onClose, productData, onSave }) {
     const [formData, setFormData] = useState({
@@ -11,12 +11,12 @@ export default function EditProductModal({ isOpen, onClose, productData, onSave 
         size: [],
         temp: [],
         method: [],
-        imageProduct: [],
         category: "Coffee",
         promoType: ""
     });
 
-    const [imageUrlInput, setImageUrlInput] = useState("");
+    const [imageFiles, setImageFiles] = useState([]);
+    const [imagePreviews, setImagePreviews] = useState([]);
     const fileInputRef = useRef(null);
 
     useEffect(() => {
@@ -31,28 +31,34 @@ export default function EditProductModal({ isOpen, onClose, productData, onSave 
                 size: productData.size || [],
                 temp: productData.temp || [],
                 method: productData.method || [],
-                imageProduct: productData.imageProduct || [],
                 category: productData.category || "Coffee",
                 promoType: productData.promoType || ""
             });
+            
+            setImagePreviews(productData.imageProduct || []);
+            setImageFiles([]);
         }
     }, [productData, isOpen]);
 
     if (!isOpen) return null;
 
-    const handleAddImageViaLink = () => {
-        if (imageUrlInput.trim() !== "") {
-            setFormData(prev => ({ ...prev, imageProduct: [...prev.imageProduct, imageUrlInput] }));
-            setImageUrlInput("");
+    const handleFileChange = (e) => {
+        const files = Array.from(e.target.files);
+        if (files.length > 0) {
+            setImageFiles(prev => [...prev, ...files]);
+            
+            const newPreviews = files.map(file => URL.createObjectURL(file));
+            setImagePreviews(prev => [...prev, ...newPreviews]);
         }
+        e.target.value = null;
     };
 
-    const handleFileChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const localUrl = URL.createObjectURL(file);
-            setFormData(prev => ({ ...prev, imageProduct: [...prev.imageProduct, localUrl] }));
-        }
+    const handleRemoveImagePreview = (indexToRemove) => {
+        setImagePreviews(prev => prev.filter((_, idx) => idx !== indexToRemove));
+        
+        setImageFiles(prev => prev.filter((file, idx) => {
+            return file.name !== file.name;
+        }));
     };
 
     const handleChange = (e) => {
@@ -78,7 +84,30 @@ export default function EditProductModal({ isOpen, onClose, productData, onSave 
             alert("Name and valid price are required.");
             return;
         }
-        onSave(formData);
+
+        const submitData = new FormData();
+        
+        submitData.append("id", formData.id); 
+        
+        submitData.append("nameProduct", formData.nameProduct);
+        submitData.append("description", formData.description);
+        submitData.append("category", formData.category);
+        submitData.append("promoType", formData.promoType);
+        submitData.append("priceProduct", formData.priceProduct);
+        submitData.append("priceDiscount", formData.priceDiscount);
+        submitData.append("stock", formData.stock);
+
+        formData.size.forEach(s => submitData.append("size", s));
+        formData.temp.forEach(t => submitData.append("temp", t));
+        formData.method.forEach(m => submitData.append("method", m));
+
+        imageFiles.forEach(file => {
+            submitData.append("images", file);
+        });
+
+        submitData.id = formData.id; 
+
+        onSave(submitData);
     };
 
     return (
@@ -94,15 +123,16 @@ export default function EditProductModal({ isOpen, onClose, productData, onSave 
                     <h2 className="text-2xl font-bold text-gray-900 mb-8">Edit Product</h2>
 
                     <div className="space-y-5">
-                        {/* PHOTO SECTION */}
                         <div className="space-y-3">
                             <label className="block text-sm font-bold text-[#1F2937]">Photo Product</label>
+                            
+                            <p className="text-xs text-orange-500 italic mb-2">Note: Mengupload foto baru akan menimpa (replace) foto lama.</p>
 
                             <div className="flex flex-wrap gap-4 mb-4">
-                                {formData.imageProduct?.map((img, idx) => (
+                                {imagePreviews.map((imgSrc, idx) => (
                                     <div key={idx} className="relative group">
-                                        <img src={img} className="w-20 h-20 rounded-xl object-cover bg-gray-100 border border-gray-100" alt="prev" />
-                                        <button onClick={() => setFormData({ ...formData, imageProduct: formData.imageProduct.filter((_, i) => i !== idx) })} className="absolute -top-2 -right-2 bg-white shadow-md p-1.5 rounded-full hover:bg-red-50 border border-red-100">
+                                        <img src={imgSrc} className="w-20 h-20 rounded-xl object-cover bg-gray-100 border border-gray-100" alt="prev" />
+                                        <button onClick={() => handleRemoveImagePreview(idx)} className="absolute -top-2 -right-2 bg-white shadow-md p-1.5 rounded-full hover:bg-red-50 border border-red-100">
                                             <Trash2 size={12} className="text-red-500" />
                                         </button>
                                     </div>
@@ -111,30 +141,15 @@ export default function EditProductModal({ isOpen, onClose, productData, onSave 
 
                             <div className="space-y-3 p-4 bg-gray-50 rounded-xl border border-gray-100">
                                 <div className="space-y-1">
-                                    <p className="text-[11px] font-bold text-gray-400 uppercase">Option 1: Image URL</p>
-                                    <div className="flex gap-2">
-                                        <div className="relative flex-1">
-                                            <input type="text" placeholder="Paste image link here..." value={imageUrlInput} onChange={(e) => setImageUrlInput(e.target.value)} className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-xs focus:ring-1 focus:ring-orange-500 outline-none" />
-                                            <Link size={14} className="absolute left-3 top-2.5 text-gray-400" />
-                                        </div>
-                                        <button onClick={handleAddImageViaLink} className="bg-orange-500 text-white px-3 py-2 rounded-lg text-xs font-bold hover:bg-orange-600 transition-colors">Add</button>
-                                    </div>
-                                </div>
-                                <div className="relative py-1">
-                                    <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-gray-200"></span></div>
-                                    <div className="relative flex justify-center text-[10px] uppercase"><span className="bg-gray-50 px-2 text-gray-400 font-bold">OR</span></div>
-                                </div>
-                                <div className="space-y-1">
-                                    <p className="text-[11px] font-bold text-gray-400 uppercase">Option 2: From Device</p>
-                                    <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept="image/*" />
-                                    <button onClick={() => fileInputRef.current.click()} className="w-full flex items-center justify-center gap-2 bg-white border border-gray-200 text-gray-700 py-2 rounded-lg text-xs font-bold hover:bg-gray-100 transition-colors">
-                                        <Upload size={14} /> Choose File
+                                    <p className="text-[11px] font-bold text-gray-400 uppercase">Upload From Device</p>
+                                    <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept="image/*" multiple />
+                                    <button onClick={() => fileInputRef.current.click()} className="w-full flex items-center justify-center gap-2 bg-white border border-gray-200 text-gray-700 py-3 rounded-lg text-xs font-bold hover:bg-gray-100 transition-colors">
+                                        <Upload size={16} /> Choose New Image Files
                                     </button>
                                 </div>
                             </div>
                         </div>
 
-                        {/* BASIC INFO */}
                         <div className="space-y-1">
                             <label className="block text-sm font-bold text-[#1F2937]">Product name</label>
                             <input type="text" name="nameProduct" value={formData.nameProduct} onChange={handleChange} className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm text-gray-700 focus:outline-none focus:ring-1 focus:ring-orange-500" />
@@ -181,7 +196,6 @@ export default function EditProductModal({ isOpen, onClose, productData, onSave 
                             <textarea name="description" rows="3" value={formData.description} onChange={handleChange} className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm text-gray-600 focus:outline-none focus:ring-1 focus:ring-orange-500 resize-none leading-relaxed" />
                         </div>
 
-                        {/* OPTIONS ARRAY */}
                         <div className="space-y-2">
                             <label className="block text-sm font-bold text-[#1F2937]">Product Size</label>
                             <div className="flex flex-wrap gap-3">

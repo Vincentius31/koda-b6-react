@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, Trash2, Upload, ChevronDown } from 'lucide-react';
+import http from '../../lib/http'; // Pastikan path import http ini benar
 
 export default function EditProductModal({ isOpen, onClose, productData, onSave }) {
     const [formData, setFormData] = useState({
         nameProduct: "",
         priceProduct: 0,
-        priceDiscount: 0,
         description: "",
         stock: 0,
         size: [],
@@ -17,26 +17,40 @@ export default function EditProductModal({ isOpen, onClose, productData, onSave 
 
     const [imageFiles, setImageFiles] = useState([]);
     const [imagePreviews, setImagePreviews] = useState([]);
+    const [promoList, setPromoList] = useState([]); 
+
     const fileInputRef = useRef(null);
 
     useEffect(() => {
-        if (productData && isOpen) {
-            setFormData({
-                id: productData.id || productData.id_product,
-                nameProduct: productData.nameProduct || "",
-                priceProduct: productData.priceProduct || 0,
-                priceDiscount: productData.priceDiscount || 0,
-                description: productData.description || "",
-                stock: productData.stock || 0,
-                size: productData.size || [],
-                temp: productData.temp || [],
-                method: productData.method || [],
-                category: productData.category || "Coffee",
-                promoType: productData.promoType || ""
-            });
-            
-            setImagePreviews(productData.imageProduct || []);
-            setImageFiles([]);
+        if (isOpen) {
+            const fetchPromos = async () => {
+                try {
+                    const res = await http("/admin/product/promos");
+                    if (res && res.success) {
+                        setPromoList(res.data || []);
+                    }
+                } catch (error) {
+                    console.error("Gagal mengambil data promo:", error);
+                }
+            };
+            fetchPromos();
+
+            if (productData) {
+                setFormData({
+                    id: productData.id || productData.id_product,
+                    nameProduct: productData.nameProduct || "",
+                    priceProduct: productData.priceProduct || 0,
+                    description: productData.description || "",
+                    stock: productData.stock || 0,
+                    size: productData.size || [],
+                    temp: productData.temp || [],
+                    method: productData.method || [],
+                    category: productData.category || "Coffee",
+                    promoType: productData.promoType || ""
+                });
+                setImagePreviews(productData.imageProduct || []);
+                setImageFiles([]);
+            }
         }
     }, [productData, isOpen]);
 
@@ -46,7 +60,6 @@ export default function EditProductModal({ isOpen, onClose, productData, onSave 
         const files = Array.from(e.target.files);
         if (files.length > 0) {
             setImageFiles(prev => [...prev, ...files]);
-            
             const newPreviews = files.map(file => URL.createObjectURL(file));
             setImagePreviews(prev => [...prev, ...newPreviews]);
         }
@@ -55,17 +68,14 @@ export default function EditProductModal({ isOpen, onClose, productData, onSave 
 
     const handleRemoveImagePreview = (indexToRemove) => {
         setImagePreviews(prev => prev.filter((_, idx) => idx !== indexToRemove));
-        
-        setImageFiles(prev => prev.filter((file, idx) => {
-            return file.name !== file.name;
-        }));
+        setImageFiles(prev => prev.filter(file => file.name !== file.name));
     };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({
             ...prev,
-            [name]: name === "priceProduct" || name === "priceDiscount" || name === "stock" ? parseInt(value) || 0 : value
+            [name]: name === "priceProduct" || name === "stock" ? parseInt(value) || 0 : value
         }));
     };
 
@@ -86,15 +96,13 @@ export default function EditProductModal({ isOpen, onClose, productData, onSave 
         }
 
         const submitData = new FormData();
-        
-        submitData.append("id", formData.id); 
-        
+
+        submitData.append("id", formData.id);
         submitData.append("nameProduct", formData.nameProduct);
         submitData.append("description", formData.description);
         submitData.append("category", formData.category);
         submitData.append("promoType", formData.promoType);
         submitData.append("priceProduct", formData.priceProduct);
-        submitData.append("priceDiscount", formData.priceDiscount);
         submitData.append("stock", formData.stock);
 
         formData.size.forEach(s => submitData.append("size", s));
@@ -105,8 +113,7 @@ export default function EditProductModal({ isOpen, onClose, productData, onSave 
             submitData.append("images", file);
         });
 
-        submitData.id = formData.id; 
-
+        submitData.id = formData.id;
         onSave(submitData);
     };
 
@@ -123,11 +130,10 @@ export default function EditProductModal({ isOpen, onClose, productData, onSave 
                     <h2 className="text-2xl font-bold text-gray-900 mb-8">Edit Product</h2>
 
                     <div className="space-y-5">
+                        {/* PHOTO SECTION */}
                         <div className="space-y-3">
                             <label className="block text-sm font-bold text-[#1F2937]">Photo Product</label>
-                            
                             <p className="text-xs text-orange-500 italic mb-2">Note: Mengupload foto baru akan menimpa (replace) foto lama.</p>
-
                             <div className="flex flex-wrap gap-4 mb-4">
                                 {imagePreviews.map((imgSrc, idx) => (
                                     <div key={idx} className="relative group">
@@ -138,7 +144,6 @@ export default function EditProductModal({ isOpen, onClose, productData, onSave 
                                     </div>
                                 ))}
                             </div>
-
                             <div className="space-y-3 p-4 bg-gray-50 rounded-xl border border-gray-100">
                                 <div className="space-y-1">
                                     <p className="text-[11px] font-bold text-gray-400 uppercase">Upload From Device</p>
@@ -150,6 +155,7 @@ export default function EditProductModal({ isOpen, onClose, productData, onSave 
                             </div>
                         </div>
 
+                        {/* BASIC INFO */}
                         <div className="space-y-1">
                             <label className="block text-sm font-bold text-[#1F2937]">Product name</label>
                             <input type="text" name="nameProduct" value={formData.nameProduct} onChange={handleChange} className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm text-gray-700 focus:outline-none focus:ring-1 focus:ring-orange-500" />
@@ -165,27 +171,21 @@ export default function EditProductModal({ isOpen, onClose, productData, onSave 
                             </select>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-1">
-                                <label className="block text-sm font-bold text-[#1F2937]">Normal Price </label>
-                                <input type="number" name="priceProduct" value={formData.priceProduct} onChange={handleChange} className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm text-gray-700 outline-none focus:ring-1 focus:ring-orange-500" />
-                            </div>
-                            <div className="space-y-1">
-                                <label className="block text-sm font-bold text-[#1F2937]">Discount Price</label>
-                                <input type="number" name="priceDiscount" value={formData.priceDiscount} onChange={handleChange} className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm text-gray-700 outline-none focus:ring-1 focus:ring-orange-500" />
-                            </div>
+                        {/* DISCOUNT PRICE DIHILANGKAN */}
+                        <div className="space-y-1">
+                            <label className="block text-sm font-bold text-[#1F2937]">Normal Price </label>
+                            <input type="number" name="priceProduct" value={formData.priceProduct} onChange={handleChange} className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm text-gray-700 outline-none focus:ring-1 focus:ring-orange-500" />
                         </div>
 
+                        {/* DINAMIS PROMO TYPE */}
                         <div className="space-y-1">
                             <label className="block text-sm font-bold text-[#1F2937]">Promo Type</label>
                             <div className="relative">
                                 <select name="promoType" value={formData.promoType || ""} onChange={handleChange} className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm text-gray-700 appearance-none bg-white focus:outline-none focus:ring-1 focus:ring-orange-500">
                                     <option value="">No Promo</option>
-                                    <option value="New Arrival">New Arrival</option>
-                                    <option value="Flash Sale">Flash Sale</option>
-                                    <option value="Buy 1 Get 1">Buy 1 Get 1</option>
-                                    <option value="Cheap">Cheap</option>
-                                    <option value="Birthday Package">Birthday Package</option>
+                                    {promoList.map((promo, idx) => (
+                                        <option key={idx} value={promo}>{promo}</option>
+                                    ))}
                                 </select>
                                 <ChevronDown className="absolute right-4 top-3.5 text-gray-400 pointer-events-none" size={20} />
                             </div>
@@ -196,6 +196,7 @@ export default function EditProductModal({ isOpen, onClose, productData, onSave 
                             <textarea name="description" rows="3" value={formData.description} onChange={handleChange} className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm text-gray-600 focus:outline-none focus:ring-1 focus:ring-orange-500 resize-none leading-relaxed" />
                         </div>
 
+                        {/* OPTIONS ARRAY */}
                         <div className="space-y-2">
                             <label className="block text-sm font-bold text-[#1F2937]">Product Size</label>
                             <div className="flex flex-wrap gap-3">

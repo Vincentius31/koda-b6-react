@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Plus, Search, Filter, Pencil, Trash2 } from 'lucide-react';
 import AddProductModal from '../../components/modal/admin/AddProductModal';
 import EditProductModal from '../../components/modal/admin/EditProductModal';
-import http from '../../lib/http';
+import http, { BASE_URL } from '../../lib/http';
 
 export default function Product() {
     const [products, setProducts] = useState([]);
@@ -165,8 +165,9 @@ export default function Product() {
                         <tbody className="divide-y divide-gray-50">
                             {currentItems.length > 0 ? (
                                 currentItems.map((product) => {
-                                    const imageSrc = (product.imageProduct && product.imageProduct.length > 0)
-                                        ? `${product.imageProduct[0]}?v=${product.updatedAt || product.id}`
+                                    const rawSrc = product.imageProduct?.[0];
+                                    const imageSrc = rawSrc
+                                        ? `${rawSrc.startsWith("http") ? rawSrc : BASE_URL + rawSrc}?v=${product.updatedAt || product.id}`
                                         : "https://via.placeholder.com/40";
 
                                     return (

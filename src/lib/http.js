@@ -13,6 +13,12 @@ async function http(url, opts={}){
         headers.Authorization = "Bearer " + opts.token;
     }
 
+    const isFormData = opts.body instanceof FormData;
+
+    if (!isFormData) {
+        headers['Content-Type'] = 'application/json';
+    }
+
     const response = await fetch(BASE_URL + url, {
         method: opts.method || "GET",
         headers: headers,

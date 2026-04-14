@@ -1,10 +1,10 @@
 export const BASE_URL = "https://vincent-backend.camps.fahrul.id";
 
-async function http(url, opts={}){ 
-    const token = localStorage.getItem('token')
+async function http(url, opts={}) { 
+    const token = localStorage.getItem('token');
     const headers = {
         ...opts.headers
-    }
+    };
 
     if (token) {
         headers.Authorization = "Bearer " + token;
@@ -18,10 +18,18 @@ async function http(url, opts={}){
         headers['Content-Type'] = 'application/json';
     }
 
-    const response = await fetch(BASE_URL + url, {
-        method: opts.method || "GET",
+    const method = opts.method || "GET";
+    let finalUrl = BASE_URL + url;
+    if (method !== "GET") {
+        const sep = url.includes("?") ? "&" : "?";
+        finalUrl += `${sep}_t=${Date.now()}`;
+    }
+
+    const response = await fetch(finalUrl, {
+        method: method,
         headers: headers,
-        body: opts.body ? (isFormData ? opts.body : JSON.stringify(opts.body)) : undefined
+        body: opts.body ? (isFormData ? opts.body : JSON.stringify(opts.body)) : undefined,
+        cache: "no-store" 
     });
 
     if(response.status === 401 && !url.includes('/auth/login')){

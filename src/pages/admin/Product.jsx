@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Search, Filter, Pencil, Trash2 } from 'lucide-react';
-import AddProductModal from '../../components/modal/admin/AddProductModal'; 
-import EditProductModal from '../../components/modal/admin/EditProductModal'; 
-import http from '../../lib/http'; 
+import AddProductModal from '../../components/modal/admin/AddProductModal';
+import EditProductModal from '../../components/modal/admin/EditProductModal';
+import http from '../../lib/http';
 
 export default function Product() {
     const [products, setProducts] = useState([]);
@@ -67,7 +67,7 @@ export default function Product() {
     };
 
     const handleUpdateProduct = async (updatedProduct) => {
-        const productId = updatedProduct.id;
+        const productId = updatedProduct.get("id");
 
         try {
             const res = await http(`/admin/product/${productId}`, {
@@ -95,7 +95,7 @@ export default function Product() {
             });
 
             if (res.success) {
-                fetchProducts(); 
+                fetchProducts();
                 setShowAddModal(false);
                 alert("Product Added Successfully!");
             } else {
